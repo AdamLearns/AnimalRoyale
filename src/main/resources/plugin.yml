@@ -1,0 +1,6 @@
+name: AnimalRoyale
+version: ${project.version}
+main: live.adamlearns.animalroyale.AnimalRoyale
+api-version: "1.13"
+authors: [Adam13531]
+website: https://adamlearns.live/
