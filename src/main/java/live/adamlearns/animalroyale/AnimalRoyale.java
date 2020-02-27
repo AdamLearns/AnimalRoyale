@@ -9,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class AnimalRoyale extends JavaPlugin {
 
     private EventListener eventListener;
+    private TwitchChat twitchChat;
+    private final GameContext gameContext = new GameContext();
 
     private void setupWorld() {
         final World world = Bukkit.getServer().getWorld("world");
@@ -22,6 +24,8 @@ public final class AnimalRoyale extends JavaPlugin {
 
         // Tiles won't drop items from them, which should speed things up.
         world.setGameRule(GameRule.DO_TILE_DROPS, false);
+
+        gameContext.registerWorld(world);
     }
 
     private void setupEventListener() {
@@ -34,10 +38,19 @@ public final class AnimalRoyale extends JavaPlugin {
         // Plugin startup logic
         this.setupWorld();
         this.setupEventListener();
+        this.setupTwitchChat();
+
+    }
+
+    private void setupTwitchChat() {
+        twitchChat = new TwitchChat();
+        gameContext.registerTwitchChat(twitchChat);
     }
 
     @Override
     public void onDisable() {
+        this.twitchChat.destroy();
+
         // Plugin shutdown logic
         if (this.eventListener != null) {
             HandlerList.unregisterAll(this.eventListener);
