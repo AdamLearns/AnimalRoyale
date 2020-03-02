@@ -1,5 +1,7 @@
 package live.adamlearns.animalroyale;
 
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.entity.Sheep;
 
 /**
@@ -14,10 +16,16 @@ public class GamePlayer {
     private boolean hasAddedSheep = false;
     private Sheep sheep;
 
+    /**
+     * This is as close to your sheep's color as we can get. We approximate some of them like black so that it's still
+     * readable.
+     */
+    private ChatColor nameColor;
+
     private int tntNextYaw;
     private int tntNextPitch;
     private int tntNextPower;
-    private int tntNextTtl;
+    private double tntNextTtl;
     private boolean hasSetTntParameters = false;
 
     public GamePlayer(final String name) {
@@ -28,7 +36,7 @@ public class GamePlayer {
         return name;
     }
 
-    public void setTntParameters(final int yaw, final int pitch, final int distance, final int ttl) {
+    public void setTntParameters(final int yaw, final int pitch, final int distance, final double ttl) {
         tntNextYaw = yaw;
         tntNextPitch = pitch;
         tntNextPower = distance;
@@ -39,6 +47,40 @@ public class GamePlayer {
     public void setSheep(final Sheep sheep) {
         this.sheep = sheep;
         hasAddedSheep = true;
+
+        final DyeColor sheepColor = sheep.getColor();
+
+        assert sheepColor != null;
+        nameColor = GamePlayer.getChatColorFromDyeColor(sheepColor);
+    }
+
+    public String getNameColoredForInGameChat() {
+        return nameColor + name;
+    }
+
+    static ChatColor getChatColorFromDyeColor(final DyeColor dyeColor) {
+        switch (dyeColor) {
+            case BLACK:
+            case LIGHT_GRAY:
+                return ChatColor.GRAY;
+            case BROWN:
+            case ORANGE:
+                return ChatColor.GOLD;
+            case CYAN:
+            case LIGHT_BLUE:
+                return ChatColor.AQUA;
+            case LIME:
+                return ChatColor.GREEN;
+            case GREEN:
+                return ChatColor.DARK_GREEN;
+            case MAGENTA:
+            case PINK:
+                return ChatColor.LIGHT_PURPLE;
+            case PURPLE:
+                return ChatColor.DARK_PURPLE;
+            default:
+                return ChatColor.valueOf(dyeColor.name());
+        }
     }
 
     public boolean canPlaceSheep() {
@@ -65,7 +107,7 @@ public class GamePlayer {
         return tntNextPower;
     }
 
-    public int getTntNextTtl() {
+    public double getTntNextTtl() {
         return tntNextTtl;
     }
 

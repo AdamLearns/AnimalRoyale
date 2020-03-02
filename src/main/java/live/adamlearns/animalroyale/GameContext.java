@@ -37,6 +37,12 @@ public class GameContext {
         gamePhase = GamePhase.LOBBY;
     }
 
+    public void advanceGamePhaseToGameplay() {
+        final int numPlayers = players.getAllPlayers().size();
+        twitchChat.sendMessageToChannel("The battle is starting with " + numPlayers + " players! Type !tnt YAW PITCH POWER TTL to engage in battle!");
+        gamePhase = GamePhase.GAMEPLAY;
+    }
+
     public boolean canAddSheep() {
         return arena != null && gamePhase == GamePhase.LOBBY;
     }

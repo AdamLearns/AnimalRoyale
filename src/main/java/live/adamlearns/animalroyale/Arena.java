@@ -1,9 +1,6 @@
 package live.adamlearns.animalroyale;
 
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -253,6 +250,12 @@ public class Arena {
         sheep.setColor(dyeColor);
 
         gamePlayer.setSheep(sheep);
+
+        final int sheepX = sheepLocation.getBlockX() - location.getBlockX() - sheepDistanceFromLocation;
+        final int sheepY = sheepLocation.getBlockY();
+        final int sheepZ = sheepLocation.getBlockZ() - location.getBlockZ();
+        gameContext.getJavaPlugin().getServer().broadcastMessage(gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
+                "(" + sheepX + ", " + sheepY + ", " + sheepZ + ") ");
     }
 
     /**
@@ -281,9 +284,9 @@ public class Arena {
      * @param tntNextPower
      * @param tntNextTtl
      */
-    private void createTntForSheep(final Sheep sheep, final int tntNextYaw, final int tntNextPitch, final int tntNextPower, final int tntNextTtl) {
+    private void createTntForSheep(final Sheep sheep, final int tntNextYaw, final int tntNextPitch, final int tntNextPower, final double tntNextTtl) {
         final TNTPrimed tnt = (TNTPrimed) sheep.getWorld().spawnEntity(sheep.getLocation(), EntityType.PRIMED_TNT);
-        tnt.setFuseTicks(tntNextTtl);
+        tnt.setFuseTicks((int) (tntNextTtl * 20));
 
         final Vector tntVector = sheep.getLocation().getDirection();
         tntVector.multiply(tntNextPower / 25.0);
@@ -292,6 +295,7 @@ public class Arena {
 
     public void startRounds() {
         startRoundIn(60);
+        gameContext.advanceGamePhaseToGameplay();
     }
 
     private void startRoundIn(final long delay) {

@@ -68,10 +68,12 @@ public class TwitchChat {
         }
 
         try {
-            final int yaw = Util.clamp(Integer.parseInt(args[0], 10), 0, 359);
-            final int pitch = Util.clamp(Integer.parseInt(args[1], 10), -90, 90);
+            final int yaw = Util.clamp(Integer.parseInt(args[0], 10), -360, 360);
+
+            // Minecraft considers -90 to be facing straight up, but most players will probably want to use positive numbers, so we invert this.
+            final int pitch = Util.clamp(Integer.parseInt(args[1], 10), -90, 90) * -1;
             final int distance = Util.clamp(Integer.parseInt(args[2], 10), 0, 100);
-            final int ttl = Util.clamp(Integer.parseInt(args[3], 10), 0, 100);
+            final double ttl = Util.clamp(Double.parseDouble(args[3]), 0.0, 5.0);
 
             final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
             if (gamePlayer == null) {
