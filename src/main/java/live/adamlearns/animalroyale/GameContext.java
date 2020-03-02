@@ -1,8 +1,12 @@
 package live.adamlearns.animalroyale;
 
+import org.bukkit.DyeColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This keeps track of all classes needed in order for the plug-in to work.
@@ -28,6 +32,8 @@ public class GameContext {
 
     public void advanceGamePhaseToLobby() {
         javaPlugin.getLogger().info("Transitioned to LOBBY phase");
+        final String validDyeColors = Stream.of(DyeColor.values()).map(s -> s.toString().toLowerCase()).collect(Collectors.joining(" "));
+        twitchChat.sendMessageToChannel("You may now join the game with !join COLOR, where COLOR is one of these: " + validDyeColors);
         gamePhase = GamePhase.LOBBY;
     }
 

@@ -15,12 +15,13 @@ public class TwitchChat {
 
     private final TwitchClient twitchClient;
     private final GameContext gameContext;
+    private final String twitchChannelToJoin;
 
     public TwitchChat(final GameContext gameContext) {
         this.gameContext = gameContext;
         final Dotenv dotenv = Dotenv.configure().directory("./").load();
         final String oauthToken = dotenv.get("TWITCH_CHAT_OAUTH_TOKEN");
-        final String twitchChannelToJoin = dotenv.get("TWITCH_CHANNEL_NAME");
+        twitchChannelToJoin = dotenv.get("TWITCH_CHANNEL_NAME");
 
         assert oauthToken != null;
         assert twitchChannelToJoin != null;
@@ -33,6 +34,10 @@ public class TwitchChat {
                 .build();
         twitchClient.getChat().joinChannel(twitchChannelToJoin);
         twitchClient.getEventManager().onEvent(ChannelMessageEvent.class).subscribe(this::onChatMessage);
+    }
+
+    public void sendMessageToChannel(final String text) {
+        twitchClient.getChat().sendMessage(twitchChannelToJoin, text);
     }
 
     private void onChatMessage(final ChannelMessageEvent event) {
