@@ -48,8 +48,8 @@ public class TwitchChat {
         final String command = commandAndArgs[0];
         final String[] args = Arrays.copyOfRange(commandAndArgs, 1, commandAndArgs.length);
 
-        if (command.equals("!startround") && senderName.toLowerCase().equals("adam13531")) {
-            gameContext.getArena().startRound();
+        if (command.equals("!startrounds") && senderName.toLowerCase().equals("adam13531")) {
+            gameContext.getArena().startRounds();
         }
 
         if ((command.equals("!join") || command.equals("!color"))) {

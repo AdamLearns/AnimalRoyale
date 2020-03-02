@@ -24,6 +24,11 @@ public class Arena {
      */
     private final int sheepDistanceFromLocation = 40;
 
+    /**
+     * This is in ticks.
+     */
+    private int timeBetweenTurns = 20 * 20;
+
     // This represents the top-center of the arena (since we're looking south).
     private Location location;
 
@@ -283,5 +288,17 @@ public class Arena {
         final Vector tntVector = sheep.getLocation().getDirection();
         tntVector.multiply(tntNextPower / 25.0);
         tnt.setVelocity(tntVector);
+    }
+
+    public void startRounds() {
+        startRoundIn(60);
+    }
+
+    private void startRoundIn(final long delay) {
+        Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
+            gameContext.getArena().startRound();
+            startRoundIn(timeBetweenTurns);
+            timeBetweenTurns = Math.max(2 * 20, (int) Math.floor(timeBetweenTurns * 0.9));
+        }, delay);
     }
 }
