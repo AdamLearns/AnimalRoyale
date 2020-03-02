@@ -9,8 +9,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Collection;
@@ -64,11 +62,19 @@ public class Arena {
      */
     private void setupArenaReadinessCheck() {
         checkArenaReadinessTask = Bukkit.getScheduler().runTaskTimer(gameContext.getJavaPlugin(), () -> {
+            final double[] tps = gameContext.getJavaPlugin().getServer().getTPS();
+            final double lastMinuteTps = tps[0];
+
+            // 20 TPS is the target, so we want to make sure things have stabilized enough
+            if (lastMinuteTps < 19.5) {
+                return;
+            }
+
             if (isArenaReadyForGameplay()) {
                 gameContext.advanceGamePhaseToLobby();
                 checkArenaReadinessTask.cancel();
             }
-        }, 0, 20);
+        }, 0, 40);
     }
 
     private boolean isArenaReadyForGameplay() {
@@ -215,10 +221,10 @@ public class Arena {
     /**
      * Creates a sheep for the given player. This is the player's avatar.
      *
-     * @param senderName
+     * @param gamePlayer
      * @param dyeColor
      */
-    protected void createSheepForPlayer(final String senderName, final DyeColor dyeColor) {
+    protected void createSheepForPlayer(final GamePlayer gamePlayer, final DyeColor dyeColor) {
         final World world = location.getWorld();
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         final Location sheepLocation = location.clone();
@@ -231,12 +237,14 @@ public class Arena {
         // We don't want sheep to have AI, but without AI, there's no fall damage, and we DO want fall damage. Instead,
         // we'll try adding a very slow potion.
         sheep.setAI(true);
-        sheep.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, Integer.MAX_VALUE));
-        sheep.setCustomName(senderName);
+        sheep.setCustomName(gamePlayer.getName());
         sheep.setCustomNameVisible(true);
         sheep.setRotation(90, 90);
+        sheep.setAware(false);
         sheep.setGlowing(true);
 
         sheep.setColor(dyeColor);
+
+        gamePlayer.setSheep(sheep);
     }
 }

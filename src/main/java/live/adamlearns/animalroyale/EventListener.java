@@ -4,6 +4,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -21,6 +22,16 @@ public class EventListener implements Listener {
         final Player player = event.getPlayer();
         gameContext.playerJoined(player);
         player.setGameMode(GameMode.SPECTATOR);
+    }
+
+    @EventHandler
+    public void onEntityDamage(final EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+
+            if (gameContext.getGamePhase() == GamePhase.LOBBY) {
+                event.setDamage(0);
+            }
+        }
     }
 
     @EventHandler

@@ -13,12 +13,15 @@ public class GameContext {
     private TwitchChat twitchChat;
     private Arena arena;
     private final JavaPlugin javaPlugin;
+    private final Players players;
 
     // The first player is like the "camera" in this game. It's what the streamer on Twitch would be controlling.
     private Player firstPlayer;
 
     public GameContext(final JavaPlugin javaPlugin) {
         gamePhase = GamePhase.CREATING_ARENA;
+
+        players = new Players();
 
         this.javaPlugin = javaPlugin;
     }
@@ -77,5 +80,13 @@ public class GameContext {
 
     public JavaPlugin getJavaPlugin() {
         return javaPlugin;
+    }
+
+    public Players getPlayers() {
+        return players;
+    }
+
+    public GamePhase getGamePhase() {
+        return gamePhase;
     }
 }

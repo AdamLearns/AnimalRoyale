@@ -58,7 +58,10 @@ public class TwitchChat {
         try {
             final DyeColor dyeColor = DyeColor.valueOf(color);
 
-            Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gameContext.getArena().createSheepForPlayer(senderName, dyeColor));
+            final GamePlayer gamePlayer = gameContext.getPlayers().createPlayerIfNotExists(senderName);
+            if (gamePlayer.canPlaceSheep()) {
+                Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gameContext.getArena().createSheepForPlayer(gamePlayer, dyeColor));
+            }
         } catch (
                 final IllegalArgumentException e) {
             // No point in spamming anything in this "catch" because Twitch chat loves to go bonkers, so they're going
