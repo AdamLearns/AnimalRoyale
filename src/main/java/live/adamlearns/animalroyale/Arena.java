@@ -9,7 +9,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
@@ -239,12 +241,47 @@ public class Arena {
         sheep.setAI(true);
         sheep.setCustomName(gamePlayer.getName());
         sheep.setCustomNameVisible(true);
-        sheep.setRotation(90, 90);
+        sheep.setRotation(90, 45);
         sheep.setAware(false);
         sheep.setGlowing(true);
 
         sheep.setColor(dyeColor);
 
         gamePlayer.setSheep(sheep);
+    }
+
+    /**
+     * Starts a round where sheep will take their turns.
+     */
+    public void startRound() {
+        // Figure out everybody with TNT parameters and fire away
+        final Collection<GamePlayer> allPlayers = gameContext.getPlayers().getAllPlayers().values();
+        for (final GamePlayer player : allPlayers) {
+            final Sheep sheep = player.getSheep();
+            if (!sheep.isValid() || sheep.isDead() || !player.hasSetTntParameters()) {
+                continue;
+            }
+
+            Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> createTntForSheep(sheep, player.getTntNextYaw(), player.getTntNextPitch(), player.getTntNextPower(), player.getTntNextTtl())
+            );
+        }
+    }
+
+    /**
+     * Fire TNT from all sheep.
+     *
+     * @param sheep
+     * @param tntNextYaw
+     * @param tntNextPitch
+     * @param tntNextPower
+     * @param tntNextTtl
+     */
+    private void createTntForSheep(final Sheep sheep, final int tntNextYaw, final int tntNextPitch, final int tntNextPower, final int tntNextTtl) {
+        final TNTPrimed tnt = (TNTPrimed) sheep.getWorld().spawnEntity(sheep.getLocation(), EntityType.PRIMED_TNT);
+        tnt.setFuseTicks(tntNextTtl);
+
+        final Vector tntVector = sheep.getLocation().getDirection();
+        tntVector.multiply(tntNextPower / 25.0);
+        tnt.setVelocity(tntVector);
     }
 }

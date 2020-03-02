@@ -13,6 +13,14 @@ public class Players {
         players = new HashMap<>();
     }
 
+    public GamePlayer getPlayer(final String name) {
+        return players.get(name);
+    }
+
+    public Map<String, GamePlayer> getAllPlayers() {
+        return players;
+    }
+
     public GamePlayer createPlayerIfNotExists(final String name) {
         if (players.containsKey(name)) {
             return players.get(name);

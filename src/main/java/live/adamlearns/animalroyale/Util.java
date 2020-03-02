@@ -27,6 +27,10 @@ public final class Util {
         return array[rnd];
     }
 
+    public static <T extends Comparable<T>> T clamp(final T numberToClamp, final T min, final T max) {
+        return numberToClamp.compareTo(min) < 0 ? min : numberToClamp.compareTo(max) > 0 ? max : numberToClamp;
+    }
+
     /**
      * Checks to see if the specified array contains the given value.
      *

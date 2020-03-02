@@ -14,12 +14,26 @@ public class GamePlayer {
     private boolean hasAddedSheep = false;
     private Sheep sheep;
 
+    private int tntNextYaw;
+    private int tntNextPitch;
+    private int tntNextPower;
+    private int tntNextTtl;
+    private boolean hasSetTntParameters = false;
+
     public GamePlayer(final String name) {
         this.name = name;
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setTntParameters(final int yaw, final int pitch, final int distance, final int ttl) {
+        tntNextYaw = yaw;
+        tntNextPitch = pitch;
+        tntNextPower = distance;
+        tntNextTtl = ttl;
+        hasSetTntParameters = true;
     }
 
     public void setSheep(final Sheep sheep) {
@@ -37,5 +51,25 @@ public class GamePlayer {
 
     public Sheep getSheep() {
         return sheep;
+    }
+
+    public int getTntNextYaw() {
+        return tntNextYaw;
+    }
+
+    public int getTntNextPitch() {
+        return tntNextPitch;
+    }
+
+    public int getTntNextPower() {
+        return tntNextPower;
+    }
+
+    public int getTntNextTtl() {
+        return tntNextTtl;
+    }
+
+    public boolean hasSetTntParameters() {
+        return hasSetTntParameters;
     }
 }
