@@ -8,28 +8,32 @@ import org.bukkit.plugin.java.JavaPlugin;
  * This keeps track of all classes needed in order for the plug-in to work.
  */
 public class GameContext {
-    private final GamePhase gamePhase;
+    private GamePhase gamePhase;
     private World world;
     private TwitchChat twitchChat;
     private Arena arena;
     private final JavaPlugin javaPlugin;
 
-
     // The first player is like the "camera" in this game. It's what the streamer on Twitch would be controlling.
     private Player firstPlayer;
 
     public GameContext(final JavaPlugin javaPlugin) {
-        this.gamePhase = GamePhase.LOBBY;
+        gamePhase = GamePhase.CREATING_ARENA;
 
         this.javaPlugin = javaPlugin;
     }
 
+    public void advanceGamePhaseToLobby() {
+        javaPlugin.getLogger().info("Transitioned to LOBBY phase");
+        gamePhase = GamePhase.LOBBY;
+    }
+
     public boolean canAddSheep() {
-        return arena != null && gamePhase != GamePhase.GAMEPLAY;
+        return arena != null && gamePhase == GamePhase.LOBBY;
     }
 
     public void createNewArena() {
-        this.arena = new Arena(this);
+        arena = new Arena(this);
     }
 
     public void registerWorld(final World world) {

@@ -1,5 +1,6 @@
 package live.adamlearns.animalroyale;
 
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,6 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
@@ -17,8 +19,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Arena {
     private final GameContext gameContext;
 
+    /**
+     * The distance from this arena's location that a sheep could spawn.
+     */
+    private final int sheepDistanceFromLocation = 40;
+
     // This represents the top-center of the arena (since we're looking south).
     private Location location;
+
+    /**
+     * We periodically check if the arena is ready to have players join. When it is, this task will cancel itself.
+     */
+    private BukkitTask checkArenaReadinessTask;
 
     public Arena(final GameContext gameContext) {
         this.gameContext = gameContext;
@@ -43,7 +55,59 @@ public class Arena {
         setCameraPositionToStartingLocation();
 
         deleteNonPlayerSheep();
+
+        setupArenaReadinessCheck();
     }
+
+    /**
+     * Checks every so often to see if the arena is ready, and when it is, this will advance the game state.
+     */
+    private void setupArenaReadinessCheck() {
+        checkArenaReadinessTask = Bukkit.getScheduler().runTaskTimer(gameContext.getJavaPlugin(), () -> {
+            if (isArenaReadyForGameplay()) {
+                gameContext.advanceGamePhaseToLobby();
+                checkArenaReadinessTask.cancel();
+            }
+        }, 0, 20);
+    }
+
+    private boolean isArenaReadyForGameplay() {
+        return haveNearbyChunksLoaded();
+    }
+
+    /**
+     * Tests whether all nearby chunks have loaded that may eventually have sheep in them.
+     *
+     * @return
+     */
+    private boolean haveNearbyChunksLoaded() {
+        final World world = gameContext.getWorld();
+
+        // This is how far away in any given direction from the center that we want to check
+        final int maxSampleDistance = sheepDistanceFromLocation;
+
+        // Each chunk is 16x16, so we only need to sample every 16 blocks
+        final int chunkSize = 16;
+        // This is how many blocks we travel in between samples.
+        final int centerX = location.getBlockX();
+        final int centerZ = location.getBlockZ();
+        final int startX = Math.floorDiv(centerX - maxSampleDistance, chunkSize);
+        final int finalX = Math.floorDiv(centerX + maxSampleDistance, chunkSize);
+        // We are going to be facing south, which is the positive Z direction, so we only need to sample in that direction
+        final int startZ = Math.floorDiv(centerZ, chunkSize);
+        final int finalZ = Math.floorDiv(centerZ + maxSampleDistance, chunkSize);
+        for (int x = startX; x <= finalX; x++) {
+            for (int z = startZ; z <= finalZ; z++) {
+                // Chunk coordinates are just block coordinates divided by 16. So loading chunk (0, 0) would load blocks (0-15, 0-15).
+                if (!world.isChunkLoaded(x, z)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
 
     /**
      * This deletes any sheep that may have already existed in the world at the arena location.
@@ -159,7 +223,7 @@ public class Arena {
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         final Location sheepLocation = location.clone();
 
-        final int distance = 40;
+        final int distance = sheepDistanceFromLocation;
         sheepLocation.add(random.nextDouble() * distance * Util.getOneOrNegativeOne(), 0, random.nextDouble() * distance);
         sheepLocation.setY(world.getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()) + 30);
         final Sheep sheep = (Sheep) world.spawnEntity(sheepLocation, EntityType.SHEEP);

@@ -5,6 +5,7 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 
 import java.util.Arrays;
@@ -57,12 +58,7 @@ public class TwitchChat {
         try {
             final DyeColor dyeColor = DyeColor.valueOf(color);
 
-            // TODO: fix the lag with this. The code I have commented out below is a way of running this in a Runnable, but that doesn't really help.
-            gameContext.getArena().createSheepForPlayer(senderName, dyeColor);
-
-//            final BukkitRunnable bukkitRunnable = new TestTask(gameContext.getJavaPlugin(), senderName, dyeColor, gameContext.getArena());
-//            bukkitRunnable.runTask(gameContext.getJavaPlugin());
-
+            Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gameContext.getArena().createSheepForPlayer(senderName, dyeColor));
         } catch (
                 final IllegalArgumentException e) {
             // No point in spamming anything in this "catch" because Twitch chat loves to go bonkers, so they're going
