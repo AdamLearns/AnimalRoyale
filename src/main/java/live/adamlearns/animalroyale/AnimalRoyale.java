@@ -10,7 +10,7 @@ public final class AnimalRoyale extends JavaPlugin {
 
     private EventListener eventListener;
     private TwitchChat twitchChat;
-    private final GameContext gameContext = new GameContext();
+    private final GameContext gameContext = new GameContext(this);
 
     private void setupWorld() {
         final World world = Bukkit.getServer().getWorld("world");
@@ -22,14 +22,15 @@ public final class AnimalRoyale extends JavaPlugin {
         // Turn off weather so that we can always see the battles.
         world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
 
-        // Tiles won't drop items from them, which should speed things up.
+        // Don't drop items since no one collects them
         world.setGameRule(GameRule.DO_TILE_DROPS, false);
+        world.setGameRule(GameRule.DO_MOB_LOOT, false);
 
         gameContext.registerWorld(world);
     }
 
     private void setupEventListener() {
-        this.eventListener = new EventListener();
+        this.eventListener = new EventListener(gameContext);
         getServer().getPluginManager().registerEvents(eventListener, this);
     }
 
@@ -43,7 +44,7 @@ public final class AnimalRoyale extends JavaPlugin {
     }
 
     private void setupTwitchChat() {
-        twitchChat = new TwitchChat();
+        twitchChat = new TwitchChat(gameContext);
         gameContext.registerTwitchChat(twitchChat);
     }
 
