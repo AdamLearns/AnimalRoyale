@@ -7,6 +7,7 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
+import org.bukkit.entity.Sheep;
 
 import java.util.Arrays;
 
@@ -42,14 +43,14 @@ public class TwitchChat {
         final String command = commandAndArgs[0];
         final String[] args = Arrays.copyOfRange(commandAndArgs, 1, commandAndArgs.length);
 
-        if (command.equals("!join") && gameContext.canAddSheep()) {
+        if ((command.equals("!join") || command.equals("!color"))) {
             onJoin(senderName, args);
             return;
         }
     }
 
     private void onJoin(final String senderName, final String[] args) {
-        if (args.length < 1) {
+        if (args.length < 1 || !gameContext.canAddSheep()) {
             return;
         }
 
@@ -61,6 +62,10 @@ public class TwitchChat {
             final GamePlayer gamePlayer = gameContext.getPlayers().createPlayerIfNotExists(senderName);
             if (gamePlayer.canPlaceSheep()) {
                 Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gameContext.getArena().createSheepForPlayer(gamePlayer, dyeColor));
+            } else if (gamePlayer.hasAddedSheep()) {
+                final Sheep sheep = gamePlayer.getSheep();
+
+                Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> sheep.setColor(dyeColor));
             }
         } catch (
                 final IllegalArgumentException e) {

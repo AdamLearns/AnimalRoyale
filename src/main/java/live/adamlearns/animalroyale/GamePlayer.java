@@ -30,4 +30,12 @@ public class GamePlayer {
     public boolean canPlaceSheep() {
         return !hasAddedSheep;
     }
+
+    public boolean hasAddedSheep() {
+        return hasAddedSheep;
+    }
+
+    public Sheep getSheep() {
+        return sheep;
+    }
 }
