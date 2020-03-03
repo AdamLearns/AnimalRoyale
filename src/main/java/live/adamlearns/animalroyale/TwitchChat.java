@@ -126,7 +126,7 @@ public class TwitchChat {
                 fireworkMeta.setPower((i + 1) * 2);
                 fireworkMeta.addEffect(fireworkEffect);
                 firework.setFireworkMeta(fireworkMeta);
-                firework.setVelocity(new Vector(0, 0.5, 0));
+                firework.setVelocity(new Vector(0, (i + 1) * 0.2, 0));
             }
         });
     }
