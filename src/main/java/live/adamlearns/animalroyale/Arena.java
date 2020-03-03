@@ -58,6 +58,8 @@ public class Arena {
 
         deleteNonPlayerSheep();
 
+        addWoolBorderToArena();
+
         setupArenaReadinessCheck();
     }
 
@@ -83,6 +85,33 @@ public class Arena {
 
     private boolean isArenaReadyForGameplay() {
         return haveNearbyChunksLoaded();
+    }
+
+    private void addWoolBorderToArena() {
+        final World world = gameContext.getWorld();
+
+        final int centerX = location.getBlockX();
+        final int centerZ = location.getBlockZ();
+        final int startX = centerX - sheepDistanceFromLocation;
+        final int finalX = centerX + sheepDistanceFromLocation;
+        // We are going to be facing south, which is the positive Z direction, so we only need to sample in that direction
+        @SuppressWarnings("UnnecessaryLocalVariable") final int startZ = centerZ;
+        final int finalZ = centerZ + sheepDistanceFromLocation;
+
+        for (int x = startX; x <= finalX; x++) {
+            for (int z = startZ; z <= finalZ; z++) {
+                if (x > startX && x < finalX && z != startZ && z != finalZ) continue;
+                if (z > startZ && z < finalZ && x != startX && x != finalX) continue;
+
+                final int highestBlockYAt = world.getHighestBlockYAt(x, z);
+                final Block block = world.getBlockAt(x, highestBlockYAt + 1, z);
+                // Note: the block is never null, it's just air when you go high enough.
+                block.setType(Material.YELLOW_WOOL);
+
+                final Block block2 = world.getBlockAt(x, highestBlockYAt + 2, z);
+                block2.setType(Material.LIGHT_BLUE_WOOL);
+            }
+        }
     }
 
     /**
