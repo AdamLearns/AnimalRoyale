@@ -62,6 +62,23 @@ public class TwitchChat {
             return;
         }
 
+        if (command.equals("!addyaw")) {
+            onAddYaw(senderName, args);
+            return;
+        }
+        if (command.equals("!addpitch")) {
+            onAddPitch(senderName, args);
+            return;
+        }
+        if (command.equals("!addpower")) {
+            onAddPower(senderName, args);
+            return;
+        }
+        if (command.equals("!addttl")) {
+            onAddTtl(senderName, args);
+            return;
+        }
+
         if ((command.equals("!join") || command.equals("!color"))) {
             onJoin(senderName, args);
             return;
@@ -144,18 +161,103 @@ public class TwitchChat {
         handleChatMessage(senderName, message);
     }
 
+    private void onAddYaw(final String senderName, final String[] args) {
+        if (args.length < 1) {
+            return;
+        }
+
+        try {
+            final int yaw = Integer.parseInt(args[0], 10);
+
+            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            if (gamePlayer == null) {
+                return;
+            }
+
+            gamePlayer.addYaw(yaw);
+            updateSheepRotationForPlayer(gamePlayer);
+        } catch (final NumberFormatException e) {
+            // Ignore formatting problems since people in Twitch chat will get this wrong quite a lot.
+        }
+    }
+
+    private void onAddTtl(final String senderName, final String[] args) {
+        if (args.length < 1) {
+            return;
+        }
+
+        try {
+            final double ttl = Double.parseDouble(args[0]);
+
+            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            if (gamePlayer == null) {
+                return;
+            }
+
+            gamePlayer.addTtl(ttl);
+        } catch (final NumberFormatException e) {
+            // Ignore formatting problems since people in Twitch chat will get this wrong quite a lot.
+        }
+    }
+
+    private void onAddPower(final String senderName, final String[] args) {
+        if (args.length < 1) {
+            return;
+        }
+
+        try {
+            final int power = Integer.parseInt(args[0], 10);
+
+            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            if (gamePlayer == null) {
+                return;
+            }
+
+            gamePlayer.addPower(power);
+        } catch (final NumberFormatException e) {
+            // Ignore formatting problems since people in Twitch chat will get this wrong quite a lot.
+        }
+    }
+
+    private void onAddPitch(final String senderName, final String[] args) {
+        if (args.length < 1) {
+            return;
+        }
+
+        try {
+            final int pitch = Integer.parseInt(args[0], 10) * -1;
+
+            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            if (gamePlayer == null) {
+                return;
+            }
+
+            gamePlayer.addPitch(pitch);
+            updateSheepRotationForPlayer(gamePlayer);
+        } catch (final NumberFormatException e) {
+            // Ignore formatting problems since people in Twitch chat will get this wrong quite a lot.
+        }
+    }
+
+    private void updateSheepRotationForPlayer(final GamePlayer gamePlayer) {
+        final int yaw = gamePlayer.getTntNextYaw();
+        final int pitch = gamePlayer.getTntNextPitch();
+
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gamePlayer.getSheep().setRotation(yaw, pitch));
+    }
+
     private void onTnt(final String senderName, final String[] args) {
         if (args.length < 4) {
             return;
         }
 
         try {
-            final int yaw = Util.clamp(Integer.parseInt(args[0], 10), -360, 360);
+            final int yaw = Integer.parseInt(args[0], 10);
 
             // Minecraft considers -90 to be facing straight up, but most players will probably want to use positive numbers, so we invert this.
-            final int pitch = Util.clamp(Integer.parseInt(args[1], 10), -90, 90) * -1;
-            final int distance = Util.clamp(Integer.parseInt(args[2], 10), 0, 100);
-            final double ttl = Util.clamp(Double.parseDouble(args[3]), 0.0, 5.0);
+            final int pitch = Integer.parseInt(args[1], 10) * -1;
+            final int distance = Integer.parseInt(args[2], 10);
+            final double ttl = Double.parseDouble(args[3]);
 
             final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
             if (gamePlayer == null) {
@@ -163,8 +265,7 @@ public class TwitchChat {
             }
 
             gamePlayer.setTntParameters(yaw, pitch, distance, ttl);
-
-            Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gamePlayer.getSheep().setRotation(yaw, pitch));
+            updateSheepRotationForPlayer(gamePlayer);
         } catch (final NumberFormatException e) {
             // Ignore formatting problems since people in Twitch chat will get this wrong quite a lot.
         }

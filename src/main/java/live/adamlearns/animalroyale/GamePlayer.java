@@ -22,11 +22,18 @@ public class GamePlayer {
      */
     private ChatColor nameColor;
 
-    private int tntNextYaw;
-    private int tntNextPitch;
-    private int tntNextPower;
-    private double tntNextTtl;
+    private int tntNextYaw = 0;
+    private int tntNextPitch = 0;
+    private int tntNextPower = 0;
+    private double tntNextTtl = 0;
     private boolean hasSetTntParameters = false;
+
+    public static final int MIN_PITCH = -90;
+    public static final int MAX_PITCH = 90;
+    public static final int MIN_POWER = 0;
+    public static final int MAX_POWER = 100;
+    public static final double MIN_TTL = 0;
+    public static final double MAX_TTL = 5.0;
 
     public GamePlayer(final String name) {
         this.name = name;
@@ -36,12 +43,44 @@ public class GamePlayer {
         return name;
     }
 
-    public void setTntParameters(final int yaw, final int pitch, final int distance, final double ttl) {
-        tntNextYaw = yaw;
-        tntNextPitch = pitch;
-        tntNextPower = distance;
-        tntNextTtl = ttl;
+    public void setTntParameters(final int yaw, final int pitch, final int power, final double ttl) {
+        setYaw(yaw);
+        setPitch(pitch);
+        setPower(power);
+        setTtl(ttl);
         hasSetTntParameters = true;
+    }
+
+    public void setYaw(final int yaw) {
+        tntNextYaw = yaw;
+    }
+
+    public void setPitch(final int pitch) {
+        tntNextPitch = Util.clamp(pitch, MIN_PITCH, MAX_PITCH);
+    }
+
+    public void setPower(final int power) {
+        tntNextPower = Util.clamp(power, MIN_POWER, MAX_POWER);
+    }
+
+    public void setTtl(final double ttl) {
+        tntNextTtl = Util.clamp(ttl, MIN_TTL, MAX_TTL);
+    }
+
+    public void addYaw(final int yaw) {
+        setYaw(tntNextYaw + yaw);
+    }
+
+    public void addPitch(final int pitch) {
+        setPitch(tntNextPitch + pitch);
+    }
+
+    public void addPower(final int power) {
+        setPower(tntNextPower + power);
+    }
+
+    public void addTtl(final double ttl) {
+        setTtl(tntNextTtl + ttl);
     }
 
     public void setSheep(final Sheep sheep) {
