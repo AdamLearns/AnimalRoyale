@@ -330,11 +330,16 @@ public class Arena {
     }
 
     public void startRounds() {
-        startRoundIn(60);
-        gameContext.advanceGamePhaseToGameplay();
+        startRoundIn(100);
+        gameContext.advanceGamePhaseToPreGameplay();
     }
 
     private void startRoundIn(final long delay) {
+        // Make sure we've advanced to GAMEPLAY
+        if (gameContext.getGamePhase() == GamePhase.PRE_GAMEPLAY) {
+            gameContext.advanceGamePhaseToGameplay();
+        }
+
         Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
             gameContext.getArena().startRound();
             startRoundIn(timeBetweenTurns);

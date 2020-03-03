@@ -34,7 +34,7 @@ public class EventListener implements Listener {
     public void onEntityDamage(final EntityDamageEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
 
-            if (gameContext.getGamePhase() == GamePhase.LOBBY) {
+            if (gameContext.getGamePhase() == GamePhase.LOBBY || gameContext.getGamePhase() == GamePhase.PRE_GAMEPLAY) {
                 // Prevent the fall animation from happening since no damage is being taken
                 event.setCancelled(true);
             }

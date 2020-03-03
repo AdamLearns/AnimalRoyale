@@ -37,6 +37,12 @@ public class GameContext {
         gamePhase = GamePhase.LOBBY;
     }
 
+    public void advanceGamePhaseToPreGameplay() {
+        final int numPlayers = players.getAllPlayers().size();
+        twitchChat.sendMessageToChannel("The battle is about to start with " + numPlayers + " players! Make sure to whisper your commands with \"/w AdamLearnsBot COMMAND\"");
+        gamePhase = GamePhase.PRE_GAMEPLAY;
+    }
+
     public void advanceGamePhaseToGameplay() {
         final int numPlayers = players.getAllPlayers().size();
         arena.setStartingNumSheep(players.getNumLivingSheep());
