@@ -280,7 +280,9 @@ public class Arena {
 
         gamePlayer.setSheep(sheep);
 
-        final int sheepX = (sheepDistanceFromLocation * 2) - (sheepLocation.getBlockX() - location.getBlockX());
+        // "location" represents the center of the Arena, so we need to subtract the sheep distance. Then, since we're
+        // facing south, the coordinates go from high to low, so we invert them, that way people see it as it is on the screen.
+        final int sheepX = (sheepDistanceFromLocation * 2) - (sheepLocation.getBlockX() - (location.getBlockX() - sheepDistanceFromLocation));
         final int sheepZ = sheepLocation.getBlockZ() - location.getBlockZ();
         gameContext.getJavaPlugin().getServer().broadcastMessage(gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
                 "(" + sheepX + ", " + sheepZ + ") ");
