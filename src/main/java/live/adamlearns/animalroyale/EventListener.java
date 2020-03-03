@@ -62,6 +62,15 @@ public class EventListener implements Listener {
             return;
         }
 
+        // Make sure this was a player sheep that died and not anything else
+        final String sheepName = dyingEntity.getCustomName();
+        final GamePlayer ownerOfDyingSheep = gameContext.getPlayers().getPlayer(sheepName);
+        if (ownerOfDyingSheep == null) {
+            return;
+        }
+
+        gameContext.getTwitchChat().getTwitchClient().getChat().sendPrivateMessage(ownerOfDyingSheep.getName(), "Your sheep died.");
+
         final int numLivingSheep = players.getNumLivingSheep();
 
         // Only print the number of remaining sheep when it's "meaningful"
@@ -93,6 +102,12 @@ public class EventListener implements Listener {
 
         // Make sure the sheep was controlled by a player
         if (!damagedEntity.isCustomNameVisible()) return;
+
+        // Make sure fireworks don't do damage since they're just intended to help players identify themselves
+        if (damagingEntity.getType() == EntityType.FIREWORK) {
+            event.setCancelled(true);
+            return;
+        }
 
         if (event.getDamage() < ((LivingEntity) damagedEntity).getHealth()) {
             return;

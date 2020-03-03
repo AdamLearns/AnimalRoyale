@@ -33,7 +33,7 @@ public class GameContext {
     public void advanceGamePhaseToLobby() {
         javaPlugin.getLogger().info("Transitioned to LOBBY phase");
         final String validDyeColors = Stream.of(DyeColor.values()).map(s -> s.toString().toLowerCase()).collect(Collectors.joining(" "));
-        twitchChat.sendMessageToChannel("You may now join the game with !join COLOR, where COLOR is one of these: " + validDyeColors);
+        twitchChat.sendMessageToChannel("You may now join the game with \"/w AdamLearnsBot !join COLOR\", where COLOR is one of these: " + validDyeColors);
         gamePhase = GamePhase.LOBBY;
     }
 
@@ -46,7 +46,7 @@ public class GameContext {
     public void advanceGamePhaseToGameplay() {
         final int numPlayers = players.getAllPlayers().size();
         arena.setStartingNumSheep(players.getNumLivingSheep());
-        twitchChat.sendMessageToChannel("The battle is starting with " + numPlayers + " players! Type !tnt YAW PITCH POWER TTL to engage in battle! More help here: https://imgur.com/XMui9vf.png");
+        twitchChat.sendMessageToChannel("The battle is starting with " + numPlayers + " players! Type \"/w AdamLearnsBot !tnt YAW PITCH POWER TTL\" to engage in battle! More help here: https://imgur.com/XMui9vf.png");
         gamePhase = GamePhase.GAMEPLAY;
     }
 
@@ -108,5 +108,9 @@ public class GameContext {
 
     public GamePhase getGamePhase() {
         return gamePhase;
+    }
+
+    public TwitchChat getTwitchChat() {
+        return twitchChat;
     }
 }

@@ -4,10 +4,18 @@ import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import com.github.twitch4j.common.events.user.PrivateMessageEvent;
 import io.github.cdimascio.dotenv.Dotenv;
+import javafx.util.Pair;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Sheep;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 
@@ -34,22 +42,25 @@ public class TwitchChat {
                 .build();
         twitchClient.getChat().joinChannel(twitchChannelToJoin);
         twitchClient.getEventManager().onEvent(ChannelMessageEvent.class).subscribe(this::onChatMessage);
+        twitchClient.getEventManager().onEvent(PrivateMessageEvent.class).subscribe(this::onWhisper);
     }
 
     public void sendMessageToChannel(final String text) {
         twitchClient.getChat().sendMessage(twitchChannelToJoin, text);
     }
 
-    private void onChatMessage(final ChannelMessageEvent event) {
-        final String senderName = event.getUser().getName();
-
-        final String message = event.getMessage().toLowerCase();
+    private void handleChatMessage(final String senderName, final String message) {
         final String[] commandAndArgs = message.split("\\s+");
         final String command = commandAndArgs[0];
         final String[] args = Arrays.copyOfRange(commandAndArgs, 1, commandAndArgs.length);
 
         if (command.equals("!startrounds") && senderName.toLowerCase().equals("adam13531")) {
             gameContext.getArena().startRounds();
+        }
+
+        if (command.equals("!identify")) {
+            onIdentify(senderName, args);
+            return;
         }
 
         if ((command.equals("!join") || command.equals("!color"))) {
@@ -60,6 +71,78 @@ public class TwitchChat {
             onTnt(senderName, args);
             return;
         }
+    }
+
+    private void onIdentify(final String senderName, final String[] args) {
+        final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+        if (gamePlayer == null || !gamePlayer.isSheepAlive()) {
+            return;
+        }
+
+        Color color = Color.RED;
+        String colorString = args.length > 0 ? args[0] : null;
+        if (colorString != null) {
+            colorString = colorString.toLowerCase();
+            switch (colorString) {
+                case "red":
+                    color = Color.RED;
+                    break;
+                case "aqua":
+                    color = Color.AQUA;
+                    break;
+                case "blue":
+                    color = Color.BLUE;
+                    break;
+                case "green":
+                    color = Color.GREEN;
+                    break;
+                case "yellow":
+                    color = Color.YELLOW;
+                    break;
+                case "purple":
+                    color = Color.PURPLE;
+                    break;
+                case "white":
+                    color = Color.WHITE;
+                    break;
+            }
+        }
+
+        final Color fireworkColor = color;
+
+        final Sheep sheep = gamePlayer.getSheep();
+
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+            // There's no fall damage before the GAMEPLAY phase, so we can make the sheep jump
+            if (gameContext.getGamePhase() == GamePhase.LOBBY) {
+                sheep.setVelocity(new Vector(0, 2, 0));
+            }
+
+            for (int i = 0; i < 3; i++) {
+                final FireworkEffect.Builder builder = FireworkEffect.builder();
+                final FireworkEffect fireworkEffect = builder.trail(true).withColor(fireworkColor).build();
+                final Firework firework = (Firework) gameContext.getWorld().spawnEntity(sheep.getLocation(), EntityType.FIREWORK);
+                final FireworkMeta fireworkMeta = firework.getFireworkMeta();
+                // Each power level is half a second of flight time
+                fireworkMeta.setPower((i + 1) * 2);
+                fireworkMeta.addEffect(fireworkEffect);
+                firework.setFireworkMeta(fireworkMeta);
+                firework.setVelocity(new Vector(0, 0.5, 0));
+            }
+        });
+    }
+
+    private void onWhisper(final PrivateMessageEvent event) {
+        final String senderName = event.getUser().getName();
+        final String message = event.getMessage().toLowerCase();
+
+        handleChatMessage(senderName, message);
+    }
+
+    private void onChatMessage(final ChannelMessageEvent event) {
+        final String senderName = event.getUser().getName();
+        final String message = event.getMessage().toLowerCase();
+        handleChatMessage(senderName, message);
     }
 
     private void onTnt(final String senderName, final String[] args) {
@@ -100,7 +183,11 @@ public class TwitchChat {
 
             final GamePlayer gamePlayer = gameContext.getPlayers().createPlayerIfNotExists(senderName);
             if (gamePlayer.canPlaceSheep()) {
-                Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gameContext.getArena().createSheepForPlayer(gamePlayer, dyeColor));
+                Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+                    final Pair<Integer, Integer> sheepXAndZ = gameContext.getArena().createSheepForPlayer(gamePlayer, dyeColor);
+                    final String coordsMessage = String.format("Your sheep is positioned at (%d, %d)", sheepXAndZ.getKey(), sheepXAndZ.getValue());
+                    twitchClient.getChat().sendPrivateMessage(senderName, coordsMessage);
+                });
             } else if (gamePlayer.hasAddedSheep()) {
                 final Sheep sheep = gamePlayer.getSheep();
 
@@ -111,6 +198,10 @@ public class TwitchChat {
             // No point in spamming anything in this "catch" because Twitch chat loves to go bonkers, so they're going
             // to produce tons of exceptions.
         }
+    }
+
+    public TwitchClient getTwitchClient() {
+        return twitchClient;
     }
 
     public void destroy() {
