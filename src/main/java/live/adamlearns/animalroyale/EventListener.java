@@ -74,6 +74,8 @@ public class EventListener implements Listener {
             return;
         }
 
+        playerDied(ownerOfDyingSheep);
+
         gameContext.getTwitchChat().getTwitchClient().getChat().sendPrivateMessage(ownerOfDyingSheep.getName(), "Your sheep died.");
 
         final int numLivingSheep = players.getNumLivingSheep();
@@ -125,8 +127,6 @@ public class EventListener implements Listener {
         if (ownerOfDyingSheep == null) {
             return;
         }
-
-        playerDied(ownerOfDyingSheep);
 
         if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION && damagingEntity.getType() == EntityType.PRIMED_TNT) {
             final String tntName = damagingEntity.getCustomName();
