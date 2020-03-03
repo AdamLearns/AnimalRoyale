@@ -39,7 +39,8 @@ public class GameContext {
 
     public void advanceGamePhaseToGameplay() {
         final int numPlayers = players.getAllPlayers().size();
-        twitchChat.sendMessageToChannel("The battle is starting with " + numPlayers + " players! Type !tnt YAW PITCH POWER TTL to engage in battle!");
+        arena.setStartingNumSheep(players.getNumLivingSheep());
+        twitchChat.sendMessageToChannel("The battle is starting with " + numPlayers + " players! Type !tnt YAW PITCH POWER TTL to engage in battle! More help here: https://imgur.com/XMui9vf.png");
         gamePhase = GamePhase.GAMEPLAY;
     }
 

@@ -33,6 +33,7 @@ public class Arena {
      * We periodically check if the arena is ready to have players join. When it is, this task will cancel itself.
      */
     private BukkitTask checkArenaReadinessTask;
+    private int startingNumSheep;
 
     public Arena(final GameContext gameContext) {
         this.gameContext = gameContext;
@@ -337,7 +338,17 @@ public class Arena {
         Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
             gameContext.getArena().startRound();
             startRoundIn(timeBetweenTurns);
-            timeBetweenTurns = Math.max(2 * 20, (int) Math.floor(timeBetweenTurns * 0.9));
+
+            // The minimum possible turn time is 1 second
+            timeBetweenTurns = Math.max(20, (int) Math.floor(timeBetweenTurns * 0.9));
         }, delay);
+    }
+
+    public void setStartingNumSheep(final int numLivingSheep) {
+        this.startingNumSheep = numLivingSheep;
+    }
+
+    public int getStartingNumSheep() {
+        return startingNumSheep;
     }
 }

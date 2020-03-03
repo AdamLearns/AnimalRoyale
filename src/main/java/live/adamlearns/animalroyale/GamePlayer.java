@@ -95,6 +95,10 @@ public class GamePlayer {
         return sheep;
     }
 
+    public boolean isSheepAlive() {
+        return hasAddedSheep && sheep.isValid() && !sheep.isDead();
+    }
+
     public int getTntNextYaw() {
         return tntNextYaw;
     }

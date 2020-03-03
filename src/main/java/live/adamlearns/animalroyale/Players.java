@@ -21,6 +21,14 @@ public class Players {
         return players;
     }
 
+    public int getNumLivingSheep() {
+        return (int) players.values().stream().filter(GamePlayer::isSheepAlive).count();
+    }
+
+    public GamePlayer getLastRemainingPlayer() {
+        return players.values().stream().filter(GamePlayer::isSheepAlive).findFirst().orElse(null);
+    }
+
     public GamePlayer createPlayerIfNotExists(final String name) {
         if (players.containsKey(name)) {
             return players.get(name);
