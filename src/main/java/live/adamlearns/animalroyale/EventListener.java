@@ -114,9 +114,19 @@ public class EventListener implements Listener {
             return;
         }
 
+        // We only care if they died below
         if (event.getDamage() < ((LivingEntity) damagedEntity).getHealth()) {
             return;
         }
+
+        final String sheepName = damagedEntity.getCustomName();
+        final GamePlayer ownerOfDyingSheep = gameContext.getPlayers().getPlayer(sheepName);
+
+        if (ownerOfDyingSheep == null) {
+            return;
+        }
+
+        playerDied(ownerOfDyingSheep);
 
         if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION && damagingEntity.getType() == EntityType.PRIMED_TNT) {
             final String tntName = damagingEntity.getCustomName();
@@ -124,15 +134,6 @@ public class EventListener implements Listener {
             if (ownerOfTnt == null) {
                 return;
             }
-
-            final String sheepName = damagedEntity.getCustomName();
-            final GamePlayer ownerOfDyingSheep = gameContext.getPlayers().getPlayer(sheepName);
-
-            if (ownerOfDyingSheep == null) {
-                return;
-            }
-
-            playerDied(ownerOfDyingSheep);
 
             final String deathMessage;
             if (ownerOfTnt == ownerOfDyingSheep) {
