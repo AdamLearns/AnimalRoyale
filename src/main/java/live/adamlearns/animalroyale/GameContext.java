@@ -82,7 +82,7 @@ public class GameContext {
     public void playerJoined(final Player player) {
         if (firstPlayer == null) {
             firstPlayer = player;
-            firstPlayer.setFlySpeed(0.6f);
+            firstPlayer.setFlySpeed(0.35f);
 
             if (arena == null) {
                 this.createNewArena();
