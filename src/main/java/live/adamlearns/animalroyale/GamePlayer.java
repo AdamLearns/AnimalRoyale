@@ -58,6 +58,11 @@ public class GamePlayer {
         return nameColor + name;
     }
 
+    public String getNameForScoreboardWhenDead() {
+        // The order for coloring a struck-out name is COLOR + STRIKETHROUGH, not the other way around.
+        return nameColor.toString() + ChatColor.STRIKETHROUGH + name;
+    }
+
     static ChatColor getChatColorFromDyeColor(final DyeColor dyeColor) {
         switch (dyeColor) {
             case BLACK:

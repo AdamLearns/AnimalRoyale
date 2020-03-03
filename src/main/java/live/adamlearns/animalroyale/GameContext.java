@@ -20,6 +20,7 @@ public class GameContext {
     private Arena arena;
     private final JavaPlugin javaPlugin;
     private final Players players;
+    private Objective killsScoreboardObjective;
 
     // The first player is like the "camera" in this game. It's what the streamer on Twitch would be controlling.
     private Player firstPlayer;
@@ -53,12 +54,12 @@ public class GameContext {
             final ScoreboardManager manager = Bukkit.getScoreboardManager();
 
             final Scoreboard board = manager.getNewScoreboard();
-            final Objective objective = board.registerNewObjective("Kills", "dummy", "Kills");
-            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+            killsScoreboardObjective = board.registerNewObjective("Kills", "dummy", "Kills");
+            killsScoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
             for (final GamePlayer gamePlayer :
                     players.getAllPlayers().values()) {
-                final Score score = objective.getScore(gamePlayer.getName());
+                final Score score = killsScoreboardObjective.getScore(gamePlayer.getNameColoredForInGameChat());
                 score.setScore(0); //Integer only!
             }
 
@@ -135,5 +136,9 @@ public class GameContext {
 
     public TwitchChat getTwitchChat() {
         return twitchChat;
+    }
+
+    public Objective getKillsScoreboardObjective() {
+        return killsScoreboardObjective;
     }
 }

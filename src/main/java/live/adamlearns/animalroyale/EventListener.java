@@ -17,8 +17,8 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
+
+import java.util.Objects;
 
 public class EventListener implements Listener {
 
@@ -132,6 +132,8 @@ public class EventListener implements Listener {
                 return;
             }
 
+            playerDied(ownerOfDyingSheep);
+
             final String deathMessage;
             if (ownerOfTnt == ownerOfDyingSheep) {
                 deathMessage = ownerOfTnt.getNameColoredForInGameChat() + ChatColor.RED + " blasted themselves :(";
@@ -145,17 +147,27 @@ public class EventListener implements Listener {
         }
     }
 
+    private void playerDied(final GamePlayer gamePlayer) {
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+            final Objective objective = gameContext.getKillsScoreboardObjective();
+            final Score score = objective.getScore(gamePlayer.getNameColoredForInGameChat());
+            final int origScore = score.getScore();
+            Objects.requireNonNull(objective.getScoreboard()).resetScores(gamePlayer.getNameColoredForInGameChat());
+
+            final Score newScore = objective.getScore(gamePlayer.getNameForScoreboardWhenDead());
+            newScore.setScore(origScore);
+        });
+    }
+
     private void incrementKillsForPlayer(final GamePlayer gamePlayer) {
         Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
-            final ScoreboardManager manager = Bukkit.getScoreboardManager();
-            final Scoreboard board = gameContext.getFirstPlayer().getScoreboard();
-
-            final Objective objective = board.getObjective("Kills");
-            final Score score;
-            if (objective != null) {
-                score = objective.getScore(gamePlayer.getName());
-                score.setScore(score.getScore() + 1);
+            final Objective objective = gameContext.getKillsScoreboardObjective();
+            Score score = objective.getScore(gamePlayer.getNameColoredForInGameChat());
+            // It's possible that they died just before killing someone else, in which case we have to update their "dead" name on the leaderboard.
+            if (!score.isScoreSet()) {
+                score = objective.getScore(gamePlayer.getNameForScoreboardWhenDead());
             }
+            score.setScore(score.getScore() + 1);
         });
     }
 
