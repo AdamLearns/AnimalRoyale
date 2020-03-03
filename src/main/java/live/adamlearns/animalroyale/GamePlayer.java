@@ -28,6 +28,9 @@ public class GamePlayer {
     private double tntNextTtl = 0;
     private boolean hasSetTntParameters = false;
 
+    // This is essentially measured in System.currentTimeMillis
+    private long nextTimeAbleToUseSpecialAbility = 0;
+
     public static final int MIN_PITCH = -90;
     public static final int MAX_PITCH = 90;
     public static final int MIN_POWER = 0;
@@ -161,5 +164,13 @@ public class GamePlayer {
 
     public boolean hasSetTntParameters() {
         return hasSetTntParameters;
+    }
+
+    public boolean canUseSpecialAbility() {
+        return System.currentTimeMillis() >= nextTimeAbleToUseSpecialAbility;
+    }
+
+    public void setNextTimeAbleToUseSpecialAbility(final long nextTimeAbleToUseSpecialAbility) {
+        this.nextTimeAbleToUseSpecialAbility = nextTimeAbleToUseSpecialAbility;
     }
 }

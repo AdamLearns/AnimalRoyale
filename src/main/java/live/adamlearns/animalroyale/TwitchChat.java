@@ -6,10 +6,7 @@ import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.common.events.user.PrivateMessageEvent;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Sheep;
@@ -17,6 +14,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TwitchChat {
 
@@ -62,6 +60,11 @@ public class TwitchChat {
             return;
         }
 
+        if (command.equals("!teleport") || command.equals("!tp")) {
+            onTeleport(senderName, args);
+            return;
+        }
+
         if (command.equals("!addyaw")) {
             onAddYaw(senderName, args);
             return;
@@ -87,6 +90,34 @@ public class TwitchChat {
             onTnt(senderName, args);
             return;
         }
+    }
+
+    private void onTeleport(final String senderName, final String[] args) {
+        final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+        if (gamePlayer == null || !gamePlayer.isSheepAlive() || gameContext.getGamePhase() != GamePhase.GAMEPLAY || !gamePlayer.canUseSpecialAbility()) {
+            return;
+        }
+
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+        final int yaw = args.length > 0 ? Integer.parseInt(args[0], 10) : random.nextInt(359);
+        final int distance = random.nextInt(8) + 3;
+
+        final Sheep sheep = gamePlayer.getSheep();
+        final double angleInRadians = yaw * Math.PI / 180.0;
+        final Vector vector = new Vector(Math.sin(angleInRadians * -1), 0, Math.cos(angleInRadians)).normalize().multiply(distance);
+        final Location sheepLocation = sheep.getLocation().clone();
+        sheepLocation.add(vector);
+
+        // Ensure that the new location is still inside the arena, otherwise they can teleport away from the battle
+        if (!gameContext.getArena().isLocationInsideArena(sheepLocation)) {
+            return;
+        }
+
+        sheepLocation.setY(gameContext.getWorld().getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()));
+
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> sheep.teleport(sheepLocation));
+
+        gamePlayer.setNextTimeAbleToUseSpecialAbility(System.currentTimeMillis() + 30000);
     }
 
     private void onIdentify(final String senderName, final String[] args) {

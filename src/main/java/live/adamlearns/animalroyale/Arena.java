@@ -180,6 +180,12 @@ public class Arena {
         gameContext.getFirstPlayer().teleport(new Location(world, x, y, z, yaw, pitch));
     }
 
+    public boolean isLocationInsideArena(final Location target) {
+        final int blockX = target.getBlockX();
+        final int blockZ = target.getBlockZ();
+        return blockX >= location.getBlockX() - sheepDistanceFromLocation && blockX <= location.getBlockX() + sheepDistanceFromLocation && blockZ >= location.getBlockZ() && blockZ <= location.getBlockZ() + sheepDistanceFromLocation;
+    }
+
     /**
      * Returns if a biome is considered a bad location for the arena, e.g. it has too much water. Water isn't
      * necessarily a problem since we can cover liquids and hazards, but it's not a very easy arena to fight in. The one
