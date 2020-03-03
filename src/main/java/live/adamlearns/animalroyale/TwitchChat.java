@@ -6,7 +6,6 @@ import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.common.events.user.PrivateMessageEvent;
 import io.github.cdimascio.dotenv.Dotenv;
-import javafx.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -184,8 +183,8 @@ public class TwitchChat {
             final GamePlayer gamePlayer = gameContext.getPlayers().createPlayerIfNotExists(senderName);
             if (gamePlayer.canPlaceSheep()) {
                 Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
-                    final Pair<Integer, Integer> sheepXAndZ = gameContext.getArena().createSheepForPlayer(gamePlayer, dyeColor);
-                    final String coordsMessage = String.format("Your sheep is positioned at (%d, %d)", sheepXAndZ.getKey(), sheepXAndZ.getValue());
+                    final Vector sheepLocation = gameContext.getArena().createSheepForPlayer(gamePlayer, dyeColor);
+                    final String coordsMessage = String.format("Your sheep is positioned at (%d, %d)", (int) sheepLocation.getX(), (int) sheepLocation.getZ());
                     twitchClient.getChat().sendPrivateMessage(senderName, coordsMessage);
                 });
             } else if (gamePlayer.hasAddedSheep()) {

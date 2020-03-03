@@ -1,6 +1,5 @@
 package live.adamlearns.animalroyale;
 
-import javafx.util.Pair;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -260,7 +259,7 @@ public class Arena {
      * @param dyeColor
      * @return
      */
-    protected Pair<Integer, Integer> createSheepForPlayer(final GamePlayer gamePlayer, final DyeColor dyeColor) {
+    protected Vector createSheepForPlayer(final GamePlayer gamePlayer, final DyeColor dyeColor) {
         final World world = location.getWorld();
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         final Location sheepLocation = location.clone();
@@ -290,7 +289,7 @@ public class Arena {
         gameContext.getJavaPlugin().getServer().broadcastMessage(gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
                 "(" + sheepX + ", " + sheepZ + ") ");
 
-        return new Pair<>(sheepX, sheepZ);
+        return new Vector(sheepX, sheepLocation.getBlockY(), sheepZ);
     }
 
     /**
