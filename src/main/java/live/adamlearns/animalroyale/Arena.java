@@ -280,11 +280,10 @@ public class Arena {
 
         gamePlayer.setSheep(sheep);
 
-        final int sheepX = sheepLocation.getBlockX() - location.getBlockX() - sheepDistanceFromLocation;
-        final int sheepY = sheepLocation.getBlockY();
+        final int sheepX = (sheepDistanceFromLocation * 2) - (sheepLocation.getBlockX() - location.getBlockX());
         final int sheepZ = sheepLocation.getBlockZ() - location.getBlockZ();
         gameContext.getJavaPlugin().getServer().broadcastMessage(gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
-                "(" + sheepX + ", " + sheepY + ", " + sheepZ + ") ");
+                "(" + sheepX + ", " + sheepZ + ") ");
     }
 
     /**
@@ -316,6 +315,11 @@ public class Arena {
     private void createTntForSheep(final Sheep sheep, final int tntNextYaw, final int tntNextPitch, final int tntNextPower, final double tntNextTtl) {
         final TNTPrimed tnt = (TNTPrimed) sheep.getWorld().spawnEntity(sheep.getLocation(), EntityType.PRIMED_TNT);
         tnt.setFuseTicks((int) (tntNextTtl * 20));
+
+        // We want to be able to identify this TNT later, so we store a name, but we don't want the name to be visible
+        tnt.setCustomName(sheep.getCustomName());
+
+        tnt.setCustomNameVisible(false);
 
         final Vector tntVector = sheep.getLocation().getDirection();
         tntVector.multiply(tntNextPower / 25.0);
