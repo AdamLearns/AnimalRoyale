@@ -181,13 +181,15 @@ public class Arena {
     }
 
     /**
-     * Returns if a biome is considered a bad location for the arena, e.g. it has too much water.
+     * Returns if a biome is considered a bad location for the arena, e.g. it has too much water. Water isn't
+     * necessarily a problem since we can cover liquids and hazards, but it's not a very easy arena to fight in. The one
+     * ocean type that we DON'T consider bad just for some variety is Biome.FROZEN_OCEAN.
      *
      * @param biome
      * @return
      */
     private boolean isBiomeBad(final Biome biome) {
-        final Biome[] badBiomes = {Biome.OCEAN, Biome.COLD_OCEAN, Biome.DEEP_COLD_OCEAN, Biome.DEEP_FROZEN_OCEAN, Biome.DEEP_LUKEWARM_OCEAN, Biome.DEEP_OCEAN, Biome.DEEP_WARM_OCEAN, Biome.FROZEN_OCEAN, Biome.LUKEWARM_OCEAN, Biome.WARM_OCEAN};
+        final Biome[] badBiomes = {Biome.OCEAN, Biome.COLD_OCEAN, Biome.DEEP_COLD_OCEAN, Biome.DEEP_FROZEN_OCEAN, Biome.DEEP_LUKEWARM_OCEAN, Biome.DEEP_OCEAN, Biome.DEEP_WARM_OCEAN, Biome.LUKEWARM_OCEAN, Biome.WARM_OCEAN};
         return Util.arrayIncludes(badBiomes, biome);
     }
 
@@ -266,6 +268,15 @@ public class Arena {
 
         final int distance = sheepDistanceFromLocation;
         sheepLocation.add(random.nextDouble() * distance * Util.getOneOrNegativeOne(), 0, random.nextDouble() * distance);
+        final Block highestBlockAtSheepLocation = world.getHighestBlockAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ());
+        final Material highestBlockType = highestBlockAtSheepLocation.getType();
+
+        // Prevent the player from dying as soon as they spawn by placing a non-flammable block above the hazard.
+        if (highestBlockAtSheepLocation.isLiquid() || highestBlockType == Material.CACTUS || highestBlockType == Material.SWEET_BERRY_BUSH) {
+            final Block blockAboveHighestBlock = world.getBlockAt(highestBlockAtSheepLocation.getX(), highestBlockAtSheepLocation.getY() + 1, highestBlockAtSheepLocation.getZ());
+            blockAboveHighestBlock.setType(Material.CYAN_CONCRETE);
+        }
+
         sheepLocation.setY(world.getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()) + 30);
         final Sheep sheep = (Sheep) world.spawnEntity(sheepLocation, EntityType.SHEEP);
 
