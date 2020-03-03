@@ -1,9 +1,11 @@
 package live.adamlearns.animalroyale;
 
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.*;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,6 +43,27 @@ public class GameContext {
         final int numPlayers = players.getAllPlayers().size();
         twitchChat.sendMessageToChannel("The battle is about to start with " + numPlayers + " players! Make sure to whisper your commands with \"/w AdamLearnsBot COMMAND\"");
         gamePhase = GamePhase.PRE_GAMEPLAY;
+
+        // Now that people can no longer join, we can set up the scoreboard
+        setUpScoreboard();
+    }
+
+    private void setUpScoreboard() {
+        Bukkit.getScheduler().runTask(javaPlugin, x -> {
+            final ScoreboardManager manager = Bukkit.getScoreboardManager();
+
+            final Scoreboard board = manager.getNewScoreboard();
+            final Objective objective = board.registerNewObjective("Kills", "dummy", "Kills");
+            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+            for (final GamePlayer gamePlayer :
+                    players.getAllPlayers().values()) {
+                final Score score = objective.getScore(gamePlayer.getName());
+                score.setScore(0); //Integer only!
+            }
+
+            firstPlayer.setScoreboard(board);
+        });
     }
 
     public void advanceGamePhaseToGameplay() {

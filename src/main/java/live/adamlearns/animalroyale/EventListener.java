@@ -1,5 +1,6 @@
 package live.adamlearns.animalroyale;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
@@ -14,6 +15,10 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 public class EventListener implements Listener {
 
@@ -132,10 +137,26 @@ public class EventListener implements Listener {
                 deathMessage = ownerOfTnt.getNameColoredForInGameChat() + ChatColor.RED + " blasted themselves :(";
             } else {
                 deathMessage = ownerOfTnt.getNameColoredForInGameChat() + ChatColor.RED + " blasted " + ownerOfDyingSheep.getNameColoredForInGameChat() + ChatColor.RED + " to smithereens";
+
+                incrementKillsForPlayer(ownerOfTnt);
             }
 
             gameContext.getJavaPlugin().getServer().broadcastMessage(deathMessage);
         }
+    }
+
+    private void incrementKillsForPlayer(final GamePlayer gamePlayer) {
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+            final ScoreboardManager manager = Bukkit.getScoreboardManager();
+            final Scoreboard board = gameContext.getFirstPlayer().getScoreboard();
+
+            final Objective objective = board.getObjective("Kills");
+            final Score score;
+            if (objective != null) {
+                score = objective.getScore(gamePlayer.getName());
+                score.setScore(score.getScore() + 1);
+            }
+        });
     }
 
     @EventHandler
