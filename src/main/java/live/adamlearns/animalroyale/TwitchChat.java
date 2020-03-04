@@ -392,11 +392,11 @@ public class TwitchChat {
     }
 
     private void onJoin(final String senderName, final String[] args) {
-        if (args.length < 1 || !gameContext.canAddSheep()) {
+        if (!gameContext.canAddSheep()) {
             return;
         }
 
-        final String color = args[0].toUpperCase();
+        final String color = args.length > 0 ? args[0].toUpperCase() : Util.sampleArray(DyeColor.values()).name();
 
         try {
             final DyeColor dyeColor = DyeColor.valueOf(color);
