@@ -35,9 +35,14 @@ public class Arena {
     private int startingNumSheep;
 
     /**
+     * This is the task that will automatically begin the current match, i.e. move from LOBBY to PRE_GAMEPLAY.
+     */
+    private BukkitTask startCurrentMatchTask;
+
+    /**
      * This task is delayed so that we don't start a new match before the "end screen" from the last match is done.
      */
-    private BukkitTask startMatchTask;
+    private BukkitTask startNewMatchTask;
 
     /**
      * This has two purposes: scheduling sudden death originally, and then handling the periodic lava spawns.
@@ -120,11 +125,14 @@ public class Arena {
     public void dispose() {
         this.killAllSheep();
 
+        if (startCurrentMatchTask != null && !startCurrentMatchTask.isCancelled()) {
+            startCurrentMatchTask.cancel();
+        }
         if (suddenDeathTask != null && !suddenDeathTask.isCancelled()) {
             suddenDeathTask.cancel();
         }
-        if (startMatchTask != null && !startMatchTask.isCancelled()) {
-            startMatchTask.cancel();
+        if (startNewMatchTask != null && !startNewMatchTask.isCancelled()) {
+            startNewMatchTask.cancel();
         }
         if (checkArenaReadinessTask != null && !checkArenaReadinessTask.isCancelled()) {
             checkArenaReadinessTask.cancel();
@@ -146,9 +154,16 @@ public class Arena {
 
             if (isArenaReadyForGameplay()) {
                 gameContext.advanceGamePhaseToLobby();
+                scheduleStartOfMatch();
                 checkArenaReadinessTask.cancel();
             }
         }, 0, 40);
+    }
+
+    private void scheduleStartOfMatch() {
+        final int NUM_SECONDS_BEFORE_STARTING_MATCH = 60;
+        gameContext.getTwitchChat().sendMessageToChannel("Starting the round automatically in " + NUM_SECONDS_BEFORE_STARTING_MATCH + " seconds.");
+        startCurrentMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), this::startRounds, NUM_SECONDS_BEFORE_STARTING_MATCH * 20);
     }
 
     private boolean isArenaReadyForGameplay() {
@@ -243,9 +258,9 @@ public class Arena {
         final int x = location.getBlockX();
         final int z = location.getBlockZ();
         final Block highestBlock = world.getHighestBlockAt(x, z);
-        final int y = highestBlock.getLocation().getBlockY() + 20;
+        final int y = highestBlock.getLocation().getBlockY() + 42;
         final float yaw = 0;
-        final float pitch = 45;
+        final float pitch = 55;
 
         Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), lambda -> gameContext.getFirstPlayer().teleport(new Location(world, x, y, z, yaw, pitch))
         );
@@ -535,7 +550,7 @@ public class Arena {
             gameContext.advanceGamePhaseToGameplay();
         }
 
-        startMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
+        startNewMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
             gameContext.getArena().startRound();
             startRoundIn(timeBetweenTurns);
 
