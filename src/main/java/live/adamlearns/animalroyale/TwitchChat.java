@@ -147,7 +147,12 @@ public class TwitchChat {
         }
 
         final ThreadLocalRandom random = ThreadLocalRandom.current();
-        final int yaw = args.length > 0 ? Integer.parseInt(args[0], 10) : random.nextInt(359);
+        final int yaw;
+        try {
+            yaw = args.length > 0 ? Integer.parseInt(args[0], 10) : random.nextInt(359);
+        } catch (final NumberFormatException e) {
+            return;
+        }
         final int distance = random.nextInt(8) + 3;
 
         final Sheep sheep = gamePlayer.getSheep();
