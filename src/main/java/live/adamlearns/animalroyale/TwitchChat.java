@@ -155,6 +155,7 @@ public class TwitchChat {
         final Vector vector = new Vector(Math.sin(angleInRadians * -1), 0, Math.cos(angleInRadians)).normalize().multiply(distance);
         final Location sheepLocation = sheep.getLocation().clone();
         sheepLocation.add(vector);
+        Util.setLocationToCenterOfBlock(sheepLocation);
 
         // Ensure that the new location is still inside the arena, otherwise they can teleport away from the battle
         if (!gameContext.getArena().isLocationInsideArena(sheepLocation)) {

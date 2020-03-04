@@ -1,5 +1,7 @@
 package live.adamlearns.animalroyale;
 
+import org.bukkit.Location;
+
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,6 +31,17 @@ public final class Util {
 
     public static <T extends Comparable<T>> T clamp(final T numberToClamp, final T min, final T max) {
         return numberToClamp.compareTo(min) < 0 ? min : numberToClamp.compareTo(max) > 0 ? max : numberToClamp;
+    }
+
+    /**
+     * Locations that are at the edge of a block may cause entities to suffocate in nearby blocks. To fix this, you
+     * apparently just pick the center of the block as mentioned here: https://www.spigotmc.org/threads/teleporting-player-to-center-of-a-block.255699/?__cf_chl_jschl_tk__=4e2c930c0179625dd750d46b94c5c116f2d94707-1583359206-0-AWv8EYIRfuycEC86A
+     *
+     * @param location
+     */
+    public static void setLocationToCenterOfBlock(final Location location) {
+        location.setX(Math.floor(location.getX()) + 0.5);
+        location.setZ(Math.floor(location.getZ()) + 0.5);
     }
 
     /**
