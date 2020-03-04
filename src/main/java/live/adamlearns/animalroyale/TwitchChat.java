@@ -161,7 +161,7 @@ public class TwitchChat {
             return;
         }
 
-        sheepLocation.setY(gameContext.getWorld().getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()) + 2);
+        sheepLocation.setY(gameContext.getWorld().getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()) + 3);
 
         gamePlayer.temporarilyStopShootingTnt();
         Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> sheep.teleport(sheepLocation));
