@@ -128,14 +128,18 @@ public class Arena {
         if (startCurrentMatchTask != null && !startCurrentMatchTask.isCancelled()) {
             startCurrentMatchTask.cancel();
         }
-        if (suddenDeathTask != null && !suddenDeathTask.isCancelled()) {
-            suddenDeathTask.cancel();
-        }
+        cancelSuddenDeath();
         if (startNewMatchTask != null && !startNewMatchTask.isCancelled()) {
             startNewMatchTask.cancel();
         }
         if (checkArenaReadinessTask != null && !checkArenaReadinessTask.isCancelled()) {
             checkArenaReadinessTask.cancel();
+        }
+    }
+
+    public void cancelSuddenDeath() {
+        if (suddenDeathTask != null && !suddenDeathTask.isCancelled()) {
+            suddenDeathTask.cancel();
         }
     }
 

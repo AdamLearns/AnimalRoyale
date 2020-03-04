@@ -105,7 +105,9 @@ public class EventListener implements Listener {
         if (numLivingSheep == 1) {
             final GamePlayer lastRemainingPlayer = players.getLastRemainingPlayer();
             final String titleText = String.format("%s wins!", lastRemainingPlayer.getName());
-            final String subtitle = String.format("#1 of %d sheep", gameContext.getArena().getStartingNumSheep());
+            final Arena arena = gameContext.getArena();
+            final String subtitle = String.format("#1 of %d sheep", arena.getStartingNumSheep());
+            arena.cancelSuddenDeath();
             gameContext.getFirstPlayer().sendTitle(titleText, subtitle, 10, 200, 20);
             gameContext.getTwitchChat().sendMessageToChannel(lastRemainingPlayer.getNameForTwitch() + " won the battle! PogChamp GG, everyone!");
             gameContext.scheduleArenaReset(300);
