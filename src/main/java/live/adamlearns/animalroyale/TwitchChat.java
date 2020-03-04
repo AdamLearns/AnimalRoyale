@@ -116,9 +116,15 @@ public class TwitchChat {
         }
     }
 
+    /**
+     * We purposely don't restrict this by GamePhase; you can teleport while in the LOBBY phase.
+     *
+     * @param senderName
+     * @param args
+     */
     private void onTeleport(final String senderName, final String[] args) {
         final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
-        if (gamePlayer == null || !gamePlayer.isSheepAlive() || gameContext.getGamePhase() != GamePhase.GAMEPLAY) {
+        if (gamePlayer == null || !gamePlayer.isSheepAlive()) {
             return;
         }
 
