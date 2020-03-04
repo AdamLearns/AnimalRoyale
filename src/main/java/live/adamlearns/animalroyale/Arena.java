@@ -3,7 +3,6 @@ package live.adamlearns.animalroyale;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.TNTPrimed;
@@ -32,8 +31,13 @@ public class Arena {
     /**
      * We periodically check if the arena is ready to have players join. When it is, this task will cancel itself.
      */
-    private BukkitTask checkArenaReadinessTask;
+    private BukkitTask checkArenaReadinessTask = null;
     private int startingNumSheep;
+
+    /**
+     * This task is delayed so that we don't start a new match before the "end screen" from the last match is done.
+     */
+    private BukkitTask startMatchTask;
 
     public Arena(final GameContext gameContext) {
         this.gameContext = gameContext;
@@ -57,11 +61,20 @@ public class Arena {
 
         setCameraPositionToStartingLocation();
 
-        deleteNonPlayerSheep();
-
         addWoolBorderToArena();
 
         setupArenaReadinessCheck();
+    }
+
+    public void dispose() {
+        this.killAllSheep();
+
+        if (startMatchTask != null && !startMatchTask.isCancelled()) {
+            startMatchTask.cancel();
+        }
+        if (checkArenaReadinessTask != null && !checkArenaReadinessTask.isCancelled()) {
+            checkArenaReadinessTask.cancel();
+        }
     }
 
     /**
@@ -99,20 +112,23 @@ public class Arena {
         @SuppressWarnings("UnnecessaryLocalVariable") final int startZ = centerZ;
         final int finalZ = centerZ + sheepDistanceFromLocation;
 
-        for (int x = startX; x <= finalX; x++) {
-            for (int z = startZ; z <= finalZ; z++) {
-                if (x > startX && x < finalX && z != startZ && z != finalZ) continue;
-                if (z > startZ && z < finalZ && x != startX && x != finalX) continue;
 
-                final int highestBlockYAt = world.getHighestBlockYAt(x, z);
-                final Block block = world.getBlockAt(x, highestBlockYAt + 1, z);
-                // Note: the block is never null, it's just air when you go high enough.
-                block.setType(Material.YELLOW_WOOL);
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), lambda -> {
+            for (int x = startX; x <= finalX; x++) {
+                for (int z = startZ; z <= finalZ; z++) {
+                    if (x > startX && x < finalX && z != startZ && z != finalZ) continue;
+                    if (z > startZ && z < finalZ && x != startX && x != finalX) continue;
 
-                final Block block2 = world.getBlockAt(x, highestBlockYAt + 2, z);
-                block2.setType(Material.LIGHT_BLUE_WOOL);
+                    final int highestBlockYAt = world.getHighestBlockYAt(x, z);
+                    final Block block = world.getBlockAt(x, highestBlockYAt + 1, z);
+                    // Note: the block is never null, it's just air when you go high enough.
+                    block.setType(Material.YELLOW_WOOL);
+
+                    final Block block2 = world.getBlockAt(x, highestBlockYAt + 2, z);
+                    block2.setType(Material.LIGHT_BLUE_WOOL);
+                }
             }
-        }
+        });
     }
 
     /**
@@ -148,21 +164,21 @@ public class Arena {
         return true;
     }
 
-
     /**
-     * This deletes any sheep that may have already existed in the world at the arena location.
-     * <p>
-     * I'm pretty sure this function doesn't actually work, but I haven't figured out why.
+     * This function exists as part of the cleanup for the arena. Without this, it's possible (though unlikely) that one
+     * arena is close enough to another and a named sheep dies even after resetting everything. That could mess up the
+     * stats and even the game state.
      */
-    private void deleteNonPlayerSheep() {
-        final World world = gameContext.getWorld();
-        final Location deleteSheepLocation = location.clone();
-        final Block highestBlock = world.getHighestBlockAt(location.getBlockX(), location.getBlockZ());
-        deleteSheepLocation.setY(highestBlock.getLocation().getBlockY());
-        final Collection<Entity> nearbyEntities = world.getNearbyEntities(deleteSheepLocation, 100, 100, 100, E -> E.getType() == EntityType.SHEEP);
-        for (final Entity entity : nearbyEntities) {
-            entity.remove();
-        }
+    public void killAllSheep() {
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+            final Collection<GamePlayer> allPlayers = gameContext.getPlayers().getAllPlayers().values();
+            for (final GamePlayer player :
+                    allPlayers) {
+                if (player.isSheepAlive()) {
+                    player.getSheep().remove();
+                }
+            }
+        });
     }
 
     /**
@@ -177,7 +193,9 @@ public class Arena {
         final int y = highestBlock.getLocation().getBlockY() + 20;
         final float yaw = 0;
         final float pitch = 45;
-        gameContext.getFirstPlayer().teleport(new Location(world, x, y, z, yaw, pitch));
+
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), lambda -> gameContext.getFirstPlayer().teleport(new Location(world, x, y, z, yaw, pitch))
+        );
     }
 
     public boolean isLocationInsideArena(final Location target) {
@@ -361,7 +379,7 @@ public class Arena {
             gameContext.advanceGamePhaseToGameplay();
         }
 
-        Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
+        startMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
             gameContext.getArena().startRound();
             startRoundIn(timeBetweenTurns);
 

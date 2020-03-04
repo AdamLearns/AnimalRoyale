@@ -7,10 +7,10 @@ import java.util.Map;
  * This keeps track of everyone who has typed a command via Twitch.
  */
 public class Players {
-    private final Map<String, GamePlayer> players;
+    private final Map<String, GamePlayer> players = new HashMap<>();
 
-    public Players() {
-        players = new HashMap<>();
+    public void removeAllPlayers() {
+        players.clear();
     }
 
     public GamePlayer getPlayer(final String name) {

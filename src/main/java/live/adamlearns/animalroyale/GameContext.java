@@ -5,8 +5,10 @@ import org.bukkit.DyeColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.*;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +23,7 @@ public class GameContext {
     private final JavaPlugin javaPlugin;
     private final Players players;
     private Objective killsScoreboardObjective;
+    private BukkitTask resetArenaTask = null;
 
     // The first player is like the "camera" in this game. It's what the streamer on Twitch would be controlling.
     private Player firstPlayer;
@@ -38,6 +41,46 @@ public class GameContext {
         final String validDyeColors = Stream.of(DyeColor.values()).map(s -> s.toString().toLowerCase()).collect(Collectors.joining(" "));
         twitchChat.sendMessageToChannel("You may now join the game with \"/w AdamLearnsBot !join COLOR\", where COLOR is one of these: " + validDyeColors);
         gamePhase = GamePhase.LOBBY;
+    }
+
+    /**
+     * This will reset ALL state so that people can join a brand new world.
+     */
+    public void startNewGame() {
+        gamePhase = GamePhase.PRE_GAMEPLAY;
+
+        // Regardless of whether this was called manually or automatically, make sure that we don't have the automatic
+        // task scheduled or else we'll reset a second time.
+        if (resetArenaTask != null && !resetArenaTask.isCancelled()) {
+            resetArenaTask.cancel();
+            resetArenaTask = null;
+        }
+
+        twitchChat.sendMessageToChannel("Setting up for a brand new game.");
+
+        resetEntireScoreboard();
+
+        // This needs to happen before we remove all of the players so that we can find and remove their sheep.
+        this.createNewArena();
+
+        // If we ever want persistent stats, then instead of just wiping out all players, you'd need to reset their
+        // individual state (basically just TNT- and sheep-related state).
+        players.removeAllPlayers();
+    }
+
+    private void resetEntireScoreboard() {
+        if (killsScoreboardObjective == null) {
+            return;
+        }
+
+        final Scoreboard scoreboard = killsScoreboardObjective.getScoreboard();
+        if (scoreboard != null) {
+            final Set<String> scoreboardEntries = scoreboard.getEntries();
+            for (final String scoreboardEntry :
+                    scoreboardEntries) {
+                scoreboard.resetScores(scoreboardEntry);
+            }
+        }
     }
 
     public void advanceGamePhaseToPreGameplay() {
@@ -79,6 +122,9 @@ public class GameContext {
     }
 
     public void createNewArena() {
+        if (arena != null) {
+            arena.dispose();
+        }
         arena = new Arena(this);
     }
 
@@ -140,5 +186,18 @@ public class GameContext {
 
     public Objective getKillsScoreboardObjective() {
         return killsScoreboardObjective;
+    }
+
+    /**
+     * Schedules a new game to be started in the future.
+     *
+     * @param delayInTicks
+     */
+    public void scheduleArenaReset(final int delayInTicks) {
+        // Don't allow scheduling multiple resets
+        if (resetArenaTask != null) {
+            return;
+        }
+        resetArenaTask = Bukkit.getScheduler().runTaskLater(javaPlugin, this::startNewGame, delayInTicks);
     }
 }

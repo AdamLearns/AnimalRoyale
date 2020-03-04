@@ -46,13 +46,28 @@ public class TwitchChat {
         twitchClient.getChat().sendMessage(twitchChannelToJoin, text);
     }
 
+    /**
+     * Returns true if a Twitch user is considered to be an administrator of this plugin. For now, that's just the
+     * channel owner.
+     *
+     * @param name
+     * @return
+     */
+    private boolean isTwitchUserAnAdmin(final String name) {
+        return name.equalsIgnoreCase(twitchChannelToJoin);
+    }
+
     private void handleChatMessage(final String senderName, final String message) {
         final String[] commandAndArgs = message.split("\\s+");
         final String command = commandAndArgs[0];
         final String[] args = Arrays.copyOfRange(commandAndArgs, 1, commandAndArgs.length);
 
-        if (command.equals("!startrounds") && senderName.toLowerCase().equals("adam13531")) {
+        if (command.equals("!startrounds") && isTwitchUserAnAdmin(senderName)) {
             gameContext.getArena().startRounds();
+        }
+
+        if (command.equals("!newarena") && isTwitchUserAnAdmin(senderName)) {
+            gameContext.startNewGame();
         }
 
         if (command.equals("!identify")) {
