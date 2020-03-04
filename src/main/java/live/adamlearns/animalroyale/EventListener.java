@@ -107,6 +107,7 @@ public class EventListener implements Listener {
             final String titleText = String.format("%s wins!", lastRemainingPlayer.getName());
             final String subtitle = String.format("#1 of %d sheep", gameContext.getArena().getStartingNumSheep());
             gameContext.getFirstPlayer().sendTitle(titleText, subtitle, 10, 200, 20);
+            gameContext.getTwitchChat().sendMessageToChannel(lastRemainingPlayer.getNameForTwitch() + " won the battle! PogChamp GG, everyone!");
             gameContext.scheduleArenaReset(300);
         }
     }
