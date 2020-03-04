@@ -129,16 +129,19 @@ public class EventListener implements Listener {
         if (ownerOfDyingSheep == null) {
             return;
         }
+        String deathMessage = null;
+        String twitchDeathMessage = null;
 
-        if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION && damagingEntity.getType() == EntityType.PRIMED_TNT) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+            deathMessage = ownerOfDyingSheep.getNameColoredForInGameChat() + ChatColor.RED + " was consumed by lava :(";
+            twitchDeathMessage = ownerOfDyingSheep.getNameForTwitch() + " was consumed by lava admFire";
+        } else if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION && damagingEntity.getType() == EntityType.PRIMED_TNT) {
             final String tntName = damagingEntity.getCustomName();
             final GamePlayer ownerOfTnt = gameContext.getPlayers().getPlayer(tntName);
             if (ownerOfTnt == null) {
                 return;
             }
 
-            final String deathMessage;
-            final String twitchDeathMessage;
             if (ownerOfTnt == ownerOfDyingSheep) {
                 deathMessage = ownerOfTnt.getNameColoredForInGameChat() + ChatColor.RED + " blasted themselves :(";
                 twitchDeathMessage = ownerOfTnt.getNameForTwitch() + " blasted themselves admFire";
@@ -148,8 +151,12 @@ public class EventListener implements Listener {
 
                 incrementKillsForPlayer(ownerOfTnt);
             }
+        }
 
+        if (twitchDeathMessage != null) {
             gameContext.getTwitchChat().sendMessageToChannel(twitchDeathMessage);
+        }
+        if (deathMessage != null) {
             gameContext.getJavaPlugin().getServer().broadcastMessage(deathMessage);
         }
     }
