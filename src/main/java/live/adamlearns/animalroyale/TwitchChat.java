@@ -79,6 +79,11 @@ public class TwitchChat {
             return;
         }
 
+        if (command.equals("!where")) {
+            onWhere(senderName, args);
+            return;
+        }
+
         if (command.equals("!teleport") || command.equals("!tp")) {
             onTeleport(senderName, args);
             return;
@@ -223,6 +228,25 @@ public class TwitchChat {
         });
     }
 
+    private void onWhere(final String senderName, final String[] args) {
+        final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+        if (gamePlayer == null) {
+            return;
+        }
+
+        if (!gamePlayer.isSheepAlive()) {
+            twitchClient.getChat().sendPrivateMessage(senderName, "Your sheep already died. BibleThump");
+            return;
+        }
+
+        final Sheep sheep = gamePlayer.getSheep();
+        final Arena arena = gameContext.getArena();
+        final Location sheepLocation = sheep.getLocation();
+        final String relativeLocationInformationString = arena.getRelativeLocationInformationString(sheepLocation);
+
+        twitchClient.getChat().sendPrivateMessage(senderName, relativeLocationInformationString);
+    }
+
     private void onWhisper(final PrivateMessageEvent event) {
         final String senderName = event.getUser().getName();
         final String message = event.getMessage().toLowerCase();
@@ -359,9 +383,10 @@ public class TwitchChat {
             final GamePlayer gamePlayer = gameContext.getPlayers().createPlayerIfNotExists(senderName);
             if (gamePlayer.canPlaceSheep()) {
                 Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
-                    final Vector sheepLocation = gameContext.getArena().createSheepForPlayer(gamePlayer, dyeColor);
-                    final String coordsMessage = String.format("Your sheep is positioned at (%d, %d)", (int) sheepLocation.getX(), (int) sheepLocation.getZ());
-                    twitchClient.getChat().sendPrivateMessage(senderName, coordsMessage);
+                    final Arena arena = gameContext.getArena();
+                    final Sheep sheep = arena.createSheepForPlayer(gamePlayer, dyeColor);
+                    final String relativeLocationInformationString = arena.getRelativeLocationInformationString(sheep.getLocation());
+                    twitchClient.getChat().sendPrivateMessage(senderName, relativeLocationInformationString);
                 });
             } else if (gamePlayer.hasAddedSheep()) {
                 final Sheep sheep = gamePlayer.getSheep();

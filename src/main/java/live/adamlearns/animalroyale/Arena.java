@@ -337,7 +337,7 @@ public class Arena {
      * @param dyeColor
      * @return
      */
-    protected Vector createSheepForPlayer(final GamePlayer gamePlayer, final DyeColor dyeColor) {
+    protected Sheep createSheepForPlayer(final GamePlayer gamePlayer, final DyeColor dyeColor) {
         final World world = location.getWorld();
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         final Location sheepLocation = location.clone();
@@ -371,13 +371,87 @@ public class Arena {
 
         // "location" represents the center of the Arena, so we need to subtract the sheep distance. Then, since we're
         // facing south, the coordinates go from high to low, so we invert them, that way people see it as it is on the screen.
-        final int sheepX = (arenaSize * 2) - (sheepLocation.getBlockX() - (location.getBlockX() - arenaSize));
-        final int sheepZ = sheepLocation.getBlockZ() - location.getBlockZ();
+        final Vector relativeVector = getLocationRelativeToArena(sheepLocation);
         final int sheepNumber = gameContext.getPlayers().getNumLivingSheep();
         gameContext.getJavaPlugin().getServer().broadcastMessage("Sheep #" + sheepNumber + ": " + gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
-                "(" + sheepX + ", " + sheepZ + ") ");
+                "(" + relativeVector.getBlockX() + ", " + relativeVector.getBlockZ() + ") ");
 
-        return new Vector(sheepX, sheepLocation.getBlockY(), sheepZ);
+        return sheep;
+    }
+
+    public int getLength() {
+        return arenaSize * 2;
+    }
+
+    public int getDepth() {
+        return arenaSize;
+    }
+
+    /**
+     * Returns a vector whose coordinates will be in the range [0, dimension], where "dimension" is the length or depth
+     * of the arena (based on which vector component you're looking at).
+     *
+     * @param target
+     * @return
+     */
+    public Vector getLocationRelativeToArena(final Location target) {
+        final int sheepX = (arenaSize * 2) - (target.getBlockX() - (location.getBlockX() - arenaSize));
+        final int sheepZ = target.getBlockZ() - location.getBlockZ();
+
+        return new Vector(sheepX, target.getBlockY(), sheepZ);
+    }
+
+    /**
+     * Gets a string that says exactly where your sheep is located and then a human-readable form of that same string.
+     *
+     * @param sheepLocation
+     * @return
+     */
+    public String getRelativeLocationInformationString(final Location sheepLocation) {
+        final Vector locationRelativeToArena = getLocationRelativeToArena(sheepLocation);
+        final String relativeLocationString = getHumanReadableRelativeLocation(sheepLocation);
+
+        return String.format("Your sheep is located at (%d, %d). The arena is %dx%d, which means you are in the %s.", locationRelativeToArena.getBlockX(), locationRelativeToArena.getBlockZ(), getLength(), getDepth(), relativeLocationString);
+    }
+
+    /**
+     * Gets a string like "top-left corner" that represents which of the 9 sections of the arena you're in.
+     *
+     * @param location
+     * @return
+     */
+    public String getHumanReadableRelativeLocation(final Location location) {
+        final Vector locationRelativeToArena = getLocationRelativeToArena(location);
+        final int x = locationRelativeToArena.getBlockX();
+        final int z = locationRelativeToArena.getBlockZ();
+
+        // Split the whole arena into 9 equal portions and tell you which portion you fall under
+        final int divisionLength = getLength() / 3;
+        final int divisionDepth = getDepth() / 3;
+
+        final String locationString;
+
+        if (x < divisionLength && z < divisionDepth) {
+            locationString = "bottom-left corner";
+        } else if (x < divisionLength && z < 2 * divisionDepth) {
+            locationString = "middle of the left side";
+        } else if (x < divisionLength) {
+            locationString = "top-left corner";
+        } else if (x < 2 * divisionLength && z < divisionDepth) {
+            locationString = "middle of the bottom side";
+        } else if (x < 2 * divisionLength && z < divisionDepth * 2) {
+            locationString = "middle of the arena";
+        } else if (x < 2 * divisionLength) {
+            locationString = "middle of the top side";
+        } else if (z < divisionDepth) {
+            locationString = "bottom-right corner";
+        } else if (z < divisionDepth * 2) {
+            locationString = "middle of the right side";
+        } else {
+            locationString = "top-right corner";
+        }
+
+        return locationString;
     }
 
     /**
