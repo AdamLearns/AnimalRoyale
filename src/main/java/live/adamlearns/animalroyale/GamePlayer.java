@@ -182,4 +182,8 @@ public class GamePlayer {
         final float secRemaining = (nextTimeAbleToUseSpecialAbility - System.currentTimeMillis()) / 1000.0f;
         return String.format("Your ability is on cooldown for another %.2fs", secRemaining);
     }
+
+    public void temporarilyStopShootingTnt() {
+        hasSetTntParameters = false;
+    }
 }

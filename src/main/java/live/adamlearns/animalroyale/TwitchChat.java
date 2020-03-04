@@ -114,6 +114,19 @@ public class TwitchChat {
             onTnt(senderName, args);
             return;
         }
+        if (command.equals("!tntcancel") || command.equals("!tntstop")) {
+            onTntCancel(senderName, args);
+            return;
+        }
+    }
+
+    private void onTntCancel(final String senderName, final String[] args) {
+        final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+        if (gamePlayer == null || !gamePlayer.isSheepAlive()) {
+            return;
+        }
+
+        gamePlayer.temporarilyStopShootingTnt();
     }
 
     /**
@@ -150,6 +163,7 @@ public class TwitchChat {
 
         sheepLocation.setY(gameContext.getWorld().getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()) + 2);
 
+        gamePlayer.temporarilyStopShootingTnt();
         Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> sheep.teleport(sheepLocation));
 
         gamePlayer.setNextTimeAbleToUseSpecialAbility(System.currentTimeMillis() + 15000);
