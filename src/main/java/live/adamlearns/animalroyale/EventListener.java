@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
+import java.util.List;
 import java.util.Objects;
 
 public class EventListener implements Listener {
@@ -86,7 +87,18 @@ public class EventListener implements Listener {
 
         if (shouldPrintMessage) {
             // This gets called after the entity is already dead, so this message will have the correct number.
-            gameContext.getJavaPlugin().getServer().broadcastMessage("" + ChatColor.AQUA + numLivingSheep + ChatColor.RESET + " sheep remaining");
+            final List<GamePlayer> playersWithLivingSheep = gameContext.getPlayers().getPlayersWithLivingSheep();
+            String remainingPlayersNames = "";
+            if (playersWithLivingSheep.size() <= 10) {
+                final StringBuilder sb = new StringBuilder();
+                for (final GamePlayer player : playersWithLivingSheep) {
+                    sb.append(player.getNameColoredForInGameChat());
+                    sb.append(" ");
+                }
+
+                remainingPlayersNames = ": " + sb.toString();
+            }
+            gameContext.getJavaPlugin().getServer().broadcastMessage("" + ChatColor.AQUA + numLivingSheep + ChatColor.RESET + " sheep remaining" + remainingPlayersNames);
         }
 
         // We have a winner!

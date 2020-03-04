@@ -1,7 +1,9 @@
 package live.adamlearns.animalroyale;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This keeps track of everyone who has typed a command via Twitch.
@@ -23,6 +25,10 @@ public class Players {
 
     public int getNumLivingSheep() {
         return (int) players.values().stream().filter(GamePlayer::isSheepAlive).count();
+    }
+
+    public List<GamePlayer> getPlayersWithLivingSheep() {
+        return players.values().stream().filter(GamePlayer::isSheepAlive).collect(Collectors.toList());
     }
 
     public GamePlayer getLastRemainingPlayer() {
