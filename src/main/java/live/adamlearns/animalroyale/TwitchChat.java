@@ -94,7 +94,12 @@ public class TwitchChat {
 
     private void onTeleport(final String senderName, final String[] args) {
         final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
-        if (gamePlayer == null || !gamePlayer.isSheepAlive() || gameContext.getGamePhase() != GamePhase.GAMEPLAY || !gamePlayer.canUseSpecialAbility()) {
+        if (gamePlayer == null || !gamePlayer.isSheepAlive() || gameContext.getGamePhase() != GamePhase.GAMEPLAY) {
+            return;
+        }
+
+        if (!gamePlayer.canUseSpecialAbility()) {
+            gameContext.getTwitchChat().getTwitchClient().getChat().sendPrivateMessage(senderName, gamePlayer.getCooldownMessage());
             return;
         }
 
@@ -113,11 +118,11 @@ public class TwitchChat {
             return;
         }
 
-        sheepLocation.setY(gameContext.getWorld().getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()));
+        sheepLocation.setY(gameContext.getWorld().getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()) + 2);
 
         Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> sheep.teleport(sheepLocation));
 
-        gamePlayer.setNextTimeAbleToUseSpecialAbility(System.currentTimeMillis() + 30000);
+        gamePlayer.setNextTimeAbleToUseSpecialAbility(System.currentTimeMillis() + 15000);
     }
 
     private void onIdentify(final String senderName, final String[] args) {

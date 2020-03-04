@@ -173,4 +173,13 @@ public class GamePlayer {
     public void setNextTimeAbleToUseSpecialAbility(final long nextTimeAbleToUseSpecialAbility) {
         this.nextTimeAbleToUseSpecialAbility = nextTimeAbleToUseSpecialAbility;
     }
+
+    public String getNameForTwitch() {
+        return "@" + name;
+    }
+
+    public String getCooldownMessage() {
+        final float secRemaining = (nextTimeAbleToUseSpecialAbility - System.currentTimeMillis()) / 1000.0f;
+        return String.format("Your ability is on cooldown for another %.2fs", secRemaining);
+    }
 }

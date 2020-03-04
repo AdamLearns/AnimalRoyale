@@ -52,6 +52,7 @@ public class EventListener implements Listener {
                     if (ownerOfSheep != null) {
                         final String deathMessage = ownerOfSheep.getNameColoredForInGameChat() + ChatColor.RED + " fell too far";
                         gameContext.getJavaPlugin().getServer().broadcastMessage(deathMessage);
+                        gameContext.getTwitchChat().sendMessageToChannel(ownerOfSheep.getNameForTwitch() + " fell too far admRocket");
                     }
                 }
             }
@@ -136,14 +137,18 @@ public class EventListener implements Listener {
             }
 
             final String deathMessage;
+            final String twitchDeathMessage;
             if (ownerOfTnt == ownerOfDyingSheep) {
                 deathMessage = ownerOfTnt.getNameColoredForInGameChat() + ChatColor.RED + " blasted themselves :(";
+                twitchDeathMessage = ownerOfTnt.getNameForTwitch() + " blasted themselves admFire";
             } else {
                 deathMessage = ownerOfTnt.getNameColoredForInGameChat() + ChatColor.RED + " blasted " + ownerOfDyingSheep.getNameColoredForInGameChat() + ChatColor.RED + " to smithereens";
+                twitchDeathMessage = ownerOfTnt.getNameForTwitch() + " blasted " + ownerOfDyingSheep.getNameForTwitch() + " admNuke";
 
                 incrementKillsForPlayer(ownerOfTnt);
             }
 
+            gameContext.getTwitchChat().sendMessageToChannel(twitchDeathMessage);
             gameContext.getJavaPlugin().getServer().broadcastMessage(deathMessage);
         }
     }
