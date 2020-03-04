@@ -159,10 +159,30 @@ public class TwitchChat {
                     color = Color.RED;
                     break;
                 case "aqua":
+                case "cyan":
                     color = Color.AQUA;
+                    break;
+                case "black":
+                    color = Color.BLACK;
+                    break;
+                case "magenta":
+                    color = Color.fromRGB(0xfc01ff);
+                    break;
+                case "grey":
+                case "gray":
+                    color = Color.GRAY;
+                    break;
+                case "lime":
+                    color = Color.LIME;
+                    break;
+                case "pink":
+                    color = Color.fromRGB(0xffaec9);
                     break;
                 case "blue":
                     color = Color.BLUE;
+                    break;
+                case "orange":
+                    color = Color.ORANGE;
                     break;
                 case "green":
                     color = Color.GREEN;
