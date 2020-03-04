@@ -303,7 +303,8 @@ public class Arena {
         // facing south, the coordinates go from high to low, so we invert them, that way people see it as it is on the screen.
         final int sheepX = (sheepDistanceFromLocation * 2) - (sheepLocation.getBlockX() - (location.getBlockX() - sheepDistanceFromLocation));
         final int sheepZ = sheepLocation.getBlockZ() - location.getBlockZ();
-        gameContext.getJavaPlugin().getServer().broadcastMessage(gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
+        final int numPlayers = gameContext.getPlayers().getAllPlayers().size();
+        gameContext.getJavaPlugin().getServer().broadcastMessage("Sheep #" + numPlayers + ": " + gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
                 "(" + sheepX + ", " + sheepZ + ") ");
 
         return new Vector(sheepX, sheepLocation.getBlockY(), sheepZ);
