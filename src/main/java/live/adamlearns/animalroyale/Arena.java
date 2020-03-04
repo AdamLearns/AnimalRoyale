@@ -16,9 +16,9 @@ public class Arena {
     private final GameContext gameContext;
 
     /**
-     * The distance from this arena's location that a sheep could spawn.
+     * The arena is 2X * X, where X is this value. The 2X spans from east to west, and the X spans from north to south.
      */
-    private final int sheepDistanceFromLocation = 40;
+    private final int arenaSize = 40;
 
     /**
      * This is in ticks.
@@ -38,6 +38,11 @@ public class Arena {
      * This task is delayed so that we don't start a new match before the "end screen" from the last match is done.
      */
     private BukkitTask startMatchTask;
+
+    /**
+     * This has two purposes: scheduling sudden death originally, and then handling the periodic lava spawns.
+     */
+    private BukkitTask suddenDeathTask;
 
     public Arena(final GameContext gameContext) {
         this.gameContext = gameContext;
@@ -66,9 +71,58 @@ public class Arena {
         setupArenaReadinessCheck();
     }
 
+    /**
+     * Gets the X coordinate of the western boundary of the arena.
+     *
+     * @return
+     */
+    private int getWestX() {
+        final int centerX = location.getBlockX();
+        return centerX - arenaSize;
+    }
+
+    /**
+     * Gets the X coordinate of the eastern boundary of the arena.
+     *
+     * @return
+     */
+    private int getEastX() {
+        final int centerX = location.getBlockX();
+        return centerX + arenaSize;
+    }
+
+    private int getCenterX() {
+        return (getEastX() + getWestX()) / 2;
+    }
+
+    private int getCenterZ() {
+        return (getNorthZ() + getSouthZ()) / 2;
+    }
+
+    /**
+     * Gets the X coordinate of the northern boundary of the arena.
+     *
+     * @return
+     */
+    private int getNorthZ() {
+        return location.getBlockZ();
+    }
+
+    /**
+     * Gets the X coordinate of the southern boundary of the arena.
+     *
+     * @return
+     */
+    private int getSouthZ() {
+        return location.getBlockZ() + arenaSize;
+    }
+
     public void dispose() {
         this.killAllSheep();
 
+        if (suddenDeathTask != null && !suddenDeathTask.isCancelled()) {
+            suddenDeathTask.cancel();
+        }
         if (startMatchTask != null && !startMatchTask.isCancelled()) {
             startMatchTask.cancel();
         }
@@ -104,13 +158,12 @@ public class Arena {
     private void addWoolBorderToArena() {
         final World world = gameContext.getWorld();
 
-        final int centerX = location.getBlockX();
         final int centerZ = location.getBlockZ();
-        final int startX = centerX - sheepDistanceFromLocation;
-        final int finalX = centerX + sheepDistanceFromLocation;
+        final int startX = getWestX();
+        final int finalX = getEastX();
         // We are going to be facing south, which is the positive Z direction, so we only need to sample in that direction
-        @SuppressWarnings("UnnecessaryLocalVariable") final int startZ = centerZ;
-        final int finalZ = centerZ + sheepDistanceFromLocation;
+        final int startZ = getNorthZ();
+        final int finalZ = getSouthZ();
 
 
         Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), lambda -> {
@@ -140,7 +193,7 @@ public class Arena {
         final World world = gameContext.getWorld();
 
         // This is how far away in any given direction from the center that we want to check
-        final int maxSampleDistance = sheepDistanceFromLocation;
+        final int maxSampleDistance = arenaSize;
 
         // Each chunk is 16x16, so we only need to sample every 16 blocks
         final int chunkSize = 16;
@@ -201,7 +254,7 @@ public class Arena {
     public boolean isLocationInsideArena(final Location target) {
         final int blockX = target.getBlockX();
         final int blockZ = target.getBlockZ();
-        return blockX >= location.getBlockX() - sheepDistanceFromLocation && blockX <= location.getBlockX() + sheepDistanceFromLocation && blockZ >= location.getBlockZ() && blockZ <= location.getBlockZ() + sheepDistanceFromLocation;
+        return blockX >= location.getBlockX() - arenaSize && blockX <= location.getBlockX() + arenaSize && blockZ >= location.getBlockZ() && blockZ <= location.getBlockZ() + arenaSize;
     }
 
     /**
@@ -228,27 +281,26 @@ public class Arena {
     private boolean isLocationValidForArena(final Location location) {
         final World world = location.getWorld();
 
-        // This is how far away in any given direction from the center that we want to check
-        final int maxSampleDistance = 100;
+        // This location
+        final int blockX = location.getBlockX();
+        final int blockY = location.getBlockY();
+        final int blockZ = location.getBlockZ();
 
-        // This is how many blocks we travel in between samples.
-        final int sampleInterval = 100;
-        final int centerX = location.getBlockX();
-        final int centerZ = location.getBlockZ();
-        final int startX = centerX - maxSampleDistance;
-        final int finalX = centerX + maxSampleDistance;
-        // We are going to be facing south, which is the positive Z direction, so we only need to sample in that direction
-        @SuppressWarnings("UnnecessaryLocalVariable") final int startZ = centerZ;
-        final int finalZ = centerZ + maxSampleDistance * 2;
-        for (int x = startX; x <= finalX; x += sampleInterval) {
-            for (int z = startZ; z <= finalZ; z += sampleInterval) {
-                // Sampling blocks in unloaded parts of the world is not very performant since Minecraft has to load
-                // each chunk. I think it's better to use world.getBiome.
+        // We'll just test the four corners of the arena and the center of it
+        final Vector[] coordinates = {
+                new Vector(blockX - arenaSize, blockY, blockZ),
+                new Vector(blockX + arenaSize, blockY, blockZ),
+                new Vector(blockX - arenaSize, blockY, blockZ + arenaSize),
+                new Vector(blockX + arenaSize, blockY, blockZ + arenaSize),
+                new Vector(blockX, blockY, blockZ + arenaSize / 2),
+        };
 
-                final Biome biome = world.getBiome(x, location.getBlockY(), z);
-                if (isBiomeBad((biome))) {
-                    return false;
-                }
+        for (final Vector vector : coordinates) {
+            // Sampling blocks in unloaded parts of the world is not very performant since Minecraft has to load
+            // each chunk. I think it's better to use world.getBiome.
+            final Biome biome = world.getBiome(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+            if (isBiomeBad((biome))) {
+                return false;
             }
         }
 
@@ -290,7 +342,7 @@ public class Arena {
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         final Location sheepLocation = location.clone();
 
-        final int distance = sheepDistanceFromLocation;
+        final int distance = arenaSize;
         sheepLocation.add(random.nextDouble() * distance * Util.getOneOrNegativeOne(), 0, random.nextDouble() * distance);
         final Block highestBlockAtSheepLocation = world.getHighestBlockAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ());
         final Material highestBlockType = highestBlockAtSheepLocation.getType();
@@ -319,13 +371,29 @@ public class Arena {
 
         // "location" represents the center of the Arena, so we need to subtract the sheep distance. Then, since we're
         // facing south, the coordinates go from high to low, so we invert them, that way people see it as it is on the screen.
-        final int sheepX = (sheepDistanceFromLocation * 2) - (sheepLocation.getBlockX() - (location.getBlockX() - sheepDistanceFromLocation));
+        final int sheepX = (arenaSize * 2) - (sheepLocation.getBlockX() - (location.getBlockX() - arenaSize));
         final int sheepZ = sheepLocation.getBlockZ() - location.getBlockZ();
         final int sheepNumber = gameContext.getPlayers().getNumLivingSheep();
         gameContext.getJavaPlugin().getServer().broadcastMessage("Sheep #" + sheepNumber + ": " + gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
                 "(" + sheepX + ", " + sheepZ + ") ");
 
         return new Vector(sheepX, sheepLocation.getBlockY(), sheepZ);
+    }
+
+    /**
+     * This'll randomly spawn lava slightly above the arena, that way the match is greatly sped up.
+     */
+    public void placeLavaRandomly() {
+        final World world = gameContext.getWorld();
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+        final int lavaX = random.nextInt(getWestX(), getEastX() + 1);
+        final int lavaZ = random.nextInt(getNorthZ(), getSouthZ() + 1);
+
+        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+            final int highestBlockY = world.getHighestBlockYAt(lavaX, lavaZ) + 5;
+            final Block block = world.getBlockAt(lavaX, highestBlockY, lavaZ);
+            block.setType(Material.LAVA);
+        });
     }
 
     /**
@@ -370,7 +438,21 @@ public class Arena {
 
     public void startRounds() {
         startRoundIn(100);
+        scheduleSuddenDeath();
         gameContext.advanceGamePhaseToPreGameplay();
+    }
+
+    private void scheduleSuddenDeath() {
+        final int NUM_SECONDS_BEFORE_SUDDEN_DEATH = 5 * 60;
+        final int numTicksBeforeSuddenDeath = NUM_SECONDS_BEFORE_SUDDEN_DEATH * 20;
+        suddenDeathTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
+            gameContext.getTwitchChat().sendMessageToChannel("SUDDEN DEATH MODE ENGAGED! Lava will fall from the sky until all sheep are dead. ☠");
+
+            // Repurpose the task into a periodic task that will spawn lava. By reusing the same variable, we will make
+            // sure this gets canceled in the dispose function one way or another.
+            suddenDeathTask = Bukkit.getScheduler().runTaskTimer(gameContext.getJavaPlugin(), this::placeLavaRandomly, 0, 20);
+
+        }, numTicksBeforeSuddenDeath);
     }
 
     private void startRoundIn(final long delay) {

@@ -70,6 +70,10 @@ public class TwitchChat {
             gameContext.startNewGame();
         }
 
+        if (command.equals("!lava") && isTwitchUserAnAdmin(senderName)) {
+            gameContext.getArena().placeLavaRandomly();
+        }
+
         if (command.equals("!identify")) {
             onIdentify(senderName, args);
             return;
