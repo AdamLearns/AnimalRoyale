@@ -1,0 +1,621 @@
+--- ✄ -----------------------
+Archived (Sun 03/08/2020 - 03:05 PM):
+✔ Finished tasks: @done (Sun 03/08/2020 - 03:05 PM)
+    Project ideas
+
+        ✔ Look at #polls and update !project accordingly @created(Wed 02/26/2020 - 04:37 PM) @done(Thu 02/27/2020 - 09:03 AM)
+
+        Twitch chat inside Minecraft
+            First step is just getting Twitch chat inside of Minecraft chat
+
+            It constructs the font out of blocks and places them in the world and "scrolls the chat:"
+                Imagine reconstructing emotes in the world
+
+                To delete a message, it could turn into TNT and blow up
+                    [15:59] ImaCatLolol: Might want to look into the map item system, and how blocks use map colors to display on maps.
+
+            Twitch chat - message reader
+                parser - text + emotes
+                    Text - font builder
+                Emotes - pixellation library
+                    color approximator
+
+            [16:08] xxComet: Emotes need a lot more blocks than text though
+                Emotes probably would just show NEAR the text rather than with the message?
+
+            To save world space, we could render in the Z direction rather than in Y direction like what you'd be used to reading
+
+        Add a boomerang
+        Make a questing system
+        Make Zelda or WoW as much as possible
+        Magic system
+            Mana
+        Tower defense?
+        I could set my lights could match the current biome
+            [15:10] solstynn: you could simply have the lights mimic the light level of the block the player is standing on
+        Think of any StarCraft or WarCraft III custom map and consider making that sort of thing, e.g. MOBA
+        Twitch integration? Spawn cows or chickens for everyone in chat?
+            Minecraft light control? Control my lights in my room with various colors of wool
+        MINECRAFT PIANO - have people jump on blocks in Minecraft to activate notes on my piano
+
+    ✔ Look up plug-ins vs. mods for Minecraft @created(Wed 02/26/2020 - 09:33 AM) @done(Wed 02/26/2020 - 09:38 AM)
+        [09:33] trustME_SC2: Plugins change the game behaviour, Mods add Block items and entities in generell to change the game overall
+    ✔ Figure out whether to use the Java or Bedrock version @created(Wed 02/26/2020 - 08:46 AM) @done(Wed 02/26/2020 - 10:01 AM)
+        Apparently I can get the bedrock version for free
+
+        Which version is more popular?
+        What goes into developing for each one?
+            There's apparently an official API for Bedrock?
+        Which is better to develop for?
+
+        What do popular mods do?
+            What makes them different from basic Minecraft?
+    ✔ Look into the Java modding APIs @created(Wed 02/26/2020 - 09:15 AM) @done(Wed 02/26/2020 - 09:50 AM)
+        Fabric API
+
+        Forge
+            [09:16] xlxAciDxlx: @fixterjake14 Forge is Client and Server.
+            https://mcforge.readthedocs.io/en/1.14.x/
+
+        Bukkit
+            server-only
+        Sponge
+        Liteloader
+        Spigot
+            [09:16] yousafe_: spigot is server only
+            [09:18] fixterjake14: There is also paperspigot which is a fork to extend spigot's base functionality. May be worth looking into
+    ✔ Decide whether to use the Java or Bedrock version @created(Wed 02/26/2020 - 09:14 AM) @done(Wed 02/26/2020 - 10:00 AM)
+        I can't seem to install the Bedrock version despite getting it for free, so I guess we're going with Java
+    ✔ How do you make a datapack? @created(Wed 02/26/2020 - 10:09 AM) @done(Wed 02/26/2020 - 12:15 PM)
+        https://minecraft.gamepedia.com/Tutorials/Creating_a_data_pack
+
+        Resource packs
+        https://minecraft.gamepedia.com/Resource_pack
+
+        ✔ Maybe we should tinker around with datapacks for a bit @created(Wed 02/26/2020 - 10:15 AM) @done(Wed 02/26/2020 - 11:03 AM)
+            https://minecraft.gamepedia.com/Tutorials/Creating_a_data_pack
+            ✔ "Hello world" @created(Wed 02/26/2020 - 10:15 AM) @done(Wed 02/26/2020 - 10:31 AM)
+                Override an achievement or an entity's health or something
+            ✔ Make a cow drop diamonds @created(Wed 02/26/2020 - 10:31 AM) @done(Wed 02/26/2020 - 10:46 AM)
+            ✔ Figure out a simple function that we can do @created(Wed 02/26/2020 - 10:46 AM) @done(Wed 02/26/2020 - 10:57 AM)
+        ✔ Consider looking through this series on data packs @created(Wed 02/26/2020 - 10:34 AM) @done(Wed 02/26/2020 - 11:57 AM)
+            [10:34] CyborgCyprezz: Here's an excellent 7 part text based tutorial series on what you can accomplish with Data packs: https://www.planetminecraft.com/collection/56795/data-pack-tutorial/ Example of Part 2: https://www.planetminecraft.com/blog/function-data-packs-for-dummies-2-who-s-json/
+
+            ronthecookie shared a datapack that they made for reference [11:33] ronthecookie: made this a while ago and put it on gh for you now: https://github.com/ronthecookie/havanadatapack
+        ✔ Consider downloading other people's datapacks to see how they accomplish things @created(Wed 02/26/2020 - 11:03 AM) @done(Wed 02/26/2020 - 12:15 PM)
+            The ClawShot one has a resource pack that will set its own version, that way the original data pack can sort of detect when it's out of date.
+                They can't access the Internet.
+    ✔ Update !project @created(Wed 02/26/2020 - 04:01 PM) @done(Thu 02/27/2020 - 09:03 AM)
+    ✔ Learn about how to make a plug-in / mod @created(Wed 02/26/2020 - 12:15 PM) @done(Thu 02/27/2020 - 09:11 AM)
+        ✔ Read the guides @created(Wed 02/26/2020 - 12:52 PM) @done(Thu 02/27/2020 - 09:03 AM)
+            ✔ Read this one: https://paper.readthedocs.io/en/latest/index.html @created(Wed 02/26/2020 - 12:52 PM) @done(Wed 02/26/2020 - 01:11 PM)
+            ✔ Read this one: https://www.spigotmc.org/wiki/spigot-plugin-development/ @created(Wed 02/26/2020 - 12:52 PM) @done(Thu 02/27/2020 - 09:03 AM)
+        ✔ Look into plug-ins first @created(Wed 02/26/2020 - 12:16 PM) @done(Wed 02/26/2020 - 02:05 PM)
+            ✔ Get set up with the development of a basic plug-in @created(Wed 02/26/2020 - 12:45 PM) @done(Wed 02/26/2020 - 02:05 PM)
+        ✔ There's apparently a plug-in for Minecraft development in IntelliJ @created(Wed 02/26/2020 - 02:28 PM) @done(Wed 02/26/2020 - 02:52 PM)
+            https://plugins.jetbrains.com/plugin/8327-minecraft-development
+        ✘ Figure out why Visual Studio Code doesn't show the import autocomplete @created(Wed 02/26/2020 - 02:10 PM) @cancelled(Wed 02/26/2020 - 02:47 PM)
+            For example, CommandExecutor was here: import org.bukkit.command.CommandExecutor;
+
+            https://hub.spigotmc.org/javadocs/spigot/overview-summary.html
+        ✔ Set up IntelliJ to point directly at the source instead of decompiled code @created(Wed 02/26/2020 - 02:43 PM) @done(Wed 02/26/2020 - 02:47 PM)
+            At the upper right, there's a "Download Sources and/or Documentation" button for Maven.
+        ✔ Write a simple slash-command that lets me change my lights in my room @created(Wed 02/26/2020 - 02:05 PM) @done(Wed 02/26/2020 - 03:08 PM)
+            String[] commandToRun = { "lights.cmd", "17"};
+            try {
+                Runtime.getRuntime().exec(commandToRun);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        ✘ I want to make a plug-in that changes the lights in my room based on something in Minecraft @created(Wed 02/26/2020 - 12:16 PM) @cancelled(Wed 02/26/2020 - 03:27 PM)
+            Maybe just connect ANY pressure plate to this for now? Or a button?
+        ✘ Flash the lights red if we get damaged in the game @created(Wed 02/26/2020 - 02:05 PM) @cancelled(Wed 02/26/2020 - 03:27 PM)
+            Maybe just flash one of the lights?
+
+            [15:09] Russjr08: You'd probably be looking for something like "EntityDamagedEvent"
+        ✔ Get IntelliJ to autoformat on save @created(Wed 02/26/2020 - 03:54 PM) @done(Thu 02/27/2020 - 09:10 AM)
+        ✘ Explore some more plug-in stuff now @created(Wed 02/26/2020 - 03:27 PM) @cancelled(Thu 02/27/2020 - 09:10 AM)
+        ✘ After doing that, maybe look at mods @created(Wed 02/26/2020 - 12:18 PM) @cancelled(Thu 02/27/2020 - 09:10 AM)
+        ✔ After getting my feet wet, come up with a project to do for all of this @created(Wed 02/26/2020 - 12:18 PM) @done(Thu 02/27/2020 - 09:10 AM)
+    ✔ Look into data packs vs. mods @created(Wed 02/26/2020 - 08:54 AM) @done(Thu 02/27/2020 - 09:03 AM)
+        [09:00] EmberCM: Simple breakdown: Datapacks are essentially plugins for Vanilla Minecraft / Single Player and are made in configuration files. Plugins are made for servers and are made in Java. Plugins and Datapacks don't add anything new to Minecraft, but can change the gameplay completely (similar to mcmmo). Mods are also made in Java, generally using the Forge API, and can add new items, mobs, etc to the game (pretty much anything).
+
+        [08:53] CyborgCyprezz: Consider learning Minecraft Data Packs instead of mods. It's "modding" for vanilla minecraft. Much more structured and officially supported.
+        08:55 CyborgCyprezz Yes, bertiecrafter on PlanetMinecraft has made an excellent tutorial series. https://www.planetminecraft.com/member/bertiecrafter/submissions/blogs/?mmod=live
+        08:55 CyborgCyprezz And examples of what's possible: https://www.planetminecraft.com/resources/data-packs/
+    ✔ Stretch goals @created(Thu 02/27/2020 - 10:54 PM) @done(Sun 03/08/2020 - 03:02 PM)
+        ✔ Get the game to be fully automated so that I can show it on my lunch screen (via Tronds) @created(Thu 02/27/2020 - 10:55 PM) @done(Sun 03/08/2020 - 03:02 PM)
+    ✔ Design the project @created(Thu 02/27/2020 - 09:04 AM) @done(Sun 03/08/2020 - 03:02 PM)
+        Which NPCs can I create in Minecraft?
+        How would I control their behaviors?
+        How do I set up a new arena?
+        How do I control fall damage?
+            Override an event?
+        Should we ever generate different terrain?
+        How do I control my "camera"?
+        What kind of cleanup tasks do we need in between games?
+        How will we show a leaderboard in the game?
+        How do we hook up Twitch chat?
+        How do we set up the game loop?
+
+        Ideas
+            Scorched Earth in Minecraft controlled by Twitch chat
+                Randomly pick NPCs from sheep, cow, pig, etc. so that people can identify themselves
+                    Maybe you can also pick an NPC since there are multiple skins
+                    You should be able to set your avatar
+                        Maybe only pick NPCs with the same general size or code my own collision system?
+
+                    Maybe make little dirt platforms for everybody to start on? Or just raycast them downward onto the terrain
+
+                    Make sure you can only join the game during the initialization section of it
+                        That way you don't join mid-fight
+
+                    If you die during the initialization, we should just recreate your sheep. Alternatively, we could spawn a patch of ground above the lava.
+
+                The "camera" might need to move - maybe we do this by relocating the player and changing their lookAt values
+
+                Fall damage - probably need to make sure players don't die immediately upon falling
+
+                We generate a terrain with irregularities and everything
+                We place all of chat who opts in. They can do "identify <color>" to make their character glow to figure out where they are.
+                They can adjust direction and power
+                    In chat, you control all things with one command
+                        SHOOT turn 0-359 turret_angle -90-90 power 0-100 duration 10-100
+                        MOVE turn 0-359 distance 0-100
+                Everybody shoots at the same time maybe? A TNT thing flies out? Players have lots of health to compensate for the chaos.
+                    Everyone takes their action after 20 seconds, so you get 20 seconds to see what happened and type the next command?
+                        If you don't choose an action, it picks what you had last time
+
+                Maybe you can choose to move OR shoot?
+
+                [14:36] EmberCM: @Adam13531 Here's a death handler if you wanna PM/broadcast the death names to Twitch https://hastebin.com/letiwasiya.java
+
+                People want to see who killed whom (or how you died)
+
+                Extra ideas
+                    Add in different abilities (maybe you spend points to buy these weapons?)
+                        Bouncing TNT
+                        Sticky TNT for people who have the high ground
+                            I would likely need an onTick and to detect when it hits something
+                        Rail gun
+                        Fireball gun?
+                            [12:50] EmberCM: If you spawn a Fire charge entity you can shoot it Adam
+                        Create a wall - or spew terrain
+                        Being able to fly or teleport?
+                        Repair
+                        TREE DESTROYER - just immediately light all trees on fire?
+                        LAVA GUN - we could just make the lava travel slowly
+                        Hook that pulls people to you?
+                        There has to be something to stop people from being "invincible" at the top of a tree, e.g. a "push" weapon that bumps the player by ~2 tiles
+                            Maybe this just automatically happens every so often?
+
+                        Some kind of "confusion" weapon that does setAi(true) on enemies
+
+                        Swap-a-port - ability to switch locations with a random player
+
+                    Just pull ideas from Bot Land?
+
+                    Weapon upgrades, kill streaks
+
+                    Keep track of the leaderboard (kills, remaining life)
+
+                We could prevent entities from spawning by detecting their spawn events and doing something based off of that
+
+            As players die out, we should make rounds last a shorter amount of time
+                Eventually, it should just be one action per second so that two people aren't waiting forever for matches to conclude
+
+            We could detect which message you've clicked in Minecraft and do something based on that
+                Maybe you can type messages right from Minecraft by selecting characters from a "keyboard"?
+
+            We could have a game where Twitch chat controls NPCs with their messages
+                Maybe this has RPG elements?
+                Maybe everyone in Twitch chat is an NPC?
+
+            Twitch chat could interact with the world via messages
+                Maybe it's just hash tags like #explode or #blue to customize their message?
+
+            A city where people can walk their NPCs around
+
+            Split chat into two teams based on names or hashes or something
+                Each team controls an avatar
+                The streamer puts the "Arena" into a top-down view
+                Maybe there's a third team that controls environmental hazards?
+                    There could actually be multiple Minecraft instances running to show this stuff
+                        identify blue ← make your character glow blue for a bit
+                            Maybe just every person with a certain name color controls that color NPC
+                            Some people in chat have random name colors
+
+            Chicken race? Navigate a lava or parkour course?
+
+            Cooperative single-player voting-based game where chat makes choices like "drink a potion"
+
+            This could be a plug-in that we market at Twitch streamers
+        ✔ Prototype @created(Thu 02/27/2020 - 09:16 AM) @done(Thu 02/27/2020 - 01:03 PM)
+            Which NPCs can I create in Minecraft?
+                Can you color sheep in any color?
+                Can you color chickens?
+            Can I make the sheep glow?
+                I know for sure that I did this yesterday, but I don't know how
+                    This will apparently work
+                    https://www.spigotmc.org/threads/change-glowing-color.402831/
+            How would I control their behaviors?
+                I want to rotate them 0-359°   (YAW)
+                I want to angle their little sheep faces -90-90° (PITCH)
+
+                Math.PI for yaw is south
+                Math.PI for pitch is straight ahead
+                    Actually, changing it to *2 /2 didn't make a difference, so it's probably in degrees
+            How do I set up a new arena?
+                Teleport myself to a random spot in the entire world and hope that we've never seen that before
+                    After teleporting, stake out an arena
+                        Look at it
+                        Make sure we're high enough above it
+
+                    world.getBiome IS a function
+
+                    Set yaw to 0 and pitch to 45
+
+                IsNewChunk to figure out if we've seen it before
+                Get the biome to see if it's ocean
+            How do we stop the sheep from taking damage from NPCs?
+                [10:02] Corax191: Adam13531 /gamerule doMobSpawning False means no mobs spawn
+                We could override the damage event instead of deleting NPCs entirely
+            How do I control fall damage?
+                Override an event?
+            Try to spawn sheep in the Arena
+            Set me to flying if I wasn't already
+                Spectator mode will do that
+            Make sure two sheep don't spawn too close to each other
+            Make sure someone doesn't drop onto lava - they should have a patch of ground near them
+            My desheeping doesn't work
+            Should we ever generate different terrain?
+            How do I control my "camera"?
+            Make a command that puts me back into the default spectator position
+            Look into adding a nametag
+                [09:41] rhymu8354: It looks like maybe you can have an always-visible name tag by adding an Armor Stand that rides the entity (I know, weird, right?) https://gaming.stackexchange.com/questions/235574/how-can-i-summon-a-mob-with-an-always-visible-name-tag
+
+                We can get a nameplate mod to increase the size
+                    I'll just rely on chat having a command like !identifyself
+            Try world.getBiome to potentially improve performance
+            See how I can turn off the weather
+            What kind of cleanup tasks do we need in between games?
+            How will we show a leaderboard in the game?
+            How do we hook up Twitch chat?
+            Make sheep take fall damage properly
+                [11:50] is_matt: Adam take a look at setAware and isAware later. It prevents movement without turning AI off from what the docs day
+
+                Detect that they're not on a block, then enable AI, then disable it when they hit the ground (which won't necessarily result in fall damage)
+
+                Override their AI by updating all sheep each game tick
+
+                Write a custom AI completely that turns off their sheepy brains
+            How do we set up the game loop?
+            Prototype shooting TNT
+        ✔ Make a new plug-in so that we can make proper code from the beginning @created(Thu 02/27/2020 - 09:16 AM) @done(Thu 02/27/2020 - 01:37 PM)
+            ✔ Make a Git repo for this on GitLab @created(Thu 02/27/2020 - 09:13 AM) @done(Thu 02/27/2020 - 01:11 PM)
+                ✔ Figure out how I'm going to commit @created(Thu 02/27/2020 - 09:13 AM) @done(Thu 02/27/2020 - 01:11 PM)
+                    I could just do this through Visual Studio Code
+
+                    [09:24] AurelioKessler: for commit and push to a remote repository with IntelliJ here a link for you @Adam13531 https://www.jetbrains.com/help/idea/commit-and-push-changes.html
+        ✔ Make sure to push to GitLab before doing anything else @created(Thu 02/27/2020 - 01:37 PM) @done(Thu 02/27/2020 - 01:46 PM)
+        ✔ Have a better build/deploy process @created(Thu 02/27/2020 - 01:37 PM) @done(Thu 02/27/2020 - 01:49 PM)
+            i.e. run Maven outside of IntelliJ
+
+            "B:\AdamLearns\projects\Minecraft\AnimalRoyale\target\animalroyale-1.0-SNAPSHOT.jar"
+        ✔ Disable tile drops via the game rule @created(Thu 02/27/2020 - 01:22 PM) @done(Thu 02/27/2020 - 02:02 PM)
+        ✔ Figure out how to reload without the chat handler going bonkers @created(Thu 02/27/2020 - 02:57 PM) @done(Thu 02/27/2020 - 03:03 PM)
+            Without doing anything special, we're connecting twice, making another TwitchClient twice, etc.
+                We need to tear down the first instance
+        ✔ Clean up and commit my code @created(Thu 02/27/2020 - 04:48 PM) @done(Mon 03/02/2020 - 09:40 AM)
+            Emphasis on the cleanup since I may have done things messily
+        ✔ Figure out why the lag is happening @created(Thu 02/27/2020 - 04:20 PM) @done(Mon 03/02/2020 - 10:57 AM)
+
+            ✔ Debug to figure out which threads things are running on @created(Mon 03/02/2020 - 09:40 AM) @done(Mon 03/02/2020 - 10:57 AM)
+                Twitch chat messages are happening in one thread (e.g. "events4j-scheduler-14")
+                    They DO happen in a pool. When we log Thread.currentThread().getName(), I see this output
+                        events4j-scheduler-7
+                        events4j-scheduler-8
+                        events4j-scheduler-9
+                        events4j-scheduler-10
+                        events4j-scheduler-11
+                        events4j-scheduler-12
+                        events4j-scheduler-13
+                        events4j-scheduler-14
+                        events4j-scheduler-7
+                        events4j-scheduler-8
+                        events4j-scheduler-9
+                        events4j-scheduler-10
+                        events4j-scheduler-11
+                        events4j-scheduler-12
+                        events4j-scheduler-13
+                        events4j-scheduler-14
+                        events4j-scheduler-7
+                        events4j-scheduler-8
+                        events4j-scheduler-9
+                All PaperSpigot calls are happening in "Server thread"
+
+                I think it may be paging frequently (or at least the JVM's concept of paging)?
+                    Apparently the JVM allocates all memory at once, so I don't think paging would be a problem, but the JVM probably has its own concept of paging
+
+                    We can test by giving the JVM more memory
+
+                    VisualVM can show high GC activity if that's a problem
+
+                    Flags to try
+                        -XX:+UseG1GC
+                            This is for more modern garbage collection
+                        -server
+
+
+                    ✔ Try this on my laptop at some point @created(Mon 03/02/2020 - 10:25 AM) @done(Mon 03/02/2020 - 10:43 AM)
+                        On the laptop, everything is fine. This points to the problem being my CPU being overutilized.
+            ✔ Modify deploy process to use SCP onto the laptop @created(Mon 03/02/2020 - 10:43 AM) @done(Mon 03/02/2020 - 10:56 AM)
+                ✔ Make another SSH key used only by the laptop @created(Mon 03/02/2020 - 10:53 AM) @done(Mon 03/02/2020 - 10:56 AM)
+
+
+            https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html
+
+            [16:25] thels: I need to head off for the night ( after midnight here in Scotland! ) - if you look into the blocking queue, it's an interface, the default implementation you probably want to look into examples for is called "BlockingQueue<Message> queue = new ArrayBlockingQueue<>(10);"
+
+            My assumption is that I'm going to have to batch all of the events that I get from Twitch and only perform them every so often
+
+            I'm pretty sure Twitch chat was slowing everything down even when there was no interaction with the world.
+                Yes, it's slowing down no matter what (even if I have a completely blank event handler), and also, my CPU usage is around 90%, so it's not absolutely maxed out.
+
+                I'm going to try removing the event handler entirely to try to isolate where this is coming from. Perhaps there's a workaround here, and perhaps I can try a different library.
+                    Removing the event handler still has lag.
+
+                    I wonder if we just put in arbitrary delays on the server if we'd notice lag on the client. "/tps" shows 20 for the last minute, although Twitch chat is only spamming for a couple of seconds, so it may not be long enough to significantly bring down the average.
+                        Apparently the server DOES go above 20 to try to hit the average of 20, so this won't be a problem
+
+                    It looks like they make a new thread every single time an IRC message is received, not even a chat message
+                        It also looks like they spawn a new event for EVERY single IRC message
+                        https://github.com/twitch4j/twitch4j/blob/c26e439435347d8fdac510515a5df178c9150a1e/chat/src/main/java/com/github/twitch4j/chat/events/IRCEventHandler.java#L39
+
+            See if Twitch's APIs are being called synchronously
+                There's some problem here. Having Twitch chat spam definitely causes lag.
+                    Maybe I need all of Twitch chat running on another thread
+
+                No matter what, I can't interact with Bukkit asynchronously, so I'll have to figure that out.
+
+        ✔ Think about how the game loop is going to work, register players, pull commands from Twitch chat, etc. @created(Thu 02/27/2020 - 12:50 PM) @done(Mon 03/02/2020 - 11:18 AM)
+            /new → new match?
+
+            GamePhase
+                Lobby mode - people can join
+                Gameplay - rounds are executing, people can't join
+                Post-game - show the score, people probably could join?
+
+
+            BotContext
+                GameState
+                    GamePhase
+                    World
+                    TwitchChat
+        ✔ Don't let people join before I've ever connected to the game @created(Thu 02/27/2020 - 03:58 PM) @done(Mon 03/02/2020 - 11:07 AM)
+        ✔ Figure out why the crash was caused @created(Mon 03/02/2020 - 11:07 AM) @done(Mon 03/02/2020 - 11:37 AM)
+            It's trying to load sheep into unloaded chunks
+                ↑ Actually, it was that the server didn't respond for 10 seconds because of the amount of sheep we tried to load in
+                    I didn't fix this yet, but I wrote it down in the "polish" section.
+        ✘ Unload chunks before disposing the old arena @created(Mon 03/02/2020 - 11:26 AM) @cancelled(Mon 03/02/2020 - 11:39 AM)
+            If we don't do that, then the chunks will never be unloaded
+
+            I just scrapped the code to generate all of the chunks since the player should be close enough for them to be loaded anyway
+
+                private void loadAllNearbyChunks() {
+                    final World world = gameContext.getWorld();
+
+                    // This is how far away in any given direction from the center that we want to check
+                    final int maxSampleDistance = sheepDistanceFromLocation;
+
+                    // Each chunk is 16x16, so we only need to sample every 16 blocks
+                    final int chunkSize = 16;
+                    // This is how many blocks we travel in between samples.
+                    final int centerX = location.getBlockX();
+                    final int centerZ = location.getBlockZ();
+                    final int startX = Math.floorDiv(centerX - maxSampleDistance, chunkSize);
+                    final int finalX = Math.floorDiv(centerX + maxSampleDistance, chunkSize);
+                    // We are going to be facing south, which is the positive Z direction, so we only need to sample in that direction
+                    final int startZ = Math.floorDiv(centerZ, chunkSize);
+                    final int finalZ = Math.floorDiv(centerZ + maxSampleDistance, chunkSize);
+                    for (int x = startX; x <= finalX; x++) {
+                        for (int z = startZ; z <= finalZ; z++) {
+                            // Chunk coordinates are just block coordinates divided by 16. So loading chunk (0, 0) would load blocks (0-15, 0-15).
+                            world.loadChunk(x, z);
+                        }
+                    }
+                }
+        ✔ Only allow !join to work when in the lobby @created(Thu 02/27/2020 - 03:50 PM) @done(Mon 03/02/2020 - 11:55 AM)
+        ✔ Only allow !join to work once per player @created(Thu 02/27/2020 - 03:50 PM) @done(Mon 03/02/2020 - 01:14 PM)
+            ✔ Make a Player object that tracks your state @created(Mon 03/02/2020 - 11:55 AM) @done(Mon 03/02/2020 - 01:14 PM)
+                Did you ever spawn a sheep?
+                If you did, what is that sheep?
+        ✔ Maybe, if we're feeling nice, let them change their color with "!join" a second time? @created(Thu 02/27/2020 - 03:50 PM) @done(Mon 03/02/2020 - 01:29 PM)
+        ✔ Cut out fall damage in the LOBBY state @created(Mon 03/02/2020 - 12:03 PM) @done(Mon 03/02/2020 - 01:29 PM)
+        ✔ When transitioning to a particular game state, log to Twitch chat that people can do things. Maybe include what the commands are at first. @created(Mon 03/02/2020 - 11:55 AM) @done(Mon 03/02/2020 - 01:45 PM)
+        ✔ Properly shift game-phase from PRE_GAME to LOBBY to whatever is after that @created(Mon 03/02/2020 - 11:31 AM) @done(Mon 03/02/2020 - 01:47 PM)
+        ✔ Allow people to fire one weapon (TNT) @created(Mon 03/02/2020 - 01:47 PM) @done(Mon 03/02/2020 - 02:49 PM)
+            ✔ Allow for !tnt @created(Mon 03/02/2020 - 01:48 PM) @done(Mon 03/02/2020 - 02:23 PM)
+                !tnt YAW PITCH POWER TTL
+
+                Set your next round's parameters
+            ✔ Add some way of manually calling into the next round @created(Mon 03/02/2020 - 01:52 PM) @done(Mon 03/02/2020 - 02:24 PM)
+            ✔ Add the round system @created(Mon 03/02/2020 - 01:47 PM) @done(Mon 03/02/2020 - 02:48 PM)
+                Every 400 ticks, start the next round
+        ✔ When starting rounds, change the game phase @created(Mon 03/02/2020 - 03:00 PM) @done(Mon 03/02/2020 - 03:03 PM)
+            ✔ Print how many players there are @created(Mon 03/02/2020 - 03:00 PM) @done(Mon 03/02/2020 - 03:03 PM)
+        ✔ Say in in-game chat where people spawned @created(Mon 03/02/2020 - 03:00 PM) @done(Mon 03/02/2020 - 03:38 PM)
+            ✔ Write a color system for this @created(Mon 03/02/2020 - 03:17 PM) @done(Mon 03/02/2020 - 03:38 PM)
+                BLACK, DARK_BLUE, and DARK_GRAY are all sort of hard to read, so approximate to GRAY and BLUE
+        ✔ Fix showing hits to showing deaths @created(Mon 03/02/2020 - 04:23 PM) @done(Mon 03/02/2020 - 04:48 PM)
+        ✔ Make sure the logged X and Z values are in the right axis @created(Mon 03/02/2020 - 04:13 PM) @done(Tue 03/03/2020 - 09:14 AM)
+            I'm facing south, so X goes positive to the left
+
+            I still messed this up
+        ✔ Outline the whole arena with colored wool on the top of each block? @created(Mon 03/02/2020 - 04:25 PM) @done(Tue 03/03/2020 - 09:21 AM)
+            We could eventually change this to barrier blocks or world borders
+                [16:29] thoughtful_onion: i think world borders would be perfiect for the arena: https://minecraft.gamepedia.com/World_border
+
+            Barrier blocks could just fill the whole "wall"
+
+                If we DO want to use this, then we have to figure out how many walls we want (e.g. we may only want 3) and then we also need to make them go through the entire height of the world. Finally, we need
+
+            Barrier blocks are only visible when holding a barrier block, so do "/give @s barrier" and then equip it from your survival inventory. However, they look like a big ❌, so they're ugly
+        ✔ Print deaths due to fall damage @created(Mon 03/02/2020 - 04:47 PM) @done(Tue 03/03/2020 - 09:24 AM)
+        ✔ Connect to in-game chat every time someone dies @created(Mon 03/02/2020 - 02:56 PM) @done(Tue 03/03/2020 - 09:39 AM)
+        ✔ ADD "X PLAYERS LEFT" after every round? Or maybe just every so often? Every kill maybe? @created(Mon 03/02/2020 - 04:22 PM) @done(Tue 03/03/2020 - 09:50 AM)
+            Maybe just show this in the title overlay
+        ✔ Use the "title" feature for the winner of the game @created(Tue 03/03/2020 - 09:42 AM) @done(Tue 03/03/2020 - 09:50 AM)
+            [09:44] tSparkles: player.sendTitle();
+        ✘ Consider allowing people to move or teleport at the beginning of the round? @created(Tue 03/03/2020 - 10:00 AM) @cancelled(Tue 03/03/2020 - 10:11 AM)
+            !join color <x> <y>
+
+            Canceling this; more people said "no" than "yes": https://www.strawpoll.me/19479889/r
+        ✘ Consider allowing people to move after joining @created(Tue 03/03/2020 - 10:12 AM) @cancelled(Tue 03/03/2020 - 10:13 AM)
+            https://www.strawpoll.me/19479893/r
+        ✔ Make TNT fire even faster toward the end @created(Tue 03/03/2020 - 10:02 AM) @done(Tue 03/03/2020 - 10:14 AM)
+        ✔ Allow people to whisper commands @created(Mon 03/02/2020 - 04:00 PM) @done(Tue 03/03/2020 - 10:23 AM)
+        ✔ Add an "identify" command @created(Mon 03/02/2020 - 02:22 PM) @done(Tue 03/03/2020 - 11:33 AM)
+            Look at fireworks for this. The API allows for a lot of customization
+
+            Maybe !identify also makes your sheep jump?
+            ✘ Add a !jump command @created(Mon 03/02/2020 - 03:54 PM) @cancelled(Tue 03/03/2020 - 10:58 AM)
+                Probably should separate this out to something else
+
+            ✔ If we do this, we need a "pre-start" phase so that sheep still don't take fall damage but can't run certain commands @created(Tue 03/03/2020 - 10:54 AM) @done(Tue 03/03/2020 - 11:20 AM)
+            ✔ Make !identify take in a color @created(Tue 03/03/2020 - 10:58 AM) @done(Tue 03/03/2020 - 11:16 AM)
+            ✔ The death toll is printing when an NPC dies, not a player @created(Tue 03/03/2020 - 11:09 AM) @done(Tue 03/03/2020 - 11:22 AM)
+            ✔ Players are having an issue getting their commands recognized @created(Tue 03/03/2020 - 11:09 AM) @done(Tue 03/03/2020 - 11:33 AM)
+                I think this may just be Twitch not even sending the messages, so I need to allow for variants
+
+                It may be something else
+                    Twitch4J event handler
+                    Too many actions queued in Bukkit
+            ✔ Launch multiple fireworks at different heights for players who use !identify @created(Tue 03/03/2020 - 11:28 AM) @done(Tue 03/03/2020 - 11:33 AM)
+        ✔ Have the bot whisper players with statuses @created(Tue 03/03/2020 - 11:13 AM) @done(Tue 03/03/2020 - 11:41 AM)
+            "You joined at X, Z"
+            "You died"
+        ✔ Fix how fireworks are getting grouped up and exploding at the same point despite there being three @created(Tue 03/03/2020 - 12:26 PM) @done(Tue 03/03/2020 - 01:20 PM)
+        ✔ Add a scoreboard @created(Mon 03/02/2020 - 02:56 PM) @done(Tue 03/03/2020 - 01:29 PM)
+            ✔ Save a reference to the scoreboard when I create it so that I don't need to fetch it through the Player object @created(Tue 03/03/2020 - 12:24 PM) @done(Tue 03/03/2020 - 01:24 PM)
+            ✔ Color the player's names correctly @created(Tue 03/03/2020 - 12:22 PM) @done(Tue 03/03/2020 - 01:29 PM)
+                ✔ Maybe change a player's name to [X]NAME if they died on the leaderboard? @created(Tue 03/03/2020 - 12:33 PM) @done(Tue 03/03/2020 - 01:29 PM)
+        ✔ Prevent deaths in the LOBBY by teleporting sheep out of water? Or just not dropping them on water or lava? Or respawning if they die? @created(Tue 03/03/2020 - 12:45 PM) @done(Tue 03/03/2020 - 02:08 PM)
+            Or maybe prevent drowning damage? We could add a water-breathing buff?
+
+            Option #1: remove hazards completely (no water or lava) from the arena itself
+            Option #2: place a block over the hazards
+            Option #3: stop sheep from taking damage from the hazards
+                Fire resist and water breathing
+            Option #4: do nothing and let the hazards kill those who are unlucky
+        ✘ Limit leaderboard entries to 10 or maybe to just people with kills? @created(Tue 03/03/2020 - 12:40 PM) @cancelled(Tue 03/03/2020 - 02:09 PM)
+            I don't see an easy way to do this, so I'll cancel it for now
+        ✔ [12:43] nDoorn: @Adam13531 Can you make commands like !pitch +20 and yaw +2 and such? @created(Tue 03/03/2020 - 12:44 PM) @done(Tue 03/03/2020 - 02:25 PM)
+        ✔ Bug: people aren't being crossed off the scoreboard when they die from falling @created(Tue 03/03/2020 - 02:35 PM) @done(Tue 03/03/2020 - 02:36 PM)
+        ✔ Fix bug where arena can only get recreated once @created(Wed 03/04/2020 - 10:09 AM) @done(Wed 03/04/2020 - 10:09 AM)
+            I wasn't nulling out the task
+        ✔ There needs to be a Sudden Death mode where lava randomly spawns somewhere in the arena @created(Tue 03/03/2020 - 04:24 PM) @done(Wed 03/04/2020 - 11:06 AM)
+            Maybe after like 2 minutes? Or 5 minutes?
+
+            8 minutes definitely feels too long from the last match on Tuesday
+
+            ✔ Make this happen automatically @created(Wed 03/04/2020 - 10:49 AM) @done(Wed 03/04/2020 - 11:06 AM)
+            ✔ Make sure a new arena resets sudden death @created(Wed 03/04/2020 - 10:49 AM) @done(Wed 03/04/2020 - 11:06 AM)
+        ✔ I think I messed up biome generation - it put me in the ocean @created(Wed 03/04/2020 - 11:07 AM) @done(Wed 03/04/2020 - 11:25 AM)
+            It put me in cold_ocean
+
+            The problem was specifying the Y coordinate twice
+        ✔ Add more !identify colors since people expect them to work @created(Wed 03/04/2020 - 11:14 AM) @done(Wed 03/04/2020 - 11:33 AM)
+        ✔ Add a specific death message for lava? @created(Wed 03/04/2020 - 11:26 AM) @done(Wed 03/04/2020 - 11:36 AM)
+        ☐ Fix names not getting crossed off @created(Wed 03/04/2020 - 10:05 AM)
+            Maybe they got a kill at the same time that they died?
+
+            I think it may just be a race condition, but I want to examine more. In this case, does the person always have a kill?
+        ✔ See if there's a problem with manually starting a match @created(Wed 03/04/2020 - 10:10 AM) @done(Wed 03/04/2020 - 10:29 AM)
+            I think that setting blocks will break
+        ✔ Make a !where command which says your coordinates and explains how to interpret them @created(Wed 03/04/2020 - 10:05 AM) @done(Wed 03/04/2020 - 12:03 PM)
+            Twitch chat?
+            In-game chat?
+
+            Twitch whisper?
+            ✔ When you join the game, it should give the same message as !where does @created(Wed 03/04/2020 - 11:58 AM) @done(Wed 03/04/2020 - 12:03 PM)
+        ✔ Make a help document @created(Wed 03/04/2020 - 12:22 PM) @done(Wed 03/04/2020 - 01:34 PM)
+            ✔ Have an automatic start for rounds @created(Wed 03/04/2020 - 12:22 PM) @done(Wed 03/04/2020 - 12:32 PM)
+            ✔ Start at a higher block and higher pitch as well @created(Wed 03/04/2020 - 12:36 PM) @done(Wed 03/04/2020 - 12:42 PM)
+                up +22
+                angle 55
+            ✔ Have a command to show the help document @created(Wed 03/04/2020 - 12:22 PM) @done(Wed 03/04/2020 - 12:51 PM)
+                https://bit.ly/2ToseHR
+        ✔ [13:27] EmberCM: @Adam13531: @embercm can you remind me when I get back to put people's names in the "sheep remaining" message? @created(Wed 03/04/2020 - 01:27 PM) @done(Wed 03/04/2020 - 01:41 PM)
+        ✔ Make !tp work while in the lobby @created(Wed 03/04/2020 - 01:29 PM) @done(Wed 03/04/2020 - 01:47 PM)
+            You can technically teleport into a hazard now and die. Hopefully that doesn't mess things up.
+        ✔ !tntcancel @created(Wed 03/04/2020 - 01:27 PM) @done(Wed 03/04/2020 - 01:53 PM)
+        ✔ Announce the game's winner in Twitch chat @created(Wed 03/04/2020 - 12:38 PM) @done(Wed 03/04/2020 - 01:56 PM)
+        ✔ Prevent suffocation deaths @created(Wed 03/04/2020 - 01:59 PM) @done(Wed 03/04/2020 - 02:06 PM)
+            [14:12] EmberCM: @Adam13531 here's a suffocation method if yours doesn't work. (Allows to die by sand) https://hastebin.com/oyibukexaz.java
+            @EventHandler
+            public void onEntityDamage(EntityDamageEvent event) {
+                // Make sure the entity is suffocating
+                if(event.getCause() != EntityDamageEvent.DamageCause.SUFFOCATION) return;
+
+                // Check if where they are currently is AIR
+                Block block = event.getEntity().getLocation().getBlock();
+                if(block.getType() != Material.AIR) return;
+
+                // Stop them from suffocating
+                event.setCancelled(true);
+            }
+        ✔ Stop sudden death when the match is over @created(Wed 03/04/2020 - 12:14 PM) @done(Wed 03/04/2020 - 02:08 PM)
+        ✔ Make a random color on just !join and whisper that to the player @created(Wed 03/04/2020 - 12:23 PM) @done(Wed 03/04/2020 - 02:10 PM)
+        ✘ Make a !joincolors command @created(Wed 03/04/2020 - 12:17 PM) @cancelled(Wed 03/04/2020 - 02:10 PM)
+            Alias to !joinhelp
+        ✘ Make a !tphelp @created(Wed 03/04/2020 - 12:17 PM) @cancelled(Wed 03/04/2020 - 02:10 PM)
+        ✔ onTeleport bug @created(Wed 03/04/2020 - 11:38 AM) @done(Wed 03/04/2020 - 02:13 PM)
+            [11:17:12 ERROR]: [reactor.core.scheduler.Schedulers] Scheduler worker in group main failed with an uncaught exception
+                reactor.core.Exceptions$ErrorCallbackNotImplemented: java.lang.NumberFormatException: For input string: "-90\"
+                Caused by: java.lang.NumberFormatException: For input string: "-90\"
+                        at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65) ~[?:?]
+                        at java.lang.Integer.parseInt(Integer.java:652) ~[?:?]
+                        at live.adamlearns.animalroyale.TwitchChat.onTeleport(TwitchChat.java:126) ~[?:?]
+                        at live.adamlearns.animalroyale.TwitchChat.handleChatMessage(TwitchChat.java:83) ~[?:?]
+    ✔ Allow the game to be run continuously without any intervention @created(Tue 03/03/2020 - 12:33 PM) @done(Sun 03/08/2020 - 03:03 PM)
+        ✔ Make a command (!newarena) to manually reset it @created(Wed 03/04/2020 - 09:25 AM) @done(Wed 03/04/2020 - 09:26 AM)
+        ✔ Have the arena autoreset @created(Wed 03/04/2020 - 09:26 AM) @done(Wed 03/04/2020 - 09:43 AM)
+        ✔ Put killing sheep and making the new arena in a task @created(Wed 03/04/2020 - 09:43 AM) @done(Wed 03/04/2020 - 09:50 AM)
+        ✘ Consider having a countdown timer and then auto-starting the match @created(Wed 03/04/2020 - 09:43 AM) @cancelled(Sun 03/08/2020 - 03:03 PM)
+            Maybe people get 60-90 seconds to join and set their starting TNT
+
+            Use the boss health bar
+                "Match starting in..."
+
+            Canceling this just because I didn't get to it.
+        ✔ Prevent people from shooting TNT when making a new arena @created(Wed 03/04/2020 - 09:43 AM) @done(Wed 03/04/2020 - 09:47 AM)
+            This is because the old arena has a "startround" task that never gets canceled
+            09:42 AdamLearnsBot Setting up for a brand new game.
+
+            09:42 AdamLearnsBot The battle is starting with 0 players! Type "/w AdamLearnsBot !tnt YAW PITCH POWER TTL" to engage in battle! More help here: https://imgur.com/XMui9vf.png
+    ✔ Modify the readme for this stuff @created(Thu 02/27/2020 - 02:43 PM) @done(Sun 03/08/2020 - 03:04 PM)
+        ✔ Mention that a file named ".env" should exist in the PaperSpigot directory with the contents below @created(Thu 02/27/2020 - 02:43 PM) @done(Sun 03/08/2020 - 03:04 PM)
+            TWITCH_CHAT_OAUTH_TOKEN=ewjhhetjlhejtklwhejtkwhejtlk
+            TWITCH_CHANNEL_NAME=Adam13531
+    ✔ Fall damage still doesn't properly cross people out because it's not ENTITY damage and that's what my event is listening for @created(Tue 03/03/2020 - 03:26 PM) @done(Tue 03/03/2020 - 03:31 PM)
+    ✘ Modify the !identify command to include Ember's particle effect @created(Tue 03/03/2020 - 12:07 PM) @cancelled(Tue 03/03/2020 - 02:42 PM)
+        [12:06] EmberCM: Adam13531 here's the particle identifier https://hastebin.com/besigugobo.java
+
+        I would like to use this, but there's no license file, which means I can't. Also, their repository is down, so I'd have to build the classes myself.
+    ✔ Add !tp @created(Tue 03/03/2020 - 02:47 PM) @done(Tue 03/03/2020 - 03:32 PM)
+        ✔ When no YAW is specified, pick a random one @created(Tue 03/03/2020 - 02:47 PM) @done(Tue 03/03/2020 - 03:32 PM)
+        teleport YAW - slams you in that direction
+            put you on the highest block wherever it decides
+
+
+            Chaotic
+            Still somewhat strategic
+            it won't immediately kill you
+
+            Max distance: 10 blocks? Still within the arena though
+    ✔ For every sheep that joins, say which sheep # they are @created(Tue 03/03/2020 - 03:40 PM) @done(Tue 03/03/2020 - 04:10 PM)
+        That way we can know the count immediately
+    ✘ Stop having my bot type a message in public chat every time @created(Tue 03/03/2020 - 03:43 PM) @cancelled(Tue 03/03/2020 - 03:47 PM)
+    ✔ Stop suffocation by teleporting @created(Tue 03/03/2020 - 03:47 PM) @done(Tue 03/03/2020 - 03:52 PM)
+

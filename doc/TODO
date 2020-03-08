@@ -1,0 +1,123 @@
+Project #3:
+    Minecraft mods! http://bit.ly/2wN9WqF
+    https://docs.google.com/document/d/1xoA3ynLUkct-Xpa9U3kv-8DwH6Ehr6WLFnrNiBOKM10/edit?usp=sharing
+
+    ☐ Jitter the camera at the beginning if it was stationary so that the world loads @created(Wed 03/04/2020 - 01:28 PM)
+    ☐ When someone dies to lava, I think the wrong message prints out @created(Wed 03/04/2020 - 02:45 PM)
+    ☐ There needs to be some kind of rate-limiting @created(Wed 03/04/2020 - 02:48 PM)
+        When ~200 people joined, it was pure chaos
+    ☐ Change the WIN message in Twitch chat to show kill count @created(Wed 03/04/2020 - 02:56 PM)
+    ☐ Make a command for starting sudden death @created(Wed 03/04/2020 - 02:33 PM)
+    ☐ Show a message when sudden death starts @created(Wed 03/04/2020 - 02:28 PM)
+    ☐ Make sure a match doesn't start with no sheep in it @created(Wed 03/04/2020 - 12:36 PM)
+    ☐ [12:34] StealerSlain: Consider creating an utility function like seconds() to return seconds * ticks @created(Wed 03/04/2020 - 12:34 PM)
+    ☐ Bug: [10:07] Shaolorn: @Adam13531 , if you trade the First person to explode gets a kill, but the second person exploding tnt doesn't get credit for a kill @created(Wed 03/04/2020 - 10:07 AM)
+    ☐ Consider putting my name in the post-game text if I upload this for other streamers @created(Wed 03/04/2020 - 11:28 AM)
+    ☐ Test out F3+P to alt+tab away @created(Wed 03/04/2020 - 10:18 AM)
+    ☐ At some point, switch to the Minecraft category @created(Wed 03/04/2020 - 10:15 AM)
+    ☐ Consider making a simple camera-control class @created(Wed 03/04/2020 - 09:19 AM)
+        Teleport the player to look at different sheep
+
+            Maybe add an in-game "/c" command or something simple where it can focus on a different sheep and then maybe zoom out?
+
+        We probably also want an "autocamera" command that will work in between games to show various displays and sheep
+            It would probably do different things when we get down to just a couple of people left
+            We could slowly pan the camera in a circle to show off the terrain
+    ☐ Command help @created(Tue 03/03/2020 - 03:21 PM)
+
+        !tp OPTIONAL_YAW
+            Teleports in a random distance from 3-10 blocks in the specified direction. If a direction isn't specified, it's random.
+            Sets your special ability on cooldown for 30 seconds
+    ☐ Suffocation can still happen if it teleports you into a sort of cave @created(Tue 03/03/2020 - 04:18 PM)
+    ☐ Add a "gettnt" that tells you your parameters @created(Tue 03/03/2020 - 04:13 PM)
+    ☐ Get properly colored glow effects @created(Tue 03/03/2020 - 04:13 PM)
+        [16:13] FunMartas_CZ: You need use "Objective/Team" for colored outline. Its based on "team" color in scoreaboard.
+    ☐ Consider just playing the plugin for a bit in the Minecraft category @created(Wed 03/04/2020 - 08:43 AM)
+        Before doing this, we should have a proper help document explaining how to use commands, why Twitch whispers aren't being sent to people (maybe link to YaTA)
+            [08:44] atastybyte: I just had to refresh a few times
+            [08:45] EmberCM: For me, if I already have the DM open it won't send me any messages but if I close it and reopen the DM box they'll show up
+    ☐ [12:39] yeetstar55: Maybe you could use Boss Bars to show the duration of rounds @adam13531 @created(Tue 03/03/2020 - 12:39 PM)
+        Probably just get rid of them at one second per round since it'll be obvious?
+    ☐ Add better particle effects instead of fireworks @created(Tue 03/03/2020 - 03:14 PM)
+        [15:13] EmberCM: @Adam13531 fixed it to use Bukkit libraries https://hastebin.com/xokubuwuso.java
+    ☐ !shotgun @created(Tue 03/03/2020 - 02:50 PM)
+        Takes your TNT parameters, fuzzes them a bit, and fires 3 TNTs
+    ☐ Add more possibilities for turns @created(Tue 03/03/2020 - 10:13 AM)
+        ☐ Add the move command @created(Mon 03/02/2020 - 04:23 PM)
+            Need to make sure people can only move within the boundaries of the arena
+
+            Maybe it's shooting yourself just like TNT and you can take fall damage
+
+            Maybe it's a random teleport?
+    ☐ Add a command just for me that lets me speed things up @created(Tue 03/03/2020 - 09:37 AM)
+        E.g. when we get to two reminaing people quickly
+        ☐ Make sure any "admin" commands are for the streamer name, not hard-coded @created(Tue 03/03/2020 - 09:37 AM)
+    ☐ Glowing TNT @created(Mon 03/02/2020 - 04:00 PM)
+    ☐ Add a !help command @created(Mon 03/02/2020 - 01:48 PM)
+    ☐ When the game ends, clear out the Twitch chatters? @created(Mon 03/02/2020 - 12:07 PM)
+    ☐ Update notes @created(Thu 02/27/2020 - 04:14 PM)
+        ☐ Java notes @created(Thu 02/27/2020 - 04:15 PM)
+            Lambdas for something like a runnable
+                Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gameContext.getArena().createSheepForPlayer(senderName, dyeColor));
+
+            To run a Runnable with just arbitrary code
+                ((Runnable) () -> {
+                    if (isArenaReadyForGameplay()) {
+                        gameContext.advanceGamePhaseToLobby();
+                    }
+                }).run();
+
+            JAVA 8 STREAMS
+                Random helpful Enum → string conversion
+                    final String validDyeColors = Stream.of(DyeColor.values()).map(s -> s.toString().toLowerCase()).collect(Collectors.joining(" "));
+
+                    // Count how many of a collection meet a certain condition
+                    players.values().stream().filter(player -> player.getSheep().isValid()).count()
+
+                    // Find first player matching a condition
+                    players.values().stream().filter(player -> player.isSheepAlive()).findFirst().orElse(null);
+
+
+            ☐ Copy from the old OneNote if I still have them @created(Thu 02/27/2020 - 04:15 PM)
+            ☐ Talk about Underscore @created(Mon 03/02/2020 - 12:05 PM)
+                https://javadev.github.io/underscore-java/#include
+            ☐ Write about these @created(Thu 02/27/2020 - 04:15 PM)
+                final ThreadLocalRandom random = ThreadLocalRandom.current();
+        ☐ IntelliJ @created(Thu 02/27/2020 - 04:15 PM)
+        ☐ Minecraft @created(Mon 03/02/2020 - 11:59 AM)
+            Anything that interacts with Minecraft itself should be done on Bukkit's thread system, e.g.
+                Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gameContext.getArena().createSheepForPlayer(senderName, dyeColor));
+
+            Potion effects should be capped at an amplification of 127. It can cause weird crashes
+
+            setAware(false) makes sheep not move/rotate/whatever. It's better than this potion
+                sheep.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 9999999, 127));
+
+                Note that sheep that aren't aware won't float
+
+            setMetadata can let you set any properties you want on entities
+    ☐ Polish stuff @created(Mon 03/02/2020 - 09:12 AM)
+        ☐ Clean up @created(Tue 03/03/2020 - 03:09 PM)
+            ☐ Rename sheepDistanceFromLocation @created(Tue 03/03/2020 - 03:09 PM)
+            ☐ Make functions to get the sides of the arena and use those everywhere @created(Tue 03/03/2020 - 03:09 PM)
+        ☐ Get rid of any hard-coded references to AdamLearnsBot or Adam13531 @created(Tue 03/03/2020 - 11:43 AM)
+        ☐ Stop generating just completely randomly in the world since the world save will just keep getting bigger and bigger @created(Mon 03/02/2020 - 04:15 PM)
+        ☐ Allow for commands directly from Minecraft chat @created(Tue 03/03/2020 - 10:51 AM)
+        ☐ Add locale @created(Mon 03/02/2020 - 01:40 PM)
+            [13:39] barteks2x: note: technically (not an issue here because you are the only one running it) for something like this you should supply Locale.ROOT to toLowerCase and toUpperCase, otherwise on systems with weird system languages the result will be weird for some letters
+        ☐ If a sheep is in water, maybe give them the potion effect and make them aware @created(Mon 03/02/2020 - 01:21 PM)
+            Rather, if they take drowning damage
+        ☐ Consider changing the render distance of entities @created(Mon 03/02/2020 - 01:18 PM)
+            [13:18] Lukeozade98: Check this out for the render distance https://www.spigotmc.org/threads/increasing-the-view-range-of-entities.359973/
+        ☐ Load sheep in groups/queues, that way we don't overload the server @created(Mon 03/02/2020 - 11:37 AM)
+            When the server doesn't respond for a long enough time, everything just crashes
+
+            [11:37] PeaEyeEnnKay: ".getServer().recentTps" and check if that's low?
+
+            ☐ There MAY be a practical limit on the number of sheep, in which case we should limit the number of players in Twitch chat @created(Mon 03/02/2020 - 11:38 AM)
+        ☐ Stop loading multiple worlds @created(Mon 03/02/2020 - 10:07 AM)
+            [10:07] EmberCM: You can disable the nether in the server.properties & the end in bukkit.yml (can delete the world folders after disabling)
+        ☐ Change .split so that it saves a pattern @created(Mon 03/02/2020 - 09:31 AM)
+            [09:30] walshydev: (Also to be picky again) just saw you do a split. If that is called a lot you should make a Pattern for it and then call that. split(String) will compile a pattern every call. Just have a Pattern variable and save the compiles
+        ☐ Figure out if the swamp is a bad biome for this @created(Mon 03/02/2020 - 09:12 AM)
+            I think there CAN be water, but it isn't a guarantee
