@@ -71,7 +71,7 @@ public class TwitchChat {
         }
 
         if (command.equals("!lava") && isTwitchUserAnAdmin(senderName)) {
-            gameContext.getArena().placeLavaRandomly();
+            gameContext.getArena().startSuddenDeath();
         }
 
         if (command.equals("!identify")) {

@@ -540,14 +540,16 @@ public class Arena {
         final int NUM_SECONDS_BEFORE_SUDDEN_DEATH = 5 * 60;
         final int numTicksBeforeSuddenDeath = NUM_SECONDS_BEFORE_SUDDEN_DEATH * Ticks.TICKS_PER_SECOND;
 
-        suddenDeathTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
-            gameContext.getTwitchChat().sendMessageToChannel("SUDDEN DEATH MODE ENGAGED! Lava will fall from the sky until all sheep are dead. ☠");
+        suddenDeathTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), this::startSuddenDeath, numTicksBeforeSuddenDeath);
+    }
 
-            // Repurpose the task into a periodic task that will spawn lava. By reusing the same variable, we will make
-            // sure this gets canceled in the dispose function one way or another.
-            suddenDeathTask = Bukkit.getScheduler().runTaskTimer(gameContext.getJavaPlugin(), this::placeLavaRandomly, 0, 20);
+    public void startSuddenDeath() {
+        cancelSuddenDeath();
+        gameContext.getTwitchChat().sendMessageToChannel("SUDDEN DEATH MODE ENGAGED! Lava will fall from the sky until all sheep are dead. ☠");
 
-        }, numTicksBeforeSuddenDeath);
+        // Repurpose the task into a periodic task that will spawn lava. By reusing the same variable, we will make
+        // sure this gets canceled in the dispose function one way or another.
+        suddenDeathTask = Bukkit.getScheduler().runTaskTimer(gameContext.getJavaPlugin(), this::placeLavaRandomly, 0, Ticks.TICKS_PER_SECOND / 2);
     }
 
     private void startRoundIn(final long delay) {
