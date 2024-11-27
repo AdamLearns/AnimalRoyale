@@ -85,7 +85,7 @@ public class GameContext {
 
     public void advanceGamePhaseToPreGameplay() {
         final int numPlayers = players.getAllPlayers().size();
-        twitchChat.sendMessageToChannel("The battle is about to start with " + numPlayers + " players! Make sure to whisper your commands with \"/w AdamLearnsBot COMMAND\"");
+        twitchChat.sendMessageToChannel("The battle is about to start with " + numPlayers + " players! Get your TNT ready! 🧨");
         gamePhase = GamePhase.PRE_GAMEPLAY;
 
         // Now that people can no longer join, we can set up the scoreboard

@@ -78,7 +78,7 @@ public class EventListener implements Listener {
 
         playerDied(ownerOfDyingSheep);
 
-        gameContext.getTwitchChat().getTwitchClient().getChat().sendPrivateMessage(ownerOfDyingSheep.getName(), "Your sheep died.");
+//        gameContext.getTwitchChat().getTwitchClient().getChat().sendPrivateMessage(ownerOfDyingSheep.getName(), "Your sheep died.");
 
         final int numLivingSheep = players.getNumLivingSheep();
 
