@@ -1,5 +1,6 @@
 package live.adamlearns.animalroyale;
 
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -23,7 +24,7 @@ public class Arena {
     /**
      * This is in ticks.
      */
-    private int timeBetweenTurns = 20 * 20;
+    private int timeBetweenTurns = 20 * Ticks.TICKS_PER_SECOND;
 
     // This represents the top-center of the arena (since we're looking south).
     private Location location;
@@ -517,7 +518,7 @@ public class Arena {
      */
     private void createTntForSheep(final Sheep sheep, final int tntNextYaw, final int tntNextPitch, final int tntNextPower, final double tntNextTtl) {
         final TNTPrimed tnt = (TNTPrimed) sheep.getWorld().spawnEntity(sheep.getLocation(), EntityType.TNT);
-        tnt.setFuseTicks((int) (tntNextTtl * 20));
+        tnt.setFuseTicks((int) (tntNextTtl * Ticks.TICKS_PER_SECOND));
 
         // We want to be able to identify this TNT later, so we store a name, but we don't want the name to be visible
         tnt.setCustomName(sheep.getCustomName());
@@ -537,7 +538,8 @@ public class Arena {
 
     private void scheduleSuddenDeath() {
         final int NUM_SECONDS_BEFORE_SUDDEN_DEATH = 5 * 60;
-        final int numTicksBeforeSuddenDeath = NUM_SECONDS_BEFORE_SUDDEN_DEATH * 20;
+        final int numTicksBeforeSuddenDeath = NUM_SECONDS_BEFORE_SUDDEN_DEATH * Ticks.TICKS_PER_SECOND;
+
         suddenDeathTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
             gameContext.getTwitchChat().sendMessageToChannel("SUDDEN DEATH MODE ENGAGED! Lava will fall from the sky until all sheep are dead. ☠");
 
