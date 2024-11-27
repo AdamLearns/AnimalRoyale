@@ -11,11 +11,27 @@ There's a single host for the game, then everybody else plays through Twitch cha
 # Building / running
 
 1. Install Maven
-1. From the root of the repository, run `mvn clean install`
-1. Copy the resulting plugin (`./target/animalroyale-1.0-SNAPSHOT.jar` to your server's `plugins` directory
-1. Create a file named `.env` in your server's root folder (where you see `bukkit.yml`, `paper.yml`, etc.). It should have the contents listed below:
+1. Install IntelliJ IDEA Community Edition
+
+   - From there, there's a Maven tab that will let you run the `install` command. That is what produces the `jar` file (by invoking `package` for you and then installing it into the local Maven repo in `~/.m2`) that you need, _not_ `compile`.
+
+   - The first `install` command took about 8 minutes to download all of the metadata. Also, I actually ran it from the CLI via `mvn clean install`.
+
+1. Install PaperMC
+
+   - Download it from [here](https://papermc.io/downloads/paper). FYI: Spigot builds on Bukkit, and PaperMC builds on Spigot, which is why you see "bukkit" and "paper" in the source.
+   - Put PaperMC's `jar` that you downloaded into its own directory since it's going to create _tons_ of files.
+   - Run the [setup-script generator](https://docs.papermc.io/misc/tools/start-script-gen), replacing `server.jar` with the `jar` that you downloaded.
+   - Create a file named `.env` in this folder (where you see `bukkit.yml`, `paper.yml`, etc.). It should have the contents listed below.
+   - It'll mention something about the EULA. Just open `eula.txt` and accept it.
+   - At this point, you can connect from the Minecraft client to `localhost`. You should type `op YourMinecraftName` to make yourself an operator (which will let you run commands in the game).
+   - Run `/gamemode creative` to be able to fly
+
+1. Run `build_and_deploy`, which will copy the resulting plugin (`./target/animalroyale-1.0-SNAPSHOT.jar`) to your server's `plugins` directory. The destination for the `copy` command should be the directory you put the PaperMC `jar` in.
 
 ```env
+# This is the .env file
+
 # Use https://twitchtokengenerator.com/ to generate the token for your bot
 TWITCH_CHAT_OAUTH_TOKEN=jktehwkjtewhjkewhtjlkewhtlk
 
