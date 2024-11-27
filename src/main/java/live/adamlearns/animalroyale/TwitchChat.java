@@ -38,8 +38,8 @@ public class TwitchChat {
                 .withChatAccount(credential)
                 .build();
         twitchClient.getChat().joinChannel(twitchChannelToJoin);
-        twitchClient.getEventManager().onEvent(ChannelMessageEvent.class).subscribe(this::onChatMessage);
-        twitchClient.getEventManager().onEvent(PrivateMessageEvent.class).subscribe(this::onWhisper);
+        twitchClient.getEventManager().onEvent(ChannelMessageEvent.class, this::onChatMessage);
+        twitchClient.getEventManager().onEvent(PrivateMessageEvent.class, this::onWhisper);
     }
 
     public void sendMessageToChannel(final String text) {
@@ -142,7 +142,8 @@ public class TwitchChat {
         }
 
         if (!gamePlayer.canUseSpecialAbility()) {
-            gameContext.getTwitchChat().getTwitchClient().getChat().sendPrivateMessage(senderName, gamePlayer.getCooldownMessage());
+            System.err.println("Player " + senderName + " tried to teleport but their ability is on cooldown.");
+//            gameContext.getTwitchChat().getTwitchClient().getChat().sendPrivateMessage(senderName, gamePlayer.getCooldownMessage());
             return;
         }
 
@@ -243,7 +244,7 @@ public class TwitchChat {
             for (int i = 0; i < 3; i++) {
                 final FireworkEffect.Builder builder = FireworkEffect.builder();
                 final FireworkEffect fireworkEffect = builder.trail(true).withColor(fireworkColor).build();
-                final Firework firework = (Firework) gameContext.getWorld().spawnEntity(sheep.getLocation(), EntityType.FIREWORK);
+                final Firework firework = (Firework) gameContext.getWorld().spawnEntity(sheep.getLocation(), EntityType.FIREWORK_ROCKET);
                 final FireworkMeta fireworkMeta = firework.getFireworkMeta();
                 // Each power level is half a second of flight time
                 fireworkMeta.setPower((i + 1) * 2);
@@ -256,12 +257,13 @@ public class TwitchChat {
 
     private void onWhere(final String senderName, final String[] args) {
         final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+        System.err.println(senderName + " used !where, but it doesn't do anything");
         if (gamePlayer == null) {
             return;
         }
 
         if (!gamePlayer.isSheepAlive()) {
-            twitchClient.getChat().sendPrivateMessage(senderName, "Your sheep already died. BibleThump");
+//            twitchClient.getChat().sendPrivateMessage(senderName, "Your sheep already died. BibleThump");
             return;
         }
 
@@ -270,7 +272,7 @@ public class TwitchChat {
         final Location sheepLocation = sheep.getLocation();
         final String relativeLocationInformationString = arena.getRelativeLocationInformationString(sheepLocation);
 
-        twitchClient.getChat().sendPrivateMessage(senderName, relativeLocationInformationString);
+//        twitchClient.getChat().sendPrivateMessage(senderName, relativeLocationInformationString);
     }
 
     private void onWhisper(final PrivateMessageEvent event) {
@@ -412,7 +414,7 @@ public class TwitchChat {
                     final Arena arena = gameContext.getArena();
                     final Sheep sheep = arena.createSheepForPlayer(gamePlayer, dyeColor);
                     final String relativeLocationInformationString = arena.getRelativeLocationInformationString(sheep.getLocation());
-                    twitchClient.getChat().sendPrivateMessage(senderName, relativeLocationInformationString);
+//                    twitchClient.getChat().sendPrivateMessage(senderName, relativeLocationInformationString);
                 });
             } else if (gamePlayer.hasAddedSheep()) {
                 final Sheep sheep = gamePlayer.getSheep();

@@ -285,7 +285,7 @@ public class Arena {
      * @return
      */
     private boolean isBiomeBad(final Biome biome) {
-        final Biome[] badBiomes = {Biome.OCEAN, Biome.COLD_OCEAN, Biome.DEEP_COLD_OCEAN, Biome.DEEP_FROZEN_OCEAN, Biome.DEEP_LUKEWARM_OCEAN, Biome.DEEP_OCEAN, Biome.DEEP_WARM_OCEAN, Biome.LUKEWARM_OCEAN, Biome.WARM_OCEAN};
+        final Biome[] badBiomes = {Biome.OCEAN, Biome.COLD_OCEAN, Biome.DEEP_COLD_OCEAN, Biome.DEEP_LUKEWARM_OCEAN, Biome.DEEP_OCEAN, Biome.WARM_OCEAN, Biome.LUKEWARM_OCEAN};
         return Util.arrayIncludes(badBiomes, biome);
     }
 
@@ -516,7 +516,7 @@ public class Arena {
      * @param tntNextTtl
      */
     private void createTntForSheep(final Sheep sheep, final int tntNextYaw, final int tntNextPitch, final int tntNextPower, final double tntNextTtl) {
-        final TNTPrimed tnt = (TNTPrimed) sheep.getWorld().spawnEntity(sheep.getLocation(), EntityType.PRIMED_TNT);
+        final TNTPrimed tnt = (TNTPrimed) sheep.getWorld().spawnEntity(sheep.getLocation(), EntityType.TNT);
         tnt.setFuseTicks((int) (tntNextTtl * 20));
 
         // We want to be able to identify this TNT later, so we store a name, but we don't want the name to be visible

@@ -13,10 +13,10 @@ There's a single host for the game, then everybody else plays through Twitch cha
 1. Install Maven
 1. From the root of the repository, run `mvn clean install`
 1. Copy the resulting plugin (`./target/animalroyale-1.0-SNAPSHOT.jar` to your server's `plugins` directory
-1. Create a file named `.env` your server's root folder (where you see `bukkit.yml`, `paper.yml`, etc.). It should have the contents listed below:
+1. Create a file named `.env` in your server's root folder (where you see `bukkit.yml`, `paper.yml`, etc.). It should have the contents listed below:
 
 ```env
-# Use https://twitchapps.com/tmi/ to generate the token
+# Use https://twitchtokengenerator.com/ to generate the token for your bot
 TWITCH_CHAT_OAUTH_TOKEN=jktehwkjtewhjkewhtjlkewhtlk
 
 # This is the name of the channel where commands like !join are accepted

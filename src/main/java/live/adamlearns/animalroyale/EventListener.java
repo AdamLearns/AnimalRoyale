@@ -128,7 +128,7 @@ public class EventListener implements Listener {
         if (!damagedEntity.isCustomNameVisible()) return;
 
         // Make sure fireworks don't do damage since they're just intended to help players identify themselves
-        if (damagingEntity.getType() == EntityType.FIREWORK) {
+        if (damagingEntity.getType() == EntityType.FIREWORK_ROCKET) {
             event.setCancelled(true);
             return;
         }
@@ -150,7 +150,7 @@ public class EventListener implements Listener {
         if (event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
             deathMessage = ownerOfDyingSheep.getNameColoredForInGameChat() + ChatColor.RED + " was consumed by lava :(";
             twitchDeathMessage = ownerOfDyingSheep.getNameForTwitch() + " was consumed by lava admFire";
-        } else if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION && damagingEntity.getType() == EntityType.PRIMED_TNT) {
+        } else if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION && damagingEntity.getType() == EntityType.TNT) {
             final String tntName = damagingEntity.getCustomName();
             final GamePlayer ownerOfTnt = gameContext.getPlayers().getPlayer(tntName);
             if (ownerOfTnt == null) {
