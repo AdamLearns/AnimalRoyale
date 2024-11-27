@@ -39,7 +39,7 @@ public class GameContext {
     public void advanceGamePhaseToLobby() {
         javaPlugin.getLogger().info("Transitioned to LOBBY phase");
         final String validDyeColors = Stream.of(DyeColor.values()).map(s -> s.toString().toLowerCase()).collect(Collectors.joining(" "));
-        twitchChat.sendMessageToChannel("You may now join the game with \"/w AdamLearnsBot !join COLOR\", where COLOR is one of these: " + validDyeColors);
+        twitchChat.sendMessageToChannel("You may now join the game with \"!join COLOR\", where COLOR is one of these: " + validDyeColors);
         gamePhase = GamePhase.LOBBY;
     }
 
