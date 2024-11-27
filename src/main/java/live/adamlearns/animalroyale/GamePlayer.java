@@ -1,5 +1,8 @@
 package live.adamlearns.animalroyale;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Sheep;
@@ -20,7 +23,7 @@ public class GamePlayer {
      * This is as close to your sheep's color as we can get. We approximate some of them like black so that it's still
      * readable.
      */
-    private ChatColor nameColor;
+    private TextColor nameColor;
 
     private int tntNextYaw = 0;
     private int tntNextPitch = 0;
@@ -96,6 +99,8 @@ public class GamePlayer {
         nameColor = GamePlayer.getChatColorFromDyeColor(sheepColor);
     }
 
+    // Use getColorfulName instead
+    @Deprecated
     public String getNameColoredForInGameChat() {
         return nameColor + name;
     }
@@ -105,29 +110,15 @@ public class GamePlayer {
         return nameColor.toString() + ChatColor.STRIKETHROUGH + name;
     }
 
-    static ChatColor getChatColorFromDyeColor(final DyeColor dyeColor) {
-        switch (dyeColor) {
-            case BLACK:
-            case LIGHT_GRAY:
-                return ChatColor.GRAY;
-            case BROWN:
-            case ORANGE:
-                return ChatColor.GOLD;
-            case CYAN:
-            case LIGHT_BLUE:
-                return ChatColor.AQUA;
-            case LIME:
-                return ChatColor.GREEN;
-            case GREEN:
-                return ChatColor.DARK_GREEN;
-            case MAGENTA:
-            case PINK:
-                return ChatColor.LIGHT_PURPLE;
-            case PURPLE:
-                return ChatColor.DARK_PURPLE;
-            default:
-                return ChatColor.valueOf(dyeColor.name());
+    public TextComponent getColorfulName() {
+        return Component.text(name, nameColor);
+    }
+
+    static TextColor getChatColorFromDyeColor(final DyeColor dyeColor) {
+        if (dyeColor == DyeColor.BLACK) {
+            return TextColor.color(128,128,128);
         }
+        return TextColor.color(dyeColor.getColor().asRGB());
     }
 
     public boolean canPlaceSheep() {

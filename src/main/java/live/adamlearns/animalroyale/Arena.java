@@ -1,5 +1,9 @@
 package live.adamlearns.animalroyale;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -10,6 +14,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -379,7 +384,8 @@ public class Arena {
         // We don't want sheep to have AI, but without AI, there's no fall damage, and we DO want fall damage. Instead,
         // we'll try adding a very slow potion.
         sheep.setAI(true);
-        sheep.setCustomName(gamePlayer.getName());
+
+        sheep.customName(Component.text(gamePlayer.getName()));
         sheep.setCustomNameVisible(true);
         sheep.setRotation(90, 45);
         sheep.setAware(false);
@@ -393,8 +399,11 @@ public class Arena {
         // facing south, the coordinates go from high to low, so we invert them, that way people see it as it is on the screen.
         final Vector relativeVector = getLocationRelativeToArena(sheepLocation);
         final int sheepNumber = gameContext.getPlayers().getNumLivingSheep();
-        gameContext.getJavaPlugin().getServer().broadcastMessage("Sheep #" + sheepNumber + ": " + gamePlayer.getNameColoredForInGameChat() + ChatColor.RESET + " joined at " + ChatColor.LIGHT_PURPLE +
-                "(" + relativeVector.getBlockX() + ", " + relativeVector.getBlockZ() + ") ");
+        TextComponent txt1 = Component.text("Sheep #" + sheepNumber + ": ");
+        TextComponent txt2 = gamePlayer.getColorfulName();
+        TextComponent txt3 = Component.text(" joined at ");
+        TextComponent txt4 = Component.text("(" + relativeVector.getBlockX() + ", " + relativeVector.getBlockZ() + ") ", TextColor.color(NamedTextColor.LIGHT_PURPLE));
+        gameContext.getJavaPlugin().getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2, txt3, txt4));
 
         return sheep;
     }

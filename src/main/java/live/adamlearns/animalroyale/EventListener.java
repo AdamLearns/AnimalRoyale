@@ -1,7 +1,12 @@
 package live.adamlearns.animalroyale;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -51,8 +56,9 @@ public class EventListener implements Listener {
                     final String sheepName = entity.getCustomName();
                     final GamePlayer ownerOfSheep = gameContext.getPlayers().getPlayer(sheepName);
                     if (ownerOfSheep != null) {
-                        final String deathMessage = ownerOfSheep.getNameColoredForInGameChat() + ChatColor.RED + " fell too far";
-                        gameContext.getJavaPlugin().getServer().broadcastMessage(deathMessage);
+                        TextComponent txt1 = ownerOfSheep.getColorfulName();
+                        TextComponent txt2 = Component.text(" fell too far").color(TextColor.color(NamedTextColor.RED));
+                        gameContext.getJavaPlugin().getServer().broadcast(txt1.append(txt2));
                         gameContext.getTwitchChat().sendMessageToChannel(ownerOfSheep.getNameForTwitch() + " fell too far admRocket");
                     }
                 }
@@ -88,17 +94,17 @@ public class EventListener implements Listener {
         if (shouldPrintMessage) {
             // This gets called after the entity is already dead, so this message will have the correct number.
             final List<GamePlayer> playersWithLivingSheep = gameContext.getPlayers().getPlayersWithLivingSheep();
-            String remainingPlayersNames = "";
+            TextComponent remainingPlayerNames = Component.text("");
             if (playersWithLivingSheep.size() <= 10) {
-                final StringBuilder sb = new StringBuilder();
                 for (final GamePlayer player : playersWithLivingSheep) {
-                    sb.append(player.getNameColoredForInGameChat());
-                    sb.append(" ");
+                    remainingPlayerNames = remainingPlayerNames.append(player.getColorfulName()).append(Component.text(" "));
                 }
 
-                remainingPlayersNames = ": " + sb.toString();
+                remainingPlayerNames = Component.text(": ").append(remainingPlayerNames);
             }
-            gameContext.getJavaPlugin().getServer().broadcastMessage("" + ChatColor.AQUA + numLivingSheep + ChatColor.RESET + " sheep remaining" + remainingPlayersNames);
+            TextComponent txt1 = Component.text(numLivingSheep, TextColor.color(NamedTextColor.AQUA));
+            TextComponent txt2 = Component.text(" sheep remaining");
+            gameContext.getJavaPlugin().getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2, remainingPlayerNames));
         }
 
         // We have a winner!
@@ -133,7 +139,7 @@ public class EventListener implements Listener {
             return;
         }
 
-        // We only care if they died below
+        // We only care if they died
         if (event.getDamage() < ((LivingEntity) damagedEntity).getHealth()) {
             return;
         }
@@ -144,13 +150,13 @@ public class EventListener implements Listener {
         if (ownerOfDyingSheep == null) {
             return;
         }
-        String deathMessage = null;
+        TextComponent deathMessage = null;
         String twitchDeathMessage = null;
 
         if (event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
-            deathMessage = ownerOfDyingSheep.getNameColoredForInGameChat() + ChatColor.RED + " was consumed by lava :(";
+            deathMessage = ownerOfDyingSheep.getColorfulName().append(Component.text(" was consumed by lava :(", TextColor.color(NamedTextColor.RED)));
             twitchDeathMessage = ownerOfDyingSheep.getNameForTwitch() + " was consumed by lava admFire";
-        } else if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION && damagingEntity.getType() == EntityType.TNT) {
+        } else if (event.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION && damagingEntity.getType() == EntityType.TNT) {
             final String tntName = damagingEntity.getCustomName();
             final GamePlayer ownerOfTnt = gameContext.getPlayers().getPlayer(tntName);
             if (ownerOfTnt == null) {
@@ -158,10 +164,14 @@ public class EventListener implements Listener {
             }
 
             if (ownerOfTnt == ownerOfDyingSheep) {
-                deathMessage = ownerOfTnt.getNameColoredForInGameChat() + ChatColor.RED + " blasted themselves :(";
+                deathMessage = ownerOfDyingSheep.getColorfulName().append(Component.text(" blasted themselves :(", TextColor.color(NamedTextColor.RED)));
                 twitchDeathMessage = ownerOfTnt.getNameForTwitch() + " blasted themselves admFire";
             } else {
-                deathMessage = ownerOfTnt.getNameColoredForInGameChat() + ChatColor.RED + " blasted " + ownerOfDyingSheep.getNameColoredForInGameChat() + ChatColor.RED + " to smithereens";
+                TextComponent txt1 = ownerOfTnt.getColorfulName();
+                TextComponent txt2 = Component.text(" blasted ");
+                TextComponent txt3 = ownerOfDyingSheep.getColorfulName();
+                TextComponent txt4 = Component.text(" to smithereens", TextColor.color(NamedTextColor.RED));
+                deathMessage = MessageUtil.MergeTextComponents(txt1, txt2, txt3, txt4);
                 twitchDeathMessage = ownerOfTnt.getNameForTwitch() + " blasted " + ownerOfDyingSheep.getNameForTwitch() + " admNuke";
 
                 incrementKillsForPlayer(ownerOfTnt);
@@ -172,7 +182,7 @@ public class EventListener implements Listener {
             gameContext.getTwitchChat().sendMessageToChannel(twitchDeathMessage);
         }
         if (deathMessage != null) {
-            gameContext.getJavaPlugin().getServer().broadcastMessage(deathMessage);
+            gameContext.getJavaPlugin().getServer().broadcast(deathMessage);
         }
     }
 
