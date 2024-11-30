@@ -78,9 +78,6 @@ public class TwitchChat {
             case "!identify":
                 onIdentify(senderName, args);
                 return;
-            case "!where":
-                onWhere(senderName, args);
-                return;
             case "!teleport":
             case "!tp":
                 onTeleport(senderName, args);
@@ -243,26 +240,6 @@ public class TwitchChat {
                 firework.setVelocity(new Vector(0, (i + 1) * 0.2, 0));
             }
         });
-    }
-
-    private void onWhere(final String senderName, final String[] args) {
-        final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
-        System.err.println(senderName + " used !where, but it doesn't do anything");
-        if (gamePlayer == null) {
-            return;
-        }
-
-        if (!gamePlayer.isSheepAlive()) {
-//            twitchClient.getChat().sendPrivateMessage(senderName, "Your sheep already died. BibleThump");
-            return;
-        }
-
-        final Sheep sheep = gamePlayer.getSheep();
-        final Arena arena = gameContext.getArena();
-        final Location sheepLocation = sheep.getLocation();
-        final String relativeLocationInformationString = arena.getRelativeLocationInformationString(sheepLocation);
-
-//        twitchClient.getChat().sendPrivateMessage(senderName, relativeLocationInformationString);
     }
 
     private void onWhisper(final PrivateMessageEvent event) {
