@@ -1,5 +1,6 @@
 package live.adamlearns.animalroyale;
 
+import live.adamlearns.animalroyale.extensions.IntKt;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -152,8 +153,8 @@ public class Arena {
      * Checks every so often to see if the arena is ready, and when it is, this will advance the game state.
      */
     private void setupArenaReadinessCheck() {
-        checkArenaReadinessTask = Bukkit.getScheduler().runTaskTimer(gameContext.getJavaPlugin(), () -> {
-            final double[] tps = gameContext.getJavaPlugin().getServer().getTPS();
+        checkArenaReadinessTask = Bukkit.getScheduler().runTaskTimer(gameContext.javaPlugin, () -> {
+            final double[] tps = gameContext.javaPlugin.getServer().getTPS();
             final double lastMinuteTps = tps[0];
 
             // 20 TPS is the target, so we want to make sure things have stabilized enough
@@ -172,7 +173,7 @@ public class Arena {
     private void scheduleStartOfMatch() {
         final int NUM_SECONDS_BEFORE_STARTING_MATCH = 60;
         gameContext.getTwitchChat().sendMessageToChannel("Starting the round automatically in " + NUM_SECONDS_BEFORE_STARTING_MATCH + " seconds.");
-        startCurrentMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), this::startRounds, NUM_SECONDS_BEFORE_STARTING_MATCH * 20);
+        startCurrentMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.javaPlugin, this::startRounds, NUM_SECONDS_BEFORE_STARTING_MATCH * 20);
     }
 
     private boolean isArenaReadyForGameplay() {
@@ -189,7 +190,7 @@ public class Arena {
         final int finalZ = getSouthZ();
 
 
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), lambda -> {
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, lambda -> {
             for (int x = startX; x <= finalX; x++) {
                 for (int z = startZ; z <= finalZ; z++) {
                     if (x > startX && x < finalX && z != startZ && z != finalZ) continue;
@@ -246,8 +247,8 @@ public class Arena {
      * stats and even the game state.
      */
     public void killAllSheep() {
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
-            final Collection<GamePlayer> allPlayers = gameContext.getPlayers().getAllPlayers().values();
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> {
+            final Collection<GamePlayer> allPlayers = gameContext.players.getAllPlayers().values();
             for (final GamePlayer player :
                     allPlayers) {
                 if (player.isSheepAlive()) {
@@ -270,7 +271,7 @@ public class Arena {
         final float yaw = 0;
         final float pitch = 55;
 
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), lambda -> gameContext.getFirstPlayer().teleport(new Location(world, x, y, z, yaw, pitch))
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, lambda -> gameContext.getFirstPlayer().teleport(new Location(world, x, y, z, yaw, pitch))
         );
     }
 
@@ -316,7 +317,8 @@ public class Arena {
         return true;
     }
 
-    private Vector @NotNull [] getArenaSampleCoordinates(Location location) {
+    @NotNull
+    private Vector[] getArenaSampleCoordinates(Location location) {
         final int blockX = location.getBlockX();
         final int blockY = location.getBlockY();
         final int blockZ = location.getBlockZ();
@@ -367,7 +369,7 @@ public class Arena {
         final Location sheepLocation = location.clone();
 
         final int distance = arenaSize;
-        sheepLocation.add(random.nextDouble() * distance * Util.getOneOrNegativeOne(), 0, random.nextDouble() * distance);
+        sheepLocation.add(random.nextDouble() * distance * IntKt.randomSign(), 0, random.nextDouble() * distance);
         final Block highestBlockAtSheepLocation = world.getHighestBlockAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ());
         final Material highestBlockType = highestBlockAtSheepLocation.getType();
 
@@ -384,7 +386,7 @@ public class Arena {
         // we'll try adding a very slow potion.
         sheep.setAI(true);
 
-        sheep.customName(Component.text(gamePlayer.getName()));
+        sheep.customName(Component.text(gamePlayer.name));
         sheep.setCustomNameVisible(true);
         sheep.setRotation(90, 45);
         sheep.setAware(false);
@@ -397,12 +399,12 @@ public class Arena {
         // "location" represents the center of the Arena, so we need to subtract the sheep distance. Then, since we're
         // facing south, the coordinates go from high to low, so we invert them, that way people see it as it is on the screen.
         final Vector relativeVector = getLocationRelativeToArena(sheepLocation);
-        final int sheepNumber = gameContext.getPlayers().getNumLivingSheep();
+        final int sheepNumber = gameContext.players.getNumLivingSheep();
         TextComponent txt1 = Component.text("Sheep #" + sheepNumber + ": ");
         TextComponent txt2 = gamePlayer.getColorfulName();
         TextComponent txt3 = Component.text(" joined at ");
         TextComponent txt4 = Component.text("(" + relativeVector.getBlockX() + ", " + relativeVector.getBlockZ() + ") ", TextColor.color(NamedTextColor.LIGHT_PURPLE));
-        gameContext.getJavaPlugin().getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2, txt3, txt4));
+        gameContext.javaPlugin.getServer().broadcast(ComponentUtils.join(txt1, txt2, txt3, txt4));
 
         return sheep;
     }
@@ -491,7 +493,7 @@ public class Arena {
         final int lavaX = random.nextInt(getWestX(), getEastX() + 1);
         final int lavaZ = random.nextInt(getNorthZ(), getSouthZ() + 1);
 
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> {
             final int highestBlockY = world.getHighestBlockYAt(lavaX, lavaZ) + 5;
             final Block block = world.getBlockAt(lavaX, highestBlockY, lavaZ);
             block.setType(Material.LAVA);
@@ -503,14 +505,14 @@ public class Arena {
      */
     public void startRound() {
         // Figure out everybody with TNT parameters and fire away
-        final Collection<GamePlayer> allPlayers = gameContext.getPlayers().getAllPlayers().values();
+        final Collection<GamePlayer> allPlayers = gameContext.players.getAllPlayers().values();
         for (final GamePlayer player : allPlayers) {
             final Sheep sheep = player.getSheep();
-            if (!sheep.isValid() || sheep.isDead() || !player.hasSetTntParameters()) {
+            if (!sheep.isValid() || sheep.isDead() || !player.getHasSetTntParameters()) {
                 continue;
             }
 
-            Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> createTntForSheep(sheep, player.getTntNextPower(), player.getTntNextTtl())
+            Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> createTntForSheep(sheep, player.getTntNextPower(), player.getTntNextTtl())
             );
         }
     }
@@ -519,8 +521,6 @@ public class Arena {
      * Fire TNT from all sheep.
      *
      * @param sheep
-     * @param tntNextYaw
-     * @param tntNextPitch
      * @param tntNextPower
      * @param tntNextTtl
      */
@@ -548,7 +548,7 @@ public class Arena {
         final int NUM_SECONDS_BEFORE_SUDDEN_DEATH = 5 * 60;
         final int numTicksBeforeSuddenDeath = NUM_SECONDS_BEFORE_SUDDEN_DEATH * Ticks.TICKS_PER_SECOND;
 
-        suddenDeathTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), this::startSuddenDeath, numTicksBeforeSuddenDeath);
+        suddenDeathTask = Bukkit.getScheduler().runTaskLater(gameContext.javaPlugin, this::startSuddenDeath, numTicksBeforeSuddenDeath);
     }
 
     public void startSuddenDeath() {
@@ -557,7 +557,7 @@ public class Arena {
 
         // Repurpose the task into a periodic task that will spawn lava. By reusing the same variable, we will make
         // sure this gets canceled in the dispose function one way or another.
-        suddenDeathTask = Bukkit.getScheduler().runTaskTimer(gameContext.getJavaPlugin(), this::placeLavaRandomly, 0, Ticks.TICKS_PER_SECOND / 2);
+        suddenDeathTask = Bukkit.getScheduler().runTaskTimer(gameContext.javaPlugin, this::placeLavaRandomly, 0, Ticks.TICKS_PER_SECOND / 2);
     }
 
     private void startRoundIn(final long delay) {
@@ -566,7 +566,7 @@ public class Arena {
             gameContext.advanceGamePhaseToGameplay();
         }
 
-        startNewMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.getJavaPlugin(), () -> {
+        startNewMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.javaPlugin, () -> {
             gameContext.getArena().startRound();
             startRoundIn(timeBetweenTurns);
 

@@ -73,3 +73,9 @@ This was all made in 5 days on Adam Learns for the purpose of learning, so I was
   - Settings → Miscellaneous → check "Set a target to join on launch" and fill out "localhost" for the server
   - Settings → Game windows → ✅ Game window → set the width and height (you can't start maximized on macOS as of Wed 11/27/2024 for some reason; it just doesn't launch in full-screen).
 - Launch `/Applications/Prism\ Launcher.app/Contents/MacOS/prismlauncher --launch 1.21.3` (note: the final bit there, `1.21.3`, is the Instance ID. See [here](https://prismlauncher.org/wiki/getting-started/command-line-interface/) for how to get that ID (it's just the folder name of the instance)).
+
+## Troubleshooting
+
+### Plugin builds from terminal but IntelliJ shows errors
+
+Your dependencies may be outdated. Make sure to click on the icon with two "circling" arrows and sync the project.
