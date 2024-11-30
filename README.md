@@ -57,3 +57,12 @@ This was all made in 5 days on Adam Learns for the purpose of learning, so I was
 - The lobby time should probably be 90 seconds based on how long people typically spend setting up `!identify` and `!tnt`.
 - Some things are hard-coded (e.g. "adm\*" emotes and AdamLearnsBot as the name to whisper).
 - This isn't a bug, but I just wanted to point out that `doc/TODO_ARCHIVE` has lots of ideas that I couldn't get to, e.g. bouncing TNT, a rail gun, a lava gun, and the concept of a shop. Search for "Extra ideas".
+
+# Launching from the command line
+
+- Download [Prism Launcher](https://prismlauncher.org/)
+- Add a client instance
+- Edit the instance:
+  - Settings → Miscellaneous → check "Set a target to join on launch" and fill out "localhost" for the server
+  - Settings → Game windows → ✅ Game window → set the width and height (you can't start maximized on macOS as of Wed 11/27/2024 for some reason; it just doesn't launch in full-screen).
+- Launch `/Applications/Prism\ Launcher.app/Contents/MacOS/prismlauncher --launch 1.21.3` (note: the final bit there, `1.21.3`, is the Instance ID. See [here](https://prismlauncher.org/wiki/getting-started/command-line-interface/) for how to get that ID (it's just the folder name of the instance)).
