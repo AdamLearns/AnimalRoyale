@@ -110,7 +110,7 @@ public class TwitchChat {
     }
 
     private void onTntCancel(final String senderName, final String[] args) {
-        final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+        final GamePlayer gamePlayer = gameContext.players.getPlayer(senderName);
         if (gamePlayer == null || !gamePlayer.isSheepAlive()) {
             return;
         }
@@ -125,7 +125,7 @@ public class TwitchChat {
      * @param args
      */
     private void onTeleport(final String senderName, final String[] args) {
-        final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+        final GamePlayer gamePlayer = gameContext.players.getPlayer(senderName);
         if (gamePlayer == null || !gamePlayer.isSheepAlive()) {
             return;
         }
@@ -160,13 +160,13 @@ public class TwitchChat {
         sheepLocation.setY(gameContext.getWorld().getHighestBlockYAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ()) + 2);
 
         gamePlayer.temporarilyStopShootingTnt();
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> sheep.teleport(sheepLocation));
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> sheep.teleport(sheepLocation));
 
         gamePlayer.setNextTimeAbleToUseSpecialAbility(System.currentTimeMillis() + 15000);
     }
 
     private void onIdentify(final String senderName, final String[] args) {
-        final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+        final GamePlayer gamePlayer = gameContext.players.getPlayer(senderName);
         if (gamePlayer == null || !gamePlayer.isSheepAlive()) {
             return;
         }
@@ -222,7 +222,7 @@ public class TwitchChat {
 
         final Sheep sheep = gamePlayer.getSheep();
 
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> {
             // There's no fall damage before the GAMEPLAY phase, so we can make the sheep jump
             if (gameContext.getGamePhase() == GamePhase.LOBBY) {
                 sheep.setVelocity(new Vector(0, 2, 0));
@@ -263,7 +263,7 @@ public class TwitchChat {
         try {
             final int yaw = Integer.parseInt(args[0], 10);
 
-            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            final GamePlayer gamePlayer = gameContext.players.getPlayer(senderName);
             if (gamePlayer == null) {
                 return;
             }
@@ -283,7 +283,7 @@ public class TwitchChat {
         try {
             final double ttl = Double.parseDouble(args[0]);
 
-            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            final GamePlayer gamePlayer = gameContext.players.getPlayer(senderName);
             if (gamePlayer == null) {
                 return;
             }
@@ -302,7 +302,7 @@ public class TwitchChat {
         try {
             final int power = Integer.parseInt(args[0], 10);
 
-            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            final GamePlayer gamePlayer = gameContext.players.getPlayer(senderName);
             if (gamePlayer == null) {
                 return;
             }
@@ -321,7 +321,7 @@ public class TwitchChat {
         try {
             final int pitch = Integer.parseInt(args[0], 10) * -1;
 
-            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            final GamePlayer gamePlayer = gameContext.players.getPlayer(senderName);
             if (gamePlayer == null) {
                 return;
             }
@@ -337,7 +337,7 @@ public class TwitchChat {
         final int yaw = gamePlayer.getTntNextYaw();
         final int pitch = gamePlayer.getTntNextPitch();
 
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> gamePlayer.getSheep().setRotation(yaw, pitch));
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> gamePlayer.getSheep().setRotation(yaw, pitch));
     }
 
     private void onTnt(final String senderName, final String[] args) {
@@ -353,7 +353,7 @@ public class TwitchChat {
             final int distance = Integer.parseInt(args[2], 10);
             final double ttl = Double.parseDouble(args[3]);
 
-            final GamePlayer gamePlayer = gameContext.getPlayers().getPlayer(senderName);
+            final GamePlayer gamePlayer = gameContext.players.getPlayer(senderName);
             if (gamePlayer == null) {
                 return;
             }
@@ -375,9 +375,9 @@ public class TwitchChat {
         try {
             final DyeColor dyeColor = DyeColor.valueOf(color);
 
-            final GamePlayer gamePlayer = gameContext.getPlayers().createPlayerIfNotExists(senderName);
+            final GamePlayer gamePlayer = gameContext.players.createPlayerIfNotExists(senderName);
             if (gamePlayer.canPlaceSheep()) {
-                Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+                Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> {
                     final Arena arena = gameContext.getArena();
                     final Sheep sheep = arena.createSheepForPlayer(gamePlayer, dyeColor);
                     final String relativeLocationInformationString = arena.getRelativeLocationInformationString(sheep.getLocation());
@@ -386,7 +386,7 @@ public class TwitchChat {
             } else if (gamePlayer.hasAddedSheep()) {
                 final Sheep sheep = gamePlayer.getSheep();
 
-                Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> sheep.setColor(dyeColor));
+                Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> sheep.setColor(dyeColor));
             }
         } catch (
                 final IllegalArgumentException e) {

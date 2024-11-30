@@ -58,7 +58,7 @@ public class EventListener implements Listener {
                     if (ownerOfSheep != null) {
                         TextComponent txt1 = ownerOfSheep.getColorfulName();
                         TextComponent txt2 = Component.text(" fell too far").color(TextColor.color(NamedTextColor.RED));
-                        gameContext.getJavaPlugin().getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2));
+                        gameContext.javaPlugin.getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2));
                         gameContext.getTwitchChat().sendMessageToChannel(ownerOfSheep.getNameForTwitch() + " fell too far admRocket");
                     }
                 }
@@ -69,7 +69,7 @@ public class EventListener implements Listener {
     @EventHandler
     public void onEntityDied(final EntityDeathEvent event) {
         final Entity dyingEntity = event.getEntity();
-        final Players players = gameContext.getPlayers();
+        final Players players = gameContext.players;
 
         if (dyingEntity.getType() != EntityType.SHEEP || !dyingEntity.isCustomNameVisible()) {
             return;
@@ -95,7 +95,7 @@ public class EventListener implements Listener {
             TextComponent remainingPlayerNames = getRemainingPlayers();
             TextComponent txt1 = Component.text(numLivingSheep, TextColor.color(NamedTextColor.AQUA));
             TextComponent txt2 = Component.text(" sheep remaining");
-            gameContext.getJavaPlugin().getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2, remainingPlayerNames));
+            gameContext.javaPlugin.getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2, remainingPlayerNames));
         }
 
         // We have a winner!
@@ -115,7 +115,7 @@ public class EventListener implements Listener {
     }
 
     private @NotNull TextComponent getRemainingPlayers() {
-        final List<GamePlayer> playersWithLivingSheep = gameContext.getPlayers().getPlayersWithLivingSheep();
+        final List<GamePlayer> playersWithLivingSheep = gameContext.players.getPlayersWithLivingSheep();
         TextComponent remainingPlayerNames = Component.text("");
         if (playersWithLivingSheep.size() <= 10) {
             for (final GamePlayer player : playersWithLivingSheep) {
@@ -187,12 +187,12 @@ public class EventListener implements Listener {
             gameContext.getTwitchChat().sendMessageToChannel(twitchDeathMessage);
         }
         if (deathMessage != null) {
-            gameContext.getJavaPlugin().getServer().broadcast(deathMessage);
+            gameContext.javaPlugin.getServer().broadcast(deathMessage);
         }
     }
 
     private void playerDied(final GamePlayer gamePlayer) {
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> {
             final Objective objective = gameContext.getKillsScoreboardObjective();
             final Score score = objective.getScore(gamePlayer.getName());
             score.customName(gamePlayer.getNameForScoreboardWhenDead());
@@ -200,7 +200,7 @@ public class EventListener implements Listener {
     }
 
     private void incrementKillsForPlayer(final GamePlayer gamePlayer) {
-        Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> {
             final Objective objective = gameContext.getKillsScoreboardObjective();
             Score score = objective.getScore(gamePlayer.getName());
             score.setScore(score.getScore() + 1);
