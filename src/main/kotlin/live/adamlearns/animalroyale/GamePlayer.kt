@@ -1,6 +1,7 @@
 package live.adamlearns.animalroyale
 
 import live.adamlearns.animalroyale.extensions.asTextColor
+import live.adamlearns.animalroyale.extensions.isAliveAndValid
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.TextColor
@@ -31,6 +32,15 @@ class GamePlayer(
             nameColor = sheep?.color?.asTextColor()
         }
 
+    val canPlaceSheep: Boolean
+        get() = sheep == null
+
+    val hasAddedSheep: Boolean
+        get() = sheep != null
+
+    val isSheepAlive: Boolean
+        get() = sheep?.isAliveAndValid ?: false
+
     var hasSetTntParameters = false
         private set
     var tntNextYaw: Int = 0
@@ -41,9 +51,6 @@ class GamePlayer(
         private set
     var tntNextTtl: Double = 0.0
         private set
-
-    val isSheepAlive: Boolean
-        get() = sheep?.let { it.isValid && !it.isDead } ?: false
 
     val colorfulName: TextComponent
         get() = Component.text(name, nameColor)
@@ -83,14 +90,6 @@ class GamePlayer(
 
     fun addTtl(ttl: Double) {
         setTtl(tntNextTtl + ttl)
-    }
-
-    fun canPlaceSheep(): Boolean {
-        return sheep == null
-    }
-
-    fun hasAddedSheep(): Boolean {
-        return sheep != null
     }
 
     fun canUseSpecialAbility(): Boolean {
