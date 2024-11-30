@@ -1,6 +1,7 @@
 package live.adamlearns.animalroyale
 
 import live.adamlearns.animalroyale.extensions.asTextColor
+import live.adamlearns.animalroyale.extensions.clamp
 import live.adamlearns.animalroyale.extensions.isAliveAndValid
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
@@ -109,15 +110,15 @@ class GamePlayer(
     }
 
     private fun setPitch(pitch: Int) {
-        tntNextPitch = Util.clamp(pitch, MIN_PITCH, MAX_PITCH)
+        tntNextPitch = pitch.clamp(MIN_PITCH, MAX_PITCH)
     }
 
     private fun setPower(power: Int) {
-        tntNextPower = Util.clamp(power, MIN_POWER, MAX_POWER)
+        tntNextPower = power.clamp(MIN_POWER, MAX_POWER)
     }
 
     private fun setTtl(ttl: Double) {
-        tntNextTtl = Util.clamp(ttl, MIN_TTL, MAX_TTL)
+        tntNextTtl = ttl.clamp(MIN_TTL, MAX_TTL)
     }
 
     companion object {

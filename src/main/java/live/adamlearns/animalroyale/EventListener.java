@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 
 public class EventListener implements Listener {
 
@@ -58,7 +57,7 @@ public class EventListener implements Listener {
                     if (ownerOfSheep != null) {
                         TextComponent txt1 = ownerOfSheep.getColorfulName();
                         TextComponent txt2 = Component.text(" fell too far").color(TextColor.color(NamedTextColor.RED));
-                        gameContext.javaPlugin.getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2));
+                        gameContext.javaPlugin.getServer().broadcast(ComponentUtils.join(txt1, txt2));
                         gameContext.getTwitchChat().sendMessageToChannel(ownerOfSheep.getNameForTwitch() + " fell too far admRocket");
                     }
                 }
@@ -95,7 +94,7 @@ public class EventListener implements Listener {
             TextComponent remainingPlayerNames = getRemainingPlayers();
             TextComponent txt1 = Component.text(numLivingSheep, TextColor.color(NamedTextColor.AQUA));
             TextComponent txt2 = Component.text(" sheep remaining");
-            gameContext.javaPlugin.getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2, remainingPlayerNames));
+            gameContext.javaPlugin.getServer().broadcast(ComponentUtils.join(txt1, txt2, remainingPlayerNames));
         }
 
         // We have a winner!
@@ -176,7 +175,7 @@ public class EventListener implements Listener {
                 TextComponent txt2 = Component.text(" blasted ");
                 TextComponent txt3 = ownerOfDyingSheep.getColorfulName();
                 TextComponent txt4 = Component.text(" to smithereens", TextColor.color(NamedTextColor.RED));
-                deathMessage = MessageUtil.MergeTextComponents(txt1, txt2, txt3, txt4);
+                deathMessage = ComponentUtils.join(txt1, txt2, txt3, txt4);
                 twitchDeathMessage = ownerOfTnt.getNameForTwitch() + " blasted " + ownerOfDyingSheep.getNameForTwitch() + " admNuke";
 
                 incrementKillsForPlayer(ownerOfTnt);

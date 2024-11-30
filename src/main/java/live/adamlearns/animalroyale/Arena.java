@@ -1,5 +1,6 @@
 package live.adamlearns.animalroyale;
 
+import live.adamlearns.animalroyale.extensions.IntKt;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -368,7 +369,7 @@ public class Arena {
         final Location sheepLocation = location.clone();
 
         final int distance = arenaSize;
-        sheepLocation.add(random.nextDouble() * distance * Util.getOneOrNegativeOne(), 0, random.nextDouble() * distance);
+        sheepLocation.add(random.nextDouble() * distance * IntKt.randomSign(), 0, random.nextDouble() * distance);
         final Block highestBlockAtSheepLocation = world.getHighestBlockAt(sheepLocation.getBlockX(), sheepLocation.getBlockZ());
         final Material highestBlockType = highestBlockAtSheepLocation.getType();
 
@@ -403,7 +404,7 @@ public class Arena {
         TextComponent txt2 = gamePlayer.getColorfulName();
         TextComponent txt3 = Component.text(" joined at ");
         TextComponent txt4 = Component.text("(" + relativeVector.getBlockX() + ", " + relativeVector.getBlockZ() + ") ", TextColor.color(NamedTextColor.LIGHT_PURPLE));
-        gameContext.javaPlugin.getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2, txt3, txt4));
+        gameContext.javaPlugin.getServer().broadcast(ComponentUtils.join(txt1, txt2, txt3, txt4));
 
         return sheep;
     }
