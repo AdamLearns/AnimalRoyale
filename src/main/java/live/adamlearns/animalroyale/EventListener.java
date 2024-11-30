@@ -101,7 +101,7 @@ public class EventListener implements Listener {
         // We have a winner!
         if (numLivingSheep == 1) {
             final GamePlayer lastRemainingPlayer = players.getLastRemainingPlayer();
-            final String titleText = String.format("%s wins!", lastRemainingPlayer.getName());
+            final String titleText = String.format("%s wins!", lastRemainingPlayer.name);
             final Arena arena = gameContext.getArena();
             final String subtitle = String.format("#1 of %d sheep", arena.getStartingNumSheep());
             arena.cancelSuddenDeath();
@@ -194,7 +194,7 @@ public class EventListener implements Listener {
     private void playerDied(final GamePlayer gamePlayer) {
         Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> {
             final Objective objective = gameContext.getKillsScoreboardObjective();
-            final Score score = objective.getScore(gamePlayer.getName());
+            final Score score = objective.getScore(gamePlayer.name);
             score.customName(gamePlayer.getNameForScoreboardWhenDead());
         });
     }
@@ -202,7 +202,7 @@ public class EventListener implements Listener {
     private void incrementKillsForPlayer(final GamePlayer gamePlayer) {
         Bukkit.getScheduler().runTask(gameContext.javaPlugin, x -> {
             final Objective objective = gameContext.getKillsScoreboardObjective();
-            Score score = objective.getScore(gamePlayer.getName());
+            Score score = objective.getScore(gamePlayer.name);
             score.setScore(score.getScore() + 1);
         });
     }

@@ -385,7 +385,7 @@ public class Arena {
         // we'll try adding a very slow potion.
         sheep.setAI(true);
 
-        sheep.customName(Component.text(gamePlayer.getName()));
+        sheep.customName(Component.text(gamePlayer.name));
         sheep.setCustomNameVisible(true);
         sheep.setRotation(90, 45);
         sheep.setAware(false);
@@ -507,7 +507,7 @@ public class Arena {
         final Collection<GamePlayer> allPlayers = gameContext.players.getAllPlayers().values();
         for (final GamePlayer player : allPlayers) {
             final Sheep sheep = player.getSheep();
-            if (!sheep.isValid() || sheep.isDead() || !player.hasSetTntParameters()) {
+            if (!sheep.isValid() || sheep.isDead() || !player.getHasSetTntParameters()) {
                 continue;
             }
 

@@ -102,7 +102,7 @@ class GameContext(
             )
             killsScoreboardObjective?.displaySlot = DisplaySlot.SIDEBAR
 
-            for (gamePlayer in players.allPlayers.values) {
+            for (gamePlayer in players.allPlayers.values.filterNotNull()) {
                 killsScoreboardObjective?.getScore(gamePlayer.name)?.let { score ->
                     score.customName(gamePlayer.colorfulName)
                     score.score = 0 //Integer only!
@@ -150,9 +150,10 @@ class GameContext(
         }
     }
 
-    fun getOwnerOfEntity(entity: Entity): GamePlayer =
-        checkNotNull(entity.customName() as TextComponent?)
-            .let { nameComponent -> players.getPlayer(nameComponent.content()) }
+    fun getOwnerOfEntity(entity: Entity): GamePlayer {
+        val name = checkNotNull(entity.customName() as TextComponent?).content()
+        return checkNotNull(players.getPlayer(name))
+    }
 
     /**
      * Schedules a new game to be started in the future.
