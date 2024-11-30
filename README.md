@@ -76,6 +76,6 @@ This was all made in 5 days on Adam Learns for the purpose of learning, so I was
 
 ## Troubleshooting
 
-### Plugin builds from terminal but IntelliJ complains shows errors.
+### Plugin builds from terminal but IntelliJ shows errors
 
 Your dependencies may be outdated. Make sure to click on the icon with two "circling" arrows and sync the project.
