@@ -316,7 +316,8 @@ public class Arena {
         return true;
     }
 
-    private Vector @NotNull [] getArenaSampleCoordinates(Location location) {
+    @NotNull
+    private Vector[] getArenaSampleCoordinates(Location location) {
         final int blockX = location.getBlockX();
         final int blockY = location.getBlockY();
         final int blockZ = location.getBlockZ();
