@@ -41,6 +41,11 @@ TWITCH_CHAT_OAUTH_TOKEN=jktehwkjtewhjkewhtjlkewhtlk
 TWITCH_CHANNEL_NAME=Adam13531
 ```
 
+### Other helpful tips when running
+
+- Hold F3 and press P (regardless of what "P" is bound to) to disable pausing the game when the focus is lost.
+- Turn night time off with `/time set day` and `/gamerule doDaylightCycle false`
+
 ## How to play
 
 I wrote [a quick guide](https://docs.google.com/document/d/1moUj-t_0jbqze7Hj56434eO6iMPjn2eO_aeHCuQcwMw/edit). The only undocumented commands are exclusively for the streamer:
