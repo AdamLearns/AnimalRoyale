@@ -1,7 +1,6 @@
 package live.adamlearns.animalroyale;
 
 import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
 
 public final class Util {
     // Don't allow construction of this class since it only has static members.

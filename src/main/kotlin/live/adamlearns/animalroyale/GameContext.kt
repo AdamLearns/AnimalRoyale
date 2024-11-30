@@ -150,9 +150,9 @@ class GameContext(
         }
     }
 
-    fun getOwnerOfEntity(entity: Entity): GamePlayer {
-        val name = checkNotNull(entity.customName() as TextComponent?).content()
-        return checkNotNull(players.getPlayer(name))
+    fun getOwnerOfEntity(entity: Entity): GamePlayer? {
+        val name = (entity.customName() as TextComponent?)?.content() ?: return null
+        return players.getPlayer(name)
     }
 
     /**
