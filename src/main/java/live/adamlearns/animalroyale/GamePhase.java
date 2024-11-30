@@ -12,4 +12,4 @@ package live.adamlearns.animalroyale;
  * <p>
  * GAMEPLAY: people can't join, but the sheep start performing their actions
  */
-public enum GamePhase {CREATING_ARENA, LOBBY, PRE_GAMEPLAY, GAMEPLAY, POST_GAME}
+public enum GamePhase {CREATING_ARENA, LOBBY, PRE_GAMEPLAY, GAMEPLAY}

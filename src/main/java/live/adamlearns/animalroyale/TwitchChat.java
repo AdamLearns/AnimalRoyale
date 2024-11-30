@@ -74,50 +74,42 @@ public class TwitchChat {
             gameContext.getArena().startSuddenDeath();
         }
 
-        if (command.equals("!identify")) {
-            onIdentify(senderName, args);
-            return;
+        switch (command) {
+            case "!identify":
+                onIdentify(senderName, args);
+                return;
+            case "!where":
+                onWhere(senderName, args);
+                return;
+            case "!teleport":
+            case "!tp":
+                onTeleport(senderName, args);
+                return;
+            case "!addyaw":
+                onAddYaw(senderName, args);
+                return;
+            case "!addpitch":
+                onAddPitch(senderName, args);
+                return;
+            case "!addpower":
+                onAddPower(senderName, args);
+                return;
+            case "!addttl":
+                onAddTtl(senderName, args);
+                return;
+            case "!join":
+            case "!color":
+                onJoin(senderName, args);
+                return;
+            case "!tnt":
+                onTnt(senderName, args);
+                return;
+            case "!tntcancel":
+            case "!tntstop":
+                onTntCancel(senderName, args);
+                return;
         }
 
-        if (command.equals("!where")) {
-            onWhere(senderName, args);
-            return;
-        }
-
-        if (command.equals("!teleport") || command.equals("!tp")) {
-            onTeleport(senderName, args);
-            return;
-        }
-
-        if (command.equals("!addyaw")) {
-            onAddYaw(senderName, args);
-            return;
-        }
-        if (command.equals("!addpitch")) {
-            onAddPitch(senderName, args);
-            return;
-        }
-        if (command.equals("!addpower")) {
-            onAddPower(senderName, args);
-            return;
-        }
-        if (command.equals("!addttl")) {
-            onAddTtl(senderName, args);
-            return;
-        }
-
-        if ((command.equals("!join") || command.equals("!color"))) {
-            onJoin(senderName, args);
-            return;
-        }
-        if (command.equals("!tnt")) {
-            onTnt(senderName, args);
-            return;
-        }
-        if (command.equals("!tntcancel") || command.equals("!tntstop")) {
-            onTntCancel(senderName, args);
-            return;
-        }
     }
 
     private void onTntCancel(final String senderName, final String[] args) {
@@ -183,13 +175,8 @@ public class TwitchChat {
         }
 
         Color color = Color.RED;
-        String colorString = args.length > 0 ? args[0] : null;
-        if (colorString != null) {
-            colorString = colorString.toLowerCase();
-            switch (colorString) {
-                case "red":
-                    color = Color.RED;
-                    break;
+        if (args.length > 0) {
+            switch (args[0].toLowerCase()) {
                 case "aqua":
                 case "cyan":
                     color = Color.AQUA;
@@ -227,6 +214,9 @@ public class TwitchChat {
                     break;
                 case "white":
                     color = Color.WHITE;
+                    break;
+                case "red":
+                default:
                     break;
             }
         }
@@ -426,10 +416,6 @@ public class TwitchChat {
             // No point in spamming anything in this "catch" because Twitch chat loves to go bonkers, so they're going
             // to produce tons of exceptions.
         }
-    }
-
-    public TwitchClient getTwitchClient() {
-        return twitchClient;
     }
 
     public void destroy() {

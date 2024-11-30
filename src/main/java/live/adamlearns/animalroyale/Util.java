@@ -35,7 +35,7 @@ public final class Util {
 
     /**
      * Locations that are at the edge of a block may cause entities to suffocate in nearby blocks. To fix this, you
-     * apparently just pick the center of the block as mentioned here: https://www.spigotmc.org/threads/teleporting-player-to-center-of-a-block.255699/?__cf_chl_jschl_tk__=4e2c930c0179625dd750d46b94c5c116f2d94707-1583359206-0-AWv8EYIRfuycEC86A
+     * apparently just pick the center of the block as mentioned <a href="https://www.spigotmc.org/threads/teleporting-player-to-center-of-a-block.255699/?__cf_chl_jschl_tk__=4e2c930c0179625dd750d46b94c5c116f2d94707-1583359206-0-AWv8EYIRfuycEC86A">here</a>
      *
      * @param location
      */

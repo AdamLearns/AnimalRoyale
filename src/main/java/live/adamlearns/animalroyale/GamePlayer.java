@@ -3,6 +3,7 @@ package live.adamlearns.animalroyale;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Sheep;
@@ -99,15 +100,8 @@ public class GamePlayer {
         nameColor = GamePlayer.getChatColorFromDyeColor(sheepColor);
     }
 
-    // Use getColorfulName instead
-    @Deprecated
-    public String getNameColoredForInGameChat() {
-        return nameColor + name;
-    }
-
-    public String getNameForScoreboardWhenDead() {
-        // The order for coloring a struck-out name is COLOR + STRIKETHROUGH, not the other way around.
-        return nameColor.toString() + ChatColor.STRIKETHROUGH + name;
+    public TextComponent getNameForScoreboardWhenDead() {
+        return Component.text(name).color(nameColor).decorate(TextDecoration.STRIKETHROUGH);
     }
 
     public TextComponent getColorfulName() {

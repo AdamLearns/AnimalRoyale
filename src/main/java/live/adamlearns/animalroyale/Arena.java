@@ -13,8 +13,8 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -67,7 +67,6 @@ public class Arena {
      */
     private void setupNewArenaLocation() {
         final World world = gameContext.getWorld();
-        final ThreadLocalRandom random = ThreadLocalRandom.current();
         try {
             location = getNextArenaLocation(world);
         } catch (final Exception e) {
@@ -183,7 +182,6 @@ public class Arena {
     private void addWoolBorderToArena() {
         final World world = gameContext.getWorld();
 
-        final int centerZ = location.getBlockZ();
         final int startX = getWestX();
         final int finalX = getEastX();
         // We are going to be facing south, which is the positive Z direction, so we only need to sample in that direction
@@ -283,15 +281,12 @@ public class Arena {
     }
 
     /**
-     * Returns if a biome is considered a bad location for the arena, e.g. it has too much water. Water isn't
+     * Returns if a biome is considered a bad location for the arena, e.g. it has too much water or too many trees. Water isn't
      * necessarily a problem since we can cover liquids and hazards, but it's not a very easy arena to fight in. The one
      * ocean type that we DON'T consider bad just for some variety is Biome.FROZEN_OCEAN.
-     *
-     * @param biome
-     * @return
      */
     private boolean isBiomeBad(final Biome biome) {
-        final Biome[] badBiomes = {Biome.OCEAN, Biome.COLD_OCEAN, Biome.DEEP_COLD_OCEAN, Biome.DEEP_LUKEWARM_OCEAN, Biome.DEEP_OCEAN, Biome.WARM_OCEAN, Biome.LUKEWARM_OCEAN};
+        final Biome[] badBiomes = {Biome.OCEAN, Biome.JUNGLE, Biome.BIRCH_FOREST, Biome.COLD_OCEAN, Biome.DEEP_COLD_OCEAN, Biome.DEEP_LUKEWARM_OCEAN, Biome.DEEP_OCEAN, Biome.WARM_OCEAN, Biome.LUKEWARM_OCEAN};
         return Util.arrayIncludes(badBiomes, biome);
     }
 
@@ -307,18 +302,7 @@ public class Arena {
         final World world = location.getWorld();
 
         // This location
-        final int blockX = location.getBlockX();
-        final int blockY = location.getBlockY();
-        final int blockZ = location.getBlockZ();
-
-        // We'll just test the four corners of the arena and the center of it
-        final Vector[] coordinates = {
-                new Vector(blockX - arenaSize, blockY, blockZ),
-                new Vector(blockX + arenaSize, blockY, blockZ),
-                new Vector(blockX - arenaSize, blockY, blockZ + arenaSize),
-                new Vector(blockX + arenaSize, blockY, blockZ + arenaSize),
-                new Vector(blockX, blockY, blockZ + arenaSize / 2),
-        };
+        final Vector[] coordinates = getArenaSampleCoordinates(location);
 
         for (final Vector vector : coordinates) {
             // Sampling blocks in unloaded parts of the world is not very performant since Minecraft has to load
@@ -330,6 +314,21 @@ public class Arena {
         }
 
         return true;
+    }
+
+    private Vector @NotNull [] getArenaSampleCoordinates(Location location) {
+        final int blockX = location.getBlockX();
+        final int blockY = location.getBlockY();
+        final int blockZ = location.getBlockZ();
+
+        // We'll just test the four corners of the arena and the center of it
+        return new Vector[]{
+                new Vector(blockX - arenaSize, blockY, blockZ),
+                new Vector(blockX + arenaSize, blockY, blockZ),
+                new Vector(blockX - arenaSize, blockY, blockZ + arenaSize),
+                new Vector(blockX + arenaSize, blockY, blockZ + arenaSize),
+                new Vector(blockX, blockY, blockZ + arenaSize / 2),
+        };
     }
 
     /**
@@ -511,7 +510,7 @@ public class Arena {
                 continue;
             }
 
-            Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> createTntForSheep(sheep, player.getTntNextYaw(), player.getTntNextPitch(), player.getTntNextPower(), player.getTntNextTtl())
+            Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> createTntForSheep(sheep, player.getTntNextPower(), player.getTntNextTtl())
             );
         }
     }
@@ -525,12 +524,12 @@ public class Arena {
      * @param tntNextPower
      * @param tntNextTtl
      */
-    private void createTntForSheep(final Sheep sheep, final int tntNextYaw, final int tntNextPitch, final int tntNextPower, final double tntNextTtl) {
+    private void createTntForSheep(final Sheep sheep, final int tntNextPower, final double tntNextTtl) {
         final TNTPrimed tnt = (TNTPrimed) sheep.getWorld().spawnEntity(sheep.getLocation(), EntityType.TNT);
         tnt.setFuseTicks((int) (tntNextTtl * Ticks.TICKS_PER_SECOND));
 
         // We want to be able to identify this TNT later, so we store a name, but we don't want the name to be visible
-        tnt.setCustomName(sheep.getCustomName());
+        tnt.customName(sheep.customName());
 
         tnt.setCustomNameVisible(false);
 

@@ -1,7 +1,6 @@
 package live.adamlearns.animalroyale;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 
 public class MessageUtil {

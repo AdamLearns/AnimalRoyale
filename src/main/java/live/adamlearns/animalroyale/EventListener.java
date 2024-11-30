@@ -4,9 +4,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -22,7 +21,9 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,12 +54,11 @@ public class EventListener implements Listener {
             if (gameContext.getGamePhase() == GamePhase.GAMEPLAY) {
                 final LivingEntity entity = (LivingEntity) event.getEntity();
                 if (entity.getType() == EntityType.SHEEP && event.getDamage() >= entity.getHealth()) {
-                    final String sheepName = entity.getCustomName();
-                    final GamePlayer ownerOfSheep = gameContext.getPlayers().getPlayer(sheepName);
+                    final GamePlayer ownerOfSheep = gameContext.getOwnerOfEntity(entity);
                     if (ownerOfSheep != null) {
                         TextComponent txt1 = ownerOfSheep.getColorfulName();
                         TextComponent txt2 = Component.text(" fell too far").color(TextColor.color(NamedTextColor.RED));
-                        gameContext.getJavaPlugin().getServer().broadcast(txt1.append(txt2));
+                        gameContext.getJavaPlugin().getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2));
                         gameContext.getTwitchChat().sendMessageToChannel(ownerOfSheep.getNameForTwitch() + " fell too far admRocket");
                     }
                 }
@@ -76,8 +76,7 @@ public class EventListener implements Listener {
         }
 
         // Make sure this was a player sheep that died and not anything else
-        final String sheepName = dyingEntity.getCustomName();
-        final GamePlayer ownerOfDyingSheep = gameContext.getPlayers().getPlayer(sheepName);
+        final GamePlayer ownerOfDyingSheep = gameContext.getOwnerOfEntity(dyingEntity);
         if (ownerOfDyingSheep == null) {
             return;
         }
@@ -93,15 +92,7 @@ public class EventListener implements Listener {
 
         if (shouldPrintMessage) {
             // This gets called after the entity is already dead, so this message will have the correct number.
-            final List<GamePlayer> playersWithLivingSheep = gameContext.getPlayers().getPlayersWithLivingSheep();
-            TextComponent remainingPlayerNames = Component.text("");
-            if (playersWithLivingSheep.size() <= 10) {
-                for (final GamePlayer player : playersWithLivingSheep) {
-                    remainingPlayerNames = remainingPlayerNames.append(player.getColorfulName()).append(Component.text(" "));
-                }
-
-                remainingPlayerNames = Component.text(": ").append(remainingPlayerNames);
-            }
+            TextComponent remainingPlayerNames = getRemainingPlayers();
             TextComponent txt1 = Component.text(numLivingSheep, TextColor.color(NamedTextColor.AQUA));
             TextComponent txt2 = Component.text(" sheep remaining");
             gameContext.getJavaPlugin().getServer().broadcast(MessageUtil.MergeTextComponents(txt1, txt2, remainingPlayerNames));
@@ -114,10 +105,26 @@ public class EventListener implements Listener {
             final Arena arena = gameContext.getArena();
             final String subtitle = String.format("#1 of %d sheep", arena.getStartingNumSheep());
             arena.cancelSuddenDeath();
-            gameContext.getFirstPlayer().sendTitle(titleText, subtitle, 10, 200, 20);
+
+            Title.Times times = Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(10), Duration.ofSeconds(1));
+            Title title = Title.title(Component.text(titleText), Component.text(subtitle), times);
+            gameContext.getFirstPlayer().showTitle(title);
             gameContext.getTwitchChat().sendMessageToChannel(lastRemainingPlayer.getNameForTwitch() + " won the battle! PogChamp GG, everyone!");
             gameContext.scheduleArenaReset(300);
         }
+    }
+
+    private @NotNull TextComponent getRemainingPlayers() {
+        final List<GamePlayer> playersWithLivingSheep = gameContext.getPlayers().getPlayersWithLivingSheep();
+        TextComponent remainingPlayerNames = Component.text("");
+        if (playersWithLivingSheep.size() <= 10) {
+            for (final GamePlayer player : playersWithLivingSheep) {
+                remainingPlayerNames = remainingPlayerNames.append(player.getColorfulName()).append(Component.text(" "));
+            }
+
+            remainingPlayerNames = Component.text(": ").append(remainingPlayerNames);
+        }
+        return remainingPlayerNames;
     }
 
     @EventHandler
@@ -144,8 +151,7 @@ public class EventListener implements Listener {
             return;
         }
 
-        final String sheepName = damagedEntity.getCustomName();
-        final GamePlayer ownerOfDyingSheep = gameContext.getPlayers().getPlayer(sheepName);
+        final GamePlayer ownerOfDyingSheep = gameContext.getOwnerOfEntity(damagedEntity);
 
         if (ownerOfDyingSheep == null) {
             return;
@@ -157,8 +163,7 @@ public class EventListener implements Listener {
             deathMessage = ownerOfDyingSheep.getColorfulName().append(Component.text(" was consumed by lava :(", TextColor.color(NamedTextColor.RED)));
             twitchDeathMessage = ownerOfDyingSheep.getNameForTwitch() + " was consumed by lava admFire";
         } else if (event.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION && damagingEntity.getType() == EntityType.TNT) {
-            final String tntName = damagingEntity.getCustomName();
-            final GamePlayer ownerOfTnt = gameContext.getPlayers().getPlayer(tntName);
+            final GamePlayer ownerOfTnt = gameContext.getOwnerOfEntity(damagingEntity);
             if (ownerOfTnt == null) {
                 return;
             }
@@ -189,23 +194,15 @@ public class EventListener implements Listener {
     private void playerDied(final GamePlayer gamePlayer) {
         Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
             final Objective objective = gameContext.getKillsScoreboardObjective();
-            final Score score = objective.getScore(gamePlayer.getNameColoredForInGameChat());
-            final int origScore = score.getScore();
-            Objects.requireNonNull(objective.getScoreboard()).resetScores(gamePlayer.getNameColoredForInGameChat());
-
-            final Score newScore = objective.getScore(gamePlayer.getNameForScoreboardWhenDead());
-            newScore.setScore(origScore);
+            final Score score = objective.getScore(gamePlayer.getName());
+            score.customName(gamePlayer.getNameForScoreboardWhenDead());
         });
     }
 
     private void incrementKillsForPlayer(final GamePlayer gamePlayer) {
         Bukkit.getScheduler().runTask(gameContext.getJavaPlugin(), x -> {
             final Objective objective = gameContext.getKillsScoreboardObjective();
-            Score score = objective.getScore(gamePlayer.getNameColoredForInGameChat());
-            // It's possible that they died just before killing someone else, in which case we have to update their "dead" name on the leaderboard.
-            if (!score.isScoreSet()) {
-                score = objective.getScore(gamePlayer.getNameForScoreboardWhenDead());
-            }
+            Score score = objective.getScore(gamePlayer.getName());
             score.setScore(score.getScore() + 1);
         });
     }

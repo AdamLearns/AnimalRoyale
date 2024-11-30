@@ -1,7 +1,6 @@
 package live.adamlearns.animalroyale;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;

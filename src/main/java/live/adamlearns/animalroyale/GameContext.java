@@ -1,8 +1,11 @@
 package live.adamlearns.animalroyale;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -39,7 +42,7 @@ public class GameContext {
     public void advanceGamePhaseToLobby() {
         javaPlugin.getLogger().info("Transitioned to LOBBY phase");
         final String validDyeColors = Stream.of(DyeColor.values()).map(s -> s.toString().toLowerCase()).collect(Collectors.joining(" "));
-        twitchChat.sendMessageToChannel("You may now join the game with \"!join COLOR\", where COLOR is one of these: " + validDyeColors);
+        twitchChat.sendMessageToChannel("You may now join the game with \"!join COLOR\", where COLOR is one of these: " + validDyeColors + ". See https://imgur.com/XMui9vf.png for how to play.");
         gamePhase = GamePhase.LOBBY;
     }
 
@@ -97,12 +100,13 @@ public class GameContext {
             final ScoreboardManager manager = Bukkit.getScoreboardManager();
 
             final Scoreboard board = manager.getNewScoreboard();
-            killsScoreboardObjective = board.registerNewObjective("Kills", "dummy", "Kills");
+            killsScoreboardObjective = board.registerNewObjective("Kills", Criteria.DUMMY, Component.text("Kills"));
             killsScoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
             for (final GamePlayer gamePlayer :
                     players.getAllPlayers().values()) {
-                final Score score = killsScoreboardObjective.getScore(gamePlayer.getNameColoredForInGameChat());
+                final Score score = killsScoreboardObjective.getScore(gamePlayer.getName());
+                score.customName(gamePlayer.getColorfulName());
                 score.setScore(0); //Integer only!
             }
 
@@ -174,6 +178,12 @@ public class GameContext {
 
     public Players getPlayers() {
         return players;
+    }
+
+    public GamePlayer getOwnerOfEntity(Entity entity) {
+        final TextComponent entityName = (TextComponent)entity.customName();
+        assert entityName != null;
+        return getPlayers().getPlayer(entityName.content());
     }
 
     public GamePhase getGamePhase() {
