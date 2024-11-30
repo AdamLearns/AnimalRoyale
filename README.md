@@ -1,14 +1,16 @@
-# MinecraftAnimalRoyale
+## MinecraftAnimalRoyale
 
 A plug-in for Minecraft for a Twitch-chat-based battle-royale game where sheep fire TNT at each other. 🐑🧨
 
 Recap video talking about the project here: https://youtu.be/3q9EyGqfuyc
 
-# Where to play
+This code existed on GitLab originally.
+
+## Where to play
 
 There's a single host for the game, then everybody else plays through Twitch chat, _not_ the Minecraft client. If you're hosting, then read below about how to build the game. If you'd like to play through Twitch chat, then you'll need to find a stream where someone is already hosting it. I.e. _I'm_ not hosting it, so it's not like I can just give you a link or IP address here.
 
-# Building / running
+## Building / running
 
 1. Install Maven
 1. Install IntelliJ IDEA Community Edition
@@ -39,7 +41,7 @@ TWITCH_CHAT_OAUTH_TOKEN=jktehwkjtewhjkewhtjlkewhtlk
 TWITCH_CHANNEL_NAME=Adam13531
 ```
 
-# How to play
+## How to play
 
 I wrote [a quick guide](https://docs.google.com/document/d/1moUj-t_0jbqze7Hj56434eO6iMPjn2eO_aeHCuQcwMw/edit). The only undocumented commands are exclusively for the streamer:
 
@@ -47,7 +49,7 @@ I wrote [a quick guide](https://docs.google.com/document/d/1moUj-t_0jbqze7Hj5643
 - `!newarena` - start a new match
 - `!startrounds` - force a match to start before the lobby time is up
 
-# Known bugs
+## Known bugs
 
 This was all made in 5 days on Adam Learns for the purpose of learning, so I wasn't planning on supporting it long-term. Here are some known bugs:
 
@@ -58,7 +60,7 @@ This was all made in 5 days on Adam Learns for the purpose of learning, so I was
 - Some things are hard-coded (e.g. "adm\*" emotes and AdamLearnsBot as the name to whisper).
 - This isn't a bug, but I just wanted to point out that `doc/TODO_ARCHIVE` has lots of ideas that I couldn't get to, e.g. bouncing TNT, a rail gun, a lava gun, and the concept of a shop. Search for "Extra ideas".
 
-# Launching from the command line
+## Launching from the command line
 
 - Download [Prism Launcher](https://prismlauncher.org/)
 - Add a client instance
