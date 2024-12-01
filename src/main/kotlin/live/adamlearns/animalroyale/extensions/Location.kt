@@ -11,3 +11,32 @@ fun Location.setToCenterOfBlock() {
     this.x = floor(this.x) + 0.5
     this.z = floor(this.z) + 0.5
 }
+
+/**
+ * Gets the X coordinate of the western boundary of the arena.
+ */
+fun Location.westX(depth: Int): Int {
+    return blockX - depth
+}
+
+/**
+ * Gets the X coordinate of the eastern boundary of the arena.
+ */
+fun Location.eastX(depth: Int): Int {
+    return blockX + depth
+}
+
+/**
+ * Gets the Z coordinate of the northern boundary of the arena.
+ */
+fun Location.northZ(depth: Int): Int {
+    return blockZ
+}
+
+/**
+ * Gets the Z coordinate of the southern boundary of the arena.
+ */
+fun Location.southZ(depth: Int): Int {
+    return blockZ + depth
+}
+
