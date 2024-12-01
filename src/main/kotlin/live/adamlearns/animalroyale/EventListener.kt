@@ -10,6 +10,7 @@ import net.kyori.adventure.title.Title.Times
 import net.kyori.adventure.util.Ticks
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.damage.DamageType
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
@@ -44,26 +45,9 @@ class EventListener(private val gameContext: GameContext) : Listener {
 
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent) {
-        if (event.cause != EntityDamageEvent.DamageCause.FALL) {
-            return
-        }
-
-        when (gameContext.gamePhase) {
-            GamePhase.LOBBY, GamePhase.PRE_GAMEPLAY -> {
-                // Prevent the fall animation from happening since no damage is being taken
-                event.isCancelled = true
-            }
-            GamePhase.GAMEPLAY -> {
-                val entity = event.entity as LivingEntity
-                if (entity.type == EntityType.SHEEP && event.damage >= entity.health) {
-                    val ownerOfSheep = gameContext.getOwnerOfEntity(entity) ?: return
-                    val txt1 = ownerOfSheep.colorfulName
-                    val txt2 = Component.text(" fell too far").color(TextColor.color(NamedTextColor.RED))
-                    gameContext.javaPlugin.server.broadcast(join(txt1, txt2))
-                    gameContext.twitchChat?.sendMessageToChannel(ownerOfSheep.nameForTwitch + " fell too far admRocket")
-                }
-            }
-            else -> {}
+        // Certain damage causes (e.g. fall) are ignored before the game starts
+        if (DAMAGE_CAUSES_IGNORED_OUTSIDE_GAMEPLAY.contains(event.cause) && gameContext.gamePhase != GamePhase.GAMEPLAY) {
+            event.isCancelled = true
         }
     }
 
@@ -76,6 +60,24 @@ class EventListener(private val gameContext: GameContext) : Listener {
         // Make sure this was a player sheep that died and not anything else
         val ownerOfDyingSheep = gameContext.getOwnerOfEntity(event.entity) ?: return
         playerDied(ownerOfDyingSheep)
+
+        // Print a message for special death causes
+        when (event.entity.lastDamageCause?.cause) {
+            EntityDamageEvent.DamageCause.FALL -> {
+                val txt1 = ownerOfDyingSheep.colorfulName
+                val txt2 = Component.text(" fell too far").color(TextColor.color(NamedTextColor.RED))
+                gameContext.javaPlugin.server.broadcast(join(txt1, txt2))
+                gameContext.twitchChat?.sendMessageToChannel(ownerOfDyingSheep.nameForTwitch + " fell too far admRocket")
+            }
+            EntityDamageEvent.DamageCause.DROWNING -> {
+                val txt1 = ownerOfDyingSheep.colorfulName
+                val txt2 = Component.text(" drowned").color(TextColor.color(NamedTextColor.DARK_BLUE))
+                gameContext.javaPlugin.server.broadcast(join(txt1, txt2))
+                gameContext.twitchChat?.sendMessageToChannel(ownerOfDyingSheep.nameForTwitch + " drowned admBoat")
+            }
+            else -> {}
+        }
+
 //        gameContext.getTwitchChat().getTwitchClient().getChat().sendPrivateMessage(ownerOfDyingSheep.getName(), "Your sheep died.");
         val numLivingSheep = gameContext.players.numLivingSheep
 
@@ -199,5 +201,12 @@ class EventListener(private val gameContext: GameContext) : Listener {
     @EventHandler
     fun onPlayerKick(event: PlayerKickEvent) {
         gameContext.playerLeft(event.player)
+    }
+
+    companion object {
+        val DAMAGE_CAUSES_IGNORED_OUTSIDE_GAMEPLAY = listOf(
+            EntityDamageEvent.DamageCause.FALL,
+            EntityDamageEvent.DamageCause.DROWNING
+        )
     }
 }
