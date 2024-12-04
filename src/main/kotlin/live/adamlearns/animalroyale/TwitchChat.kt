@@ -4,7 +4,7 @@ import com.github.philippheuer.credentialmanager.domain.OAuth2Credential
 import com.github.twitch4j.TwitchClient
 import com.github.twitch4j.TwitchClientBuilder
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent
-import com.github.twitch4j.common.events.user.PrivateMessageEvent
+import com.github.twitch4j.common.enums.CommandPermission
 import io.github.cdimascio.dotenv.Dotenv
 import live.adamlearns.animalroyale.extensions.isAliveAndValid
 import live.adamlearns.animalroyale.extensions.sample
@@ -41,7 +41,6 @@ class TwitchChat(private val gameContext: GameContext) {
             .build()
         twitchClient.chat.joinChannel(twitchChannelToJoin)
         twitchClient.eventManager.onEvent(ChannelMessageEvent::class.java, this::onChatMessage)
-        twitchClient.eventManager.onEvent(PrivateMessageEvent::class.java, this::onWhisper)
     }
 
     fun sendMessageToChannel(text: String?) {
@@ -59,20 +58,20 @@ class TwitchChat(private val gameContext: GameContext) {
         return name.equals(twitchChannelToJoin, ignoreCase = true)
     }
 
-    private fun handleChatMessage(senderName: String, message: String) {
+    private fun handleChatMessage(senderName: String, message: String, isAdmin: Boolean) {
         val commandAndArgs = message.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val command = commandAndArgs[0]
         val args = Arrays.copyOfRange(commandAndArgs, 1, commandAndArgs.size)
 
-        if (command == "!startrounds" && isTwitchUserAnAdmin(senderName)) {
+        if (command == "!startrounds" && isAdmin) {
             gameContext.arena?.startRounds()
         }
 
-        if (command == "!newarena" && isTwitchUserAnAdmin(senderName)) {
+        if (command == "!newarena" && isAdmin) {
             gameContext.startNewGame()
         }
 
-        if (command == "!lava" && isTwitchUserAnAdmin(senderName)) {
+        if (command == "!lava" && isAdmin) {
             gameContext.arena?.startSuddenDeath()
         }
 
@@ -227,17 +226,14 @@ class TwitchChat(private val gameContext: GameContext) {
         }
     }
 
-    private fun onWhisper(event: PrivateMessageEvent) {
-        val senderName = event.user.name
-        val message = event.message.lowercase(Locale.getDefault())
-
-        handleChatMessage(senderName, message)
-    }
-
     private fun onChatMessage(event: ChannelMessageEvent) {
         val senderName = event.user.name
         val message = event.message.lowercase(Locale.getDefault())
-        handleChatMessage(senderName, message)
+        val isMod = isTwitchUserAnAdmin(senderName) || event.permissions.any {
+            ADMIN_PERMISSIONS.contains(it)
+        }
+
+        handleChatMessage(senderName, message, isMod)
     }
 
     private fun onAddYaw(senderName: String, args: Array<String>) {
@@ -368,5 +364,9 @@ class TwitchChat(private val gameContext: GameContext) {
 
     fun destroy() {
         twitchClient.chat.disconnect()
+    }
+
+    companion object {
+        val ADMIN_PERMISSIONS = listOf(CommandPermission.OWNER, CommandPermission.BROADCASTER, CommandPermission.MODERATOR)
     }
 }
