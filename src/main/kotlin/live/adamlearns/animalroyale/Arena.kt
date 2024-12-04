@@ -356,14 +356,14 @@ class Arena(private val gameContext: GameContext) {
         // facing south, the coordinates go from high to low, so we invert them, that way people see it as it is on the screen.
         val relativeVector = getLocationRelativeToArena(sheepLocation)
         val sheepNumber = gameContext.players.numLivingSheep
-        val txt1 = Component.text("Sheep #$sheepNumber: ")
+        val txt1 = Component.text("Sheep #$sheepNumber:")
         val txt2 = gamePlayer.colorfulName
-        val txt3 = Component.text(" joined at ")
+        val txt3 = Component.text("joined at")
         val txt4 = Component.text(
             "(${relativeVector.blockX}, ${relativeVector.blockZ}) ",
             TextColor.color(NamedTextColor.LIGHT_PURPLE)
         )
-        gameContext.javaPlugin.server.broadcast(join(txt1, txt2, txt3, txt4))
+        gameContext.javaPlugin.server.broadcast(join(" ", txt1, txt2, txt3, txt4))
 
         return sheep
     }
