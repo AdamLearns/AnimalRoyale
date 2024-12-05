@@ -26,12 +26,12 @@ class Players {
         return players[name]
     }
 
-    fun createPlayerIfNotExists(name: String): GamePlayer? {
+    fun createPlayerIfNotExists(name: String, displayName: String?): GamePlayer? {
         if (players.containsKey(name)) {
             return players[name]
         }
 
-        val gamePlayer = GamePlayer(name)
+        val gamePlayer = GamePlayer(name, displayName)
         players[name] = gamePlayer
 
         return gamePlayer

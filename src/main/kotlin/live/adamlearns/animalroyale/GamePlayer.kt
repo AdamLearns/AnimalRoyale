@@ -17,7 +17,8 @@ class GamePlayer(
     /**
      * This is the person's Twitch name.
      */
-    @JvmField val name: String
+    val name: String,
+    private val displayName: String?
 ) {
     /**
      * This is as close to your sheep's color as we can get. We approximate some of them like black so that it's still
@@ -54,13 +55,13 @@ class GamePlayer(
         private set
 
     val colorfulName: TextComponent
-        get() = Component.text(name, nameColor)
+        get() = Component.text(displayName ?: name, nameColor)
 
     val nameForScoreboardWhenDead: TextComponent
-        get() = Component.text(name).color(nameColor).decorate(TextDecoration.STRIKETHROUGH)
+        get() = Component.text(displayName ?: name).color(nameColor).decorate(TextDecoration.STRIKETHROUGH)
 
     val nameForTwitch: String
-        get() = "@$name"
+        get() = "@${displayName ?: name}"
 
     val cooldownMessage: String
         get() {
