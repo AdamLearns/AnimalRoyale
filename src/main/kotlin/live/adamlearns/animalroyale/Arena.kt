@@ -556,6 +556,7 @@ class Arena(private val gameContext: GameContext) {
             Biome.OCEAN,
             Biome.JUNGLE,
             Biome.BIRCH_FOREST,
+            Biome.BAMBOO_JUNGLE,
             Biome.COLD_OCEAN,
             Biome.DEEP_COLD_OCEAN,
             Biome.DEEP_LUKEWARM_OCEAN,
