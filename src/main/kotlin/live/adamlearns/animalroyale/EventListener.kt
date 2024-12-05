@@ -10,7 +10,6 @@ import net.kyori.adventure.title.Title.Times
 import net.kyori.adventure.util.Ticks
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
-import org.bukkit.damage.DamageType
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
@@ -31,7 +30,7 @@ class EventListener(private val gameContext: GameContext) : Listener {
 
             val remainingPlayerNames = playersWithLivingSheep.filterNotNull()
                 .map { it.colorfulName }
-                .let { join(*it.toTypedArray()) }
+                .let { join(" ", *it.toTypedArray()) }
 
             return Component.text(": ").append(remainingPlayerNames)
         }
@@ -65,14 +64,14 @@ class EventListener(private val gameContext: GameContext) : Listener {
         when (event.entity.lastDamageCause?.cause) {
             EntityDamageEvent.DamageCause.FALL -> {
                 val txt1 = ownerOfDyingSheep.colorfulName
-                val txt2 = Component.text(" fell too far").color(TextColor.color(NamedTextColor.RED))
-                gameContext.javaPlugin.server.broadcast(join(txt1, txt2))
+                val txt2 = Component.text("fell too far").color(TextColor.color(NamedTextColor.RED))
+                gameContext.javaPlugin.server.broadcast(join(" ", txt1, txt2))
                 gameContext.twitchChat?.sendMessageToChannel(ownerOfDyingSheep.nameForTwitch + " fell too far admRocket")
             }
             EntityDamageEvent.DamageCause.DROWNING -> {
                 val txt1 = ownerOfDyingSheep.colorfulName
-                val txt2 = Component.text(" drowned").color(TextColor.color(NamedTextColor.DARK_BLUE))
-                gameContext.javaPlugin.server.broadcast(join(txt1, txt2))
+                val txt2 = Component.text("drowned").color(TextColor.color(NamedTextColor.DARK_BLUE))
+                gameContext.javaPlugin.server.broadcast(join(" ", txt1, txt2))
                 gameContext.twitchChat?.sendMessageToChannel(ownerOfDyingSheep.nameForTwitch + " drowned admBoat")
             }
             else -> {}
@@ -134,7 +133,7 @@ class EventListener(private val gameContext: GameContext) : Listener {
 
         val ownerOfDyingSheep = gameContext.getOwnerOfEntity(damagedEntity) ?: return
 
-        var deathMessage: TextComponent? = null
+        var deathMessage: Component? = null
         var twitchDeathMessage: String? = null
 
         if (event.cause == EntityDamageEvent.DamageCause.LAVA) {
@@ -158,10 +157,10 @@ class EventListener(private val gameContext: GameContext) : Listener {
                 twitchDeathMessage = "${ownerOfTnt.nameForTwitch} blasted themselves admFire"
             } else {
                 val txt1 = ownerOfTnt.colorfulName
-                val txt2 = Component.text(" blasted ")
+                val txt2 = Component.text("blasted")
                 val txt3 = ownerOfDyingSheep.colorfulName
-                val txt4 = Component.text(" to smithereens", TextColor.color(NamedTextColor.RED))
-                deathMessage = join(txt1, txt2, txt3, txt4)
+                val txt4 = Component.text("to smithereens", TextColor.color(NamedTextColor.RED))
+                deathMessage = join(" ", txt1, txt2, txt3, txt4)
                 twitchDeathMessage = "${ownerOfTnt.nameForTwitch} blasted ${ownerOfDyingSheep.nameForTwitch} admNuke"
 
                 incrementKillsForPlayer(ownerOfTnt)
