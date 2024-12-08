@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class AnimalRoyale : JavaPlugin() {
     private var eventListener: EventListener? = null
     private var twitchChat: TwitchChat? = null
+    private var hud: Hud? = null
     private val gameContext = GameContext(this)
 
     private fun setupWorld() {
@@ -35,11 +36,16 @@ class AnimalRoyale : JavaPlugin() {
         this.setupWorld()
         this.setupEventListener()
         this.setupTwitchChat()
+        this.setupHud()
     }
 
     private fun setupTwitchChat() {
         twitchChat = TwitchChat(gameContext)
         gameContext.registerTwitchChat(twitchChat)
+    }
+
+    private fun setupHud() {
+        hud = Hud(gameContext)
     }
 
     override fun onDisable() {
