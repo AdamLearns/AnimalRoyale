@@ -91,7 +91,7 @@ class Hud(private val gameContext: GameContext) {
 
     companion object {
         private const val PHASE_BAR_UPDATE_PERIOD: Long = 1L * Ticks.TICKS_PER_SECOND
-        private const val TNT_BAR_UPDATE_PERIOD: Long = Ticks.TICKS_PER_SECOND / 2L
+        private const val TNT_BAR_UPDATE_PERIOD: Long = Ticks.TICKS_PER_SECOND / 10L
 
         private val PHASES_THAT_HAVE_PROGRESS = listOf(GamePhase.LOBBY, GamePhase.GAMEPLAY)
 
