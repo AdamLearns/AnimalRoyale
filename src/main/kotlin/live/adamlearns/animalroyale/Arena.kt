@@ -27,7 +27,7 @@ class Arena(private val gameContext: GameContext) {
     /**
      * This is in ticks.
      */
-    private var timeBetweenTurns = 20 * Ticks.TICKS_PER_SECOND
+    private var timeUntilNextRound = 20 * Ticks.TICKS_PER_SECOND
 
     // This represents the top-center of the arena (since we're looking south).
     private var location: Location? = null
@@ -53,6 +53,12 @@ class Arena(private val gameContext: GameContext) {
     private var suddenDeathTask: BukkitTask? = null
 
     var startingNumSheep: Int = 0
+
+    var currentRoundStartTick: Float = Float.MIN_VALUE
+        private set
+
+    var nextRoundStartTick: Float = Float.MAX_VALUE
+        private set
 
     private val length: Int
         get() = depth * 2
@@ -534,11 +540,15 @@ class Arena(private val gameContext: GameContext) {
         }
 
         startNewMatchTask = Bukkit.getScheduler().runTaskLater(gameContext.javaPlugin, Runnable {
+            val currentTick = gameContext.javaPlugin.server.currentTick.toFloat()
+            currentRoundStartTick = currentTick
+            nextRoundStartTick = currentTick + timeUntilNextRound
+
             gameContext.arena?.startRound()
-            startRoundIn(timeBetweenTurns.toLong())
+            startRoundIn(timeUntilNextRound.toLong())
 
             // The minimum possible turn time is 1 second
-            timeBetweenTurns = max(20.0, floor(timeBetweenTurns * 0.9).toInt().toDouble()).toInt()
+            timeUntilNextRound = max(Ticks.TICKS_PER_SECOND, floor(timeUntilNextRound * 0.9).toInt())
         }, delay)
     }
 

@@ -3,6 +3,7 @@ package live.adamlearns.animalroyale
 import live.adamlearns.animalroyale.ComponentUtils.join
 import live.adamlearns.animalroyale.extensions.cancelIfNeeded
 import live.adamlearns.animalroyale.extensions.clamp
+import live.adamlearns.animalroyale.extensions.format
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -36,17 +37,16 @@ class Hud(private val gameContext: GameContext) {
             gamePhaseStartTick = currentTick.toFloat()
             gamePhaseEndTick = (currentTick + getPhaseDuration(gameContext.gamePhase)).toFloat()
 
-            gamePhaseBossBar.name(GamePhaseTitles.getTitle(gameContext.gamePhase))
+            gamePhaseBossBar.name(GamePhaseBarTitle.getTitle(gameContext.gamePhase))
             gamePhaseBossBar.progress(1f)
 
             if (gamePhase == GamePhase.GAMEPLAY) {
-                updateTntTask =
-                    Bukkit.getScheduler()
-                        .runTaskTimer(gameContext.javaPlugin, this::updateTntBar, 0L, TNT_BAR_UPDATE_PERIOD)
-//                showBarToPlayerIfNeeded(tntBossBar)
+                updateTntTask = Bukkit.getScheduler()
+                    .runTaskTimer(gameContext.javaPlugin, this::updateTntBar, 0L, TNT_BAR_UPDATE_PERIOD)
+                showBarToPlayerIfNeeded(tntBossBar)
             } else {
                 updateTntTask?.cancelIfNeeded()
-//                hideBarFromPlayerIfNeeded(tntBossBar)
+                hideBarFromPlayerIfNeeded(tntBossBar)
             }
         }
 
@@ -60,6 +60,17 @@ class Hud(private val gameContext: GameContext) {
     }
 
     private fun updateTntBar() {
+        val arena = gameContext.arena ?: return
+
+        val currentTick = gameContext.javaPlugin.server.currentTick
+        val progress: Float =
+            ((currentTick.toFloat() - arena.currentRoundStartTick) / (arena.nextRoundStartTick - arena.currentRoundStartTick)).clamp(
+                0f, 1f
+            )
+        tntBossBar.progress(1f - progress) // We want the bar to go 'down' to get the timer effect
+
+        val remainingSeconds = (arena.nextRoundStartTick - currentTick) / Ticks.TICKS_PER_SECOND.toFloat()
+        tntBossBar.name(TntBarTitle.getTitle(remainingSeconds))
     }
 
     private fun showBarToPlayerIfNeeded(bar: BossBar) {
@@ -80,23 +91,22 @@ class Hud(private val gameContext: GameContext) {
 
     companion object {
         private const val PHASE_BAR_UPDATE_PERIOD: Long = 1L * Ticks.TICKS_PER_SECOND
-        private const val TNT_BAR_UPDATE_PERIOD: Long = 5 // ticks
+        private const val TNT_BAR_UPDATE_PERIOD: Long = Ticks.TICKS_PER_SECOND / 2L
 
         private val PHASES_THAT_HAVE_PROGRESS = listOf(GamePhase.LOBBY, GamePhase.LOBBY)
 
-        private fun getPhaseDuration(phase: GamePhase): Int =
-            when (phase) {
-                GamePhase.LOBBY -> Arena.NUM_SECONDS_BEFORE_STARTING_MATCH * Ticks.TICKS_PER_SECOND
-                GamePhase.GAMEPLAY -> Arena.NUM_SECONDS_BEFORE_SUDDEN_DEATH * Ticks.TICKS_PER_SECOND
-                // For other phases, return an arbitrary long timeframe since we do not update the bar during them
-                else -> 3600 * Ticks.TICKS_PER_SECOND
-            }
+        private fun getPhaseDuration(phase: GamePhase): Int = when (phase) {
+            GamePhase.LOBBY -> Arena.NUM_SECONDS_BEFORE_STARTING_MATCH * Ticks.TICKS_PER_SECOND
+            GamePhase.GAMEPLAY -> Arena.NUM_SECONDS_BEFORE_SUDDEN_DEATH * Ticks.TICKS_PER_SECOND
+            // For other phases, return an arbitrary long timeframe since we do not update the bar during them
+            else -> 3600 * Ticks.TICKS_PER_SECOND
+        }
     }
 
-    private object GamePhaseTitles {
-        val CREATING_ARENA_TITLE: Component = Component.text("Waiting to start...")
+    private object GamePhaseBarTitle {
+        private val CREATING_ARENA_TITLE: Component = Component.text("Waiting to start...")
 
-        val LOBBY_TITLE: Component
+        private val LOBBY_TITLE: Component
             get() = join(
                 " ",
                 Component.text("Game will start soon, type"),
@@ -104,9 +114,9 @@ class Hud(private val gameContext: GameContext) {
                 Component.text("in chat!"),
             )
 
-        val PRE_GAMEPLAY_TITLE: Component = Component.text("Starting soon...")
+        private val PRE_GAMEPLAY_TITLE: Component = Component.text("Starting soon...")
 
-        val GAMEPLAY: Component
+        private val GAMEPLAY: Component
             get() = join(
                 " ",
                 Component.text("Game is ongoing! Waiting for someone to"),
@@ -116,12 +126,20 @@ class Hud(private val gameContext: GameContext) {
                 Component.text("to start")
             )
 
-        fun getTitle(phase: GamePhase): Component =
-            when (phase) {
-                GamePhase.CREATING_ARENA -> CREATING_ARENA_TITLE
-                GamePhase.PRE_GAMEPLAY -> PRE_GAMEPLAY_TITLE
-                GamePhase.LOBBY -> LOBBY_TITLE
-                GamePhase.GAMEPLAY -> GAMEPLAY
-            }
+        fun getTitle(phase: GamePhase): Component = when (phase) {
+            GamePhase.CREATING_ARENA -> CREATING_ARENA_TITLE
+            GamePhase.PRE_GAMEPLAY -> PRE_GAMEPLAY_TITLE
+            GamePhase.LOBBY -> LOBBY_TITLE
+            GamePhase.GAMEPLAY -> GAMEPLAY
+        }
+    }
+
+    private object TntBarTitle {
+        fun getTitle(remainingSeconds: Float): Component = join(
+            " ",
+            Component.text("Launching TNT in"),
+            Component.text(remainingSeconds.format(1), NamedTextColor.RED),
+            Component.text("seconds!"),
+        )
     }
 }
