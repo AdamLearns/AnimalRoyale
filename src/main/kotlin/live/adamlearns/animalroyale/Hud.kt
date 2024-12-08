@@ -93,7 +93,7 @@ class Hud(private val gameContext: GameContext) {
         private const val PHASE_BAR_UPDATE_PERIOD: Long = 1L * Ticks.TICKS_PER_SECOND
         private const val TNT_BAR_UPDATE_PERIOD: Long = Ticks.TICKS_PER_SECOND / 2L
 
-        private val PHASES_THAT_HAVE_PROGRESS = listOf(GamePhase.LOBBY, GamePhase.LOBBY)
+        private val PHASES_THAT_HAVE_PROGRESS = listOf(GamePhase.LOBBY, GamePhase.GAMEPLAY)
 
         private fun getPhaseDuration(phase: GamePhase): Int = when (phase) {
             GamePhase.LOBBY -> Arena.NUM_SECONDS_BEFORE_STARTING_MATCH * Ticks.TICKS_PER_SECOND
