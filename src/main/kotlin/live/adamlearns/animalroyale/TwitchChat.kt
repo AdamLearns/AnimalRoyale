@@ -6,8 +6,8 @@ import com.github.twitch4j.TwitchClientBuilder
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent
 import com.github.twitch4j.common.enums.CommandPermission
 import io.github.cdimascio.dotenv.Dotenv
+import live.adamlearns.animalroyale.extensions.distanceTo
 import live.adamlearns.animalroyale.extensions.isAliveAndValid
-import live.adamlearns.animalroyale.extensions.sample
 import live.adamlearns.animalroyale.extensions.setToCenterOfBlock
 import org.bukkit.Bukkit
 import org.bukkit.Color
@@ -58,68 +58,41 @@ class TwitchChat(private val gameContext: GameContext) {
         return name.equals(twitchChannelToJoin, ignoreCase = true)
     }
 
-    private fun handleChatMessage(senderName: String, message: String, isAdmin: Boolean) {
+    private fun onChatMessage(event: ChannelMessageEvent) {
+        val senderName = event.user.name
+        val senderDisplayName = event.messageEvent.userDisplayName.orElse(null)
+        val senderChatColor: String? = event.messageEvent.userChatColor.orElse(null)
+        val senderIsAdmin = isTwitchUserAnAdmin(senderName) || event.permissions.any {
+            ADMIN_PERMISSIONS.contains(it)
+        }
+
+        val message = event.message.lowercase(Locale.getDefault())
         val commandAndArgs = message.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val command = commandAndArgs[0]
         val args = Arrays.copyOfRange(commandAndArgs, 1, commandAndArgs.size)
 
-        if (command == "!startrounds" && isAdmin) {
+        if (command == "!startrounds" && senderIsAdmin) {
             gameContext.arena?.startRounds()
         }
 
-        if (command == "!newarena" && isAdmin) {
+        if (command == "!newarena" && senderIsAdmin) {
             gameContext.startNewGame()
         }
 
-        if (command == "!lava" && isAdmin) {
+        if (command == "!lava" && senderIsAdmin) {
             gameContext.arena?.startSuddenDeath()
         }
 
         when (command) {
-            "!identify" -> {
-                onIdentify(senderName, args)
-                return
-            }
-
-            "!teleport", "!tp" -> {
-                onTeleport(senderName, args)
-                return
-            }
-
-            "!addyaw" -> {
-                onAddYaw(senderName, args)
-                return
-            }
-
-            "!addpitch" -> {
-                onAddPitch(senderName, args)
-                return
-            }
-
-            "!addpower" -> {
-                onAddPower(senderName, args)
-                return
-            }
-
-            "!addttl" -> {
-                onAddTtl(senderName, args)
-                return
-            }
-
-            "!join", "!color" -> {
-                onJoin(senderName, args)
-                return
-            }
-
-            "!tnt" -> {
-                onTnt(senderName, args)
-                return
-            }
-
-            "!tntcancel", "!tntstop" -> {
-                onTntCancel(senderName, args)
-                return
-            }
+            "!identify" -> onIdentify(senderName, args)
+            "!teleport", "!tp" -> onTeleport(senderName, args)
+            "!addyaw" -> onAddYaw(senderName, args)
+            "!addpitch" -> onAddPitch(senderName, args)
+            "!addpower" -> onAddPower(senderName, args)
+            "!addttl" -> onAddTtl(senderName, args)
+            "!join", "!color" -> onJoin(senderName, senderDisplayName, senderChatColor, args)
+            "!tnt" -> onTnt(senderName, args)
+            "!tntcancel", "!tntstop" -> onTntCancel(senderName, args)
         }
     }
 
@@ -226,16 +199,6 @@ class TwitchChat(private val gameContext: GameContext) {
         }
     }
 
-    private fun onChatMessage(event: ChannelMessageEvent) {
-        val senderName = event.user.name
-        val message = event.message.lowercase(Locale.getDefault())
-        val isMod = isTwitchUserAnAdmin(senderName) || event.permissions.any {
-            ADMIN_PERMISSIONS.contains(it)
-        }
-
-        handleChatMessage(senderName, message, isMod)
-    }
-
     private fun onAddYaw(senderName: String, args: Array<String>) {
         if (args.isEmpty()) {
             return
@@ -333,19 +296,19 @@ class TwitchChat(private val gameContext: GameContext) {
         }
     }
 
-    private fun onJoin(senderName: String, args: Array<String>) {
+    private fun onJoin(senderName: String, senderDisplayName: String?, senderChatColor: String?, args: Array<String>) {
         if (!gameContext.canAddSheep()) {
             return
         }
 
         val arena = gameContext.arena ?: return
-        val gamePlayer = gameContext.players.createPlayerIfNotExists(senderName) ?: return
+        val gamePlayer = gameContext.players.createPlayerIfNotExists(senderName, senderDisplayName) ?: return
 
-        val colorName =
-            if (args.isNotEmpty()) args[0].uppercase(Locale.getDefault()) else DyeColor.values().sample().name
+        val colorName = if (args.isNotEmpty()) args[0].uppercase(Locale.getDefault()) else null
 
         try {
-            val dyeColor = DyeColor.valueOf(colorName)
+            val dyeColor = colorName?.let { DyeColor.valueOf(it) }
+                ?: senderChatColor?.let { getDyeColorFromHex(senderChatColor) }
 
             if (gamePlayer.canPlaceSheep) {
                 Bukkit.getScheduler().runTask(gameContext.javaPlugin) { _ ->
@@ -368,5 +331,66 @@ class TwitchChat(private val gameContext: GameContext) {
 
     companion object {
         val ADMIN_PERMISSIONS = listOf(CommandPermission.OWNER, CommandPermission.BROADCASTER, CommandPermission.MODERATOR)
+
+        private var cachedClosestColors: MutableMap<String, DyeColor> = mutableMapOf()
+
+        private fun getDyeColorFromHex(hex: String): DyeColor =
+            // These are the 'default' Twitch colors. For custom colors, we try to find the closest one.
+            when (hex) {
+                // rgb(255, 0, 0)
+                "#FF0000" -> DyeColor.RED
+                // rgb(178, 34, 34)
+                "#B22222" -> DyeColor.RED
+                // rgb(0, 128, 0)
+                "#008000" -> DyeColor.GREEN
+                // rgb(46, 139, 87)
+                "#2E8B57" -> DyeColor.CYAN
+                // rgb(154, 205, 50)
+                "#91CD32" -> DyeColor.LIME
+                // rgb(0, 255, 127)
+                "#00FF7F" -> DyeColor.LIME
+                // rgb(0, 0, 255)
+                "#0000FF" -> DyeColor.BLUE
+                // rgb(30, 144, 255)
+                "#1E90FF" -> DyeColor.BLUE
+                // rgb(95, 158, 160)
+                "#5F9EA0" -> DyeColor.LIGHT_BLUE
+                // rgb(255, 127, 80)
+                "#FF7F50" -> DyeColor.ORANGE
+                // rgb(255, 69, 0)
+                "#FF4500" -> DyeColor.ORANGE
+                // rgb(210, 105, 30)
+                "#D2691E" -> DyeColor.ORANGE
+                // rgb(218, 165, 32)
+                "#DAA520" -> DyeColor.YELLOW
+                // rgb(255, 105, 180)
+                "#FF69B4" -> DyeColor.PINK
+                // rgb(138, 43, 226)
+                "#8A2BE2" -> DyeColor.PURPLE
+                else -> getClosestDyeColorFromHex(hex)
+            }
+
+        private fun getClosestDyeColorFromHex(hex: String): DyeColor {
+            if (cachedClosestColors.containsKey(hex)) {
+                return cachedClosestColors[hex]!!
+            }
+
+            val color = Color.fromRGB(hex.removePrefix("#").toInt(16))
+
+            var closestDyeColor = DyeColor.WHITE
+            var closesDistance = Double.MAX_VALUE
+
+            for (dyeColor in DyeColor.values()) {
+                val distance = color.distanceTo(dyeColor.color)
+
+                if (distance < closesDistance) {
+                    closestDyeColor = dyeColor
+                    closesDistance = distance
+                }
+            }
+
+            cachedClosestColors[hex] = closestDyeColor
+            return closestDyeColor
+        }
     }
 }
