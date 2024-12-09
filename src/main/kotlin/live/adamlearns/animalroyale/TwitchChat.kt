@@ -343,12 +343,12 @@ class TwitchChat(private val gameContext: GameContext) {
                 "#B22222" -> DyeColor.RED
                 // rgb(0, 128, 0)
                 "#008000" -> DyeColor.GREEN
-                // rgb(154, 205, 50)
-                "#91CD32" -> DyeColor.GREEN
                 // rgb(46, 139, 87)
-                "#2E8B57" -> DyeColor.GREEN
+                "#2E8B57" -> DyeColor.CYAN
+                // rgb(154, 205, 50)
+                "#91CD32" -> DyeColor.LIME
                 // rgb(0, 255, 127)
-                "#00FF7F" -> DyeColor.GREEN
+                "#00FF7F" -> DyeColor.LIME
                 // rgb(0, 0, 255)
                 "#0000FF" -> DyeColor.BLUE
                 // rgb(30, 144, 255)
