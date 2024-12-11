@@ -91,6 +91,7 @@ class TwitchChat(private val gameContext: GameContext) {
             "!addpower" -> onAddPower(senderName, args)
             "!addttl" -> onAddTtl(senderName, args)
             "!join", "!color" -> onJoin(senderName, senderDisplayName, senderChatColor, args)
+            "!relocate" -> onRelocate(senderName, args)
             "!tnt" -> onTnt(senderName, args)
             "!tntcancel", "!tntstop" -> onTntCancel(senderName, args)
         }
@@ -147,6 +148,18 @@ class TwitchChat(private val gameContext: GameContext) {
         Bukkit.getScheduler().runTask(gameContext.javaPlugin) { _ -> sheep.teleport(sheepLocation) }
 
         gamePlayer.setNextTimeAbleToUseSpecialAbility(System.currentTimeMillis() + 15000)
+    }
+
+    private fun onRelocate(senderName: String, args: Array<String>) {
+        // This is only allowed in the 'lobby' (i.e. when players join and before the round starts)
+        if (gameContext.gamePhase != GamePhase.LOBBY) {
+            return
+        }
+
+        val arena = gameContext.arena ?: return
+        val gamePlayer = gameContext.players.getPlayer(senderName) ?: return
+
+        arena.relocateSheepForPlayer(gamePlayer)
     }
 
     private fun onIdentify(senderName: String, args: Array<String>) {

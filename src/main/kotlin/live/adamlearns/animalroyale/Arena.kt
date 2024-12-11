@@ -321,27 +321,7 @@ class Arena(private val gameContext: GameContext) {
      */
     internal fun createSheepForPlayer(gamePlayer: GamePlayer, dyeColor: DyeColor?): Sheep {
         val world = checkNotNull(gameContext.world)
-        val location = checkNotNull(this.location)
-
-        val random = ThreadLocalRandom.current()
-        val sheepLocation = location.clone()
-
-        val distance = depth
-        sheepLocation.add(random.nextDouble() * distance * randomSign(), 0.0, random.nextDouble() * distance)
-        val highestBlockAtSheepLocation = world.getHighestBlockAt(sheepLocation.blockX, sheepLocation.blockZ)
-        val highestBlockType = highestBlockAtSheepLocation.type
-
-        // Prevent the player from dying as soon as they spawn by placing a non-flammable block above the hazard.
-        if (highestBlockAtSheepLocation.isLiquid || highestBlockType == Material.CACTUS || highestBlockType == Material.SWEET_BERRY_BUSH) {
-            val blockAboveHighestBlock = world.getBlockAt(
-                highestBlockAtSheepLocation.x,
-                highestBlockAtSheepLocation.y + 1,
-                highestBlockAtSheepLocation.z
-            )
-            blockAboveHighestBlock.type = Material.CYAN_CONCRETE
-        }
-
-        sheepLocation.y = (world.getHighestBlockYAt(sheepLocation.blockX, sheepLocation.blockZ) + 30).toDouble()
+        val sheepLocation = getNewLocationForSheep()
         val sheep = world.spawnEntity(sheepLocation, EntityType.SHEEP) as Sheep
 
         // We don't want sheep to have AI, but without AI, there's no fall damage, and we DO want fall damage. Instead,
@@ -372,6 +352,49 @@ class Arena(private val gameContext: GameContext) {
         gameContext.javaPlugin.server.broadcast(join(" ", txt1, txt2, txt3, txt4))
 
         return sheep
+    }
+
+    /**
+     * Teleports a sheep to a new random location.
+     */
+    internal fun relocateSheepForPlayer(gamePlayer: GamePlayer) {
+        val newSheepLocation = getNewLocationForSheep()
+
+        Bukkit.getScheduler().runTask(gameContext.javaPlugin) { _ ->
+            gamePlayer.sheep?.teleport(newSheepLocation)
+        }
+    }
+
+    /**
+     * Finds a suitable location for a sheep. If that location is in a liquid or a damaging block, it will also place a
+     * safety block so the sheep stays above the hazard.
+     */
+    private fun getNewLocationForSheep(): Location {
+        val world = checkNotNull(gameContext.world)
+        val location = checkNotNull(this.location)
+        val sheepLocation = location.clone()
+
+        // Move to a random place within the arena
+        val random = ThreadLocalRandom.current()
+        sheepLocation.add(random.nextDouble() * depth * randomSign(), 0.0, random.nextDouble() * depth)
+
+        val highestBlockAtSheepLocation = world.getHighestBlockAt(sheepLocation.blockX, sheepLocation.blockZ)
+        val highestBlockType = highestBlockAtSheepLocation.type
+
+        // Prevent the player from dying as soon as they spawn by placing a non-flammable block above the hazard.
+        if (highestBlockAtSheepLocation.isLiquid || highestBlockType == Material.CACTUS || highestBlockType == Material.SWEET_BERRY_BUSH) {
+            val blockAboveHighestBlock = world.getBlockAt(
+                highestBlockAtSheepLocation.x,
+                highestBlockAtSheepLocation.y + 1,
+                highestBlockAtSheepLocation.z
+            )
+            blockAboveHighestBlock.type = Material.CYAN_CONCRETE
+        }
+
+        // Make it spawn a few blocks upwards so it looks like the sheep is falling
+        sheepLocation.y = (world.getHighestBlockYAt(sheepLocation.blockX, sheepLocation.blockZ) + 30).toDouble()
+
+        return sheepLocation
     }
 
     /**
