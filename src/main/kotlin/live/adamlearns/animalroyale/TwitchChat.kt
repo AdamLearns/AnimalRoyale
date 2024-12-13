@@ -18,6 +18,7 @@ import org.bukkit.entity.Firework
 import org.bukkit.util.Vector
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
+import java.util.regex.Pattern
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -321,7 +322,10 @@ class TwitchChat(private val gameContext: GameContext) {
 
         try {
             val dyeColor = colorName?.let { DyeColor.valueOf(it) }
-                ?: senderChatColor?.let { getDyeColorFromHex(senderChatColor) }
+                ?: senderChatColor?.trim()
+                    ?.takeIf { isValidHexString(it) }
+                    ?.let { getDyeColorFromHex(senderChatColor) }
+                ?: DyeColor.values().random()
 
             if (gamePlayer.canPlaceSheep) {
                 Bukkit.getScheduler().runTask(gameContext.javaPlugin) { _ ->
@@ -345,7 +349,12 @@ class TwitchChat(private val gameContext: GameContext) {
     companion object {
         val ADMIN_PERMISSIONS = listOf(CommandPermission.OWNER, CommandPermission.BROADCASTER, CommandPermission.MODERATOR)
 
+        private val HEX_PATTERN = Pattern.compile("^#[A-Fa-f0-9]{6}$")
         private var cachedClosestColors: MutableMap<String, DyeColor> = mutableMapOf()
+
+        private fun isValidHexString(hex: String): Boolean {
+            return HEX_PATTERN.matcher(hex).matches()
+        }
 
         private fun getDyeColorFromHex(hex: String): DyeColor =
             // These are the 'default' Twitch colors. For custom colors, we try to find the closest one.

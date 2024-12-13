@@ -319,7 +319,7 @@ class Arena(private val gameContext: GameContext) {
      * @param dyeColor
      * @return
      */
-    internal fun createSheepForPlayer(gamePlayer: GamePlayer, dyeColor: DyeColor?): Sheep {
+    internal fun createSheepForPlayer(gamePlayer: GamePlayer, dyeColor: DyeColor): Sheep {
         val world = checkNotNull(gameContext.world)
         val sheepLocation = getNewLocationForSheep()
         val sheep = world.spawnEntity(sheepLocation, EntityType.SHEEP) as Sheep
