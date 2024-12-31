@@ -358,10 +358,8 @@ class Arena(private val gameContext: GameContext) {
      * Teleports a sheep to a new random location.
      */
     internal fun relocateSheepForPlayer(gamePlayer: GamePlayer) {
-        val newSheepLocation = getNewLocationForSheep()
-
         Bukkit.getScheduler().runTask(gameContext.javaPlugin) { _ ->
-            gamePlayer.sheep?.teleport(newSheepLocation)
+            gamePlayer.sheep?.teleport(getNewLocationForSheep())
         }
     }
 
