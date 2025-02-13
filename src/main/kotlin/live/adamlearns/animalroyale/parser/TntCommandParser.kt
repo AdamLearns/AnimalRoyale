@@ -88,7 +88,7 @@ object TntCommandParser {
         var distanceWord: String? = null
         var ttlWord: String? = null
 
-        for (arg in args) {
+        for (arg in args.map { it.lowercase() }) {
             if (yawWord == null && YAW_WORDS.containsKey(arg)) {
                 yawWord = arg
             }
