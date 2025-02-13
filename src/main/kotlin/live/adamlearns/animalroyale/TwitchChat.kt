@@ -9,6 +9,7 @@ import io.github.cdimascio.dotenv.Dotenv
 import live.adamlearns.animalroyale.extensions.distanceTo
 import live.adamlearns.animalroyale.extensions.isAliveAndValid
 import live.adamlearns.animalroyale.extensions.setToCenterOfBlock
+import live.adamlearns.animalroyale.parser.TntCommandParser
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.DyeColor
@@ -289,25 +290,10 @@ class TwitchChat(private val gameContext: GameContext) {
     }
 
     private fun onTnt(senderName: String, args: Array<String>) {
-        if (args.size < 4) {
-            return
-        }
-
-        try {
-            val yaw = args[0].toInt(10)
-
-            // Minecraft considers -90 to be facing straight up, but most players will probably want to use positive numbers, so we invert this.
-            val pitch = args[1].toInt(10) * -1
-            val distance = args[2].toInt(10)
-            val ttl = args[3].toDouble()
-
-            val gamePlayer = gameContext.players.getPlayer(senderName) ?: return
-
-            gamePlayer.setTntParameters(yaw, pitch, distance, ttl)
-            updateSheepRotationForPlayer(gamePlayer)
-        } catch (e: NumberFormatException) {
-            // Ignore formatting problems since people in Twitch chat will get this wrong quite a lot.
-        }
+        val gamePlayer = gameContext.players.getPlayer(senderName) ?: return
+        val parameters = TntCommandParser.parse(args) ?: return
+        gamePlayer.setTntParameters(parameters.yaw, parameters.pitch, parameters.distance, parameters.ttl)
+        updateSheepRotationForPlayer(gamePlayer)
     }
 
     private fun onJoin(senderName: String, senderDisplayName: String?, senderChatColor: String?, args: Array<String>) {
