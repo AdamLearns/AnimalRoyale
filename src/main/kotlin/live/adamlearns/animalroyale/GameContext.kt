@@ -46,7 +46,7 @@ class GameContext(
         val validDyeColors = DyeColor.values().joinToString(" ") {
             it.toString().lowercase(Locale.getDefault())
         }
-        twitchChat?.sendMessageToChannel("You may now join the game with \"!join COLOR\", where COLOR is one of these: $validDyeColors. See https://imgur.com/XMui9vf.png for how to play.")
+        twitchChat?.sendMessageToChannel("You may now join the game with \"!join COLOR\", where COLOR is one of these: $validDyeColors. See https://i.imgur.com/42cQes4.png for how to play.")
         gamePhase = GamePhase.LOBBY
     }
 
@@ -114,7 +114,7 @@ class GameContext(
 
     fun advanceGamePhaseToGameplay() {
         arena?.startingNumSheep = players.numLivingSheep
-        twitchChat?.sendMessageToChannel("The battle is starting with ${players.allPlayers.size} players! See how to play here: https://imgur.com/XMui9vf.png")
+        twitchChat?.sendMessageToChannel("The battle is starting with ${players.allPlayers.size} players! See how to play here: https://i.imgur.com/42cQes4.png")
         gamePhase = GamePhase.GAMEPLAY
     }
 
