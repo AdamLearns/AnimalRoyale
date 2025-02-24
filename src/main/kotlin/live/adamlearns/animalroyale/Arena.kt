@@ -574,7 +574,7 @@ class Arena(private val gameContext: GameContext) {
     }
 
     companion object {
-        const val MINIMUM_TPS_TO_START = 19.5
+        const val MINIMUM_TPS_TO_START = 18.5
         const val NUM_SECONDS_BEFORE_STARTING_MATCH = 60
         const val NUM_SECONDS_BEFORE_SUDDEN_DEATH = 5 * 60
 
